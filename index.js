@@ -1,9 +1,17 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal')
+const qrcode = require('qrcode-terminal');
 
+
+// --------------------------------------------------
+// Global variables
+// --------------------------------------------------
 const SUPER_ADMIN = '233557632802';
 const BOT = '233551687450';
-const IS_MUTED = false;
+let IS_MUTED = false;
+
+// --------------------------------------------------
+// Configurations
+// --------------------------------------------------
 
 const client = new Client({
     authStrategy: new LocalAuth() // to persist client session
@@ -17,23 +25,34 @@ client.on('ready', () => {
     console.log('Client is ready!');
 });
 
+// client.on('auth_failure', () => {
+//     console.log('Client failed to authenticate!');
+// });
+
+// client.on('authenticated', () => {
+//     console.log('Client was authenticated successfully!');
+// });
+
+
+
 // --------------------------------------------------
 // Helper functions
 // --------------------------------------------------
 const pickRandomReply = (replies) => {
-    replies[Math.floor(Math.random() * replies.length)];
+    return replies[Math.floor(Math.random() * replies.length)];
 }
 
 
 // --------------------------------------------------
 // BOT LOGIC FROM HERE DOWN
 // --------------------------------------------------
+
+// Ping
 client.on('message', message => {
     if (message.body === '!ping' && !IS_MUTED) {
         message.reply('pong');
     }
 });
-
 
 
 // Mention everyone
@@ -61,7 +80,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
 
     if (msg.body[0] === '@' && !IS_MUTED) {
-        const first_word = msg.body.split()[0];
+        const first_word = msg.body.split(' ')[0];
         const contact = await msg.getContact();
 
         const PING_REPLIES = [
@@ -97,6 +116,7 @@ client.on('message', async (msg) => {
                 '🤐👍🏽'
             ]
             await msg.reply(pickRandomReply(MUTE_REPLIES));
+            IS_MUTED = true;
         }
     }
 })
@@ -114,6 +134,7 @@ client.on('message', async (msg) => {
                 'Speaking freely now 👍🏽',
             ]
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
+            IS_MUTED = false;
         }
     }
 })
