@@ -6,10 +6,9 @@ Project Description
 
 ### Todo
 
-- [ ] ⭐❔Add feature to forward links from class group chats to dm?  
-- [ ] ⭐Add command to send timetable and a command to tell the classes we have for that specific day, their times and venues  
 - [ ] ⭐Add command to check assignments, their descriptioins, due dates etc.  
 - [ ] ⭐Write documentation for bot commands  
+- [ ] ⭐❔Add feature to forward links from class group chats to dm?  
 - [ ] ❗ Add more logic for when someone pings bot too much  
 
 ### In Progress
@@ -17,4 +16,5 @@ Project Description
 
 ### Done ✓
 
+- [x] ⭐Add command to send timetable and a command to tell the classes we have for that specific day, their times and venues  
 

@@ -7,7 +7,53 @@ const qrcode = require('qrcode-terminal');
 // --------------------------------------------------
 const SUPER_ADMIN = '233557632802';
 const BOT = '233551687450';
+const BOT_PUSHNAME = 'Ethereal';
 let IS_MUTED = false;
+
+
+
+// --------------------------------------------------
+// Data
+// --------------------------------------------------
+const CLASSES = [
+    {
+        day: 'Monday',
+        classes: [
+            '_Formal Methods_ | ⏰5:30pm | 🏠N3'
+        ]
+    },
+    {
+        day: 'Tuesday',
+        classes: [
+            '_Accounting_ | ⏰5:30pm | 🏠JQB23'
+        ]
+    },
+    {
+        day: 'Wednesday',
+        classes: [
+            '_Compilers_ | ⏰9:30am | 🏠E10',
+            '_Theory & Survey_ | ⏰3:30pm | 🏠JQB09',
+            '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1'
+        ]
+    },
+    {
+        day: 'Thursday',
+        classes: [
+            '_Project_ | ⏰8:30am | 🏠Online',
+            '_Formal Methods_ | ⏰12:30pm | 🏠JQB19',
+            '_Accounting_ | ⏰6:30pm | 🏠E10'
+        ]
+    },
+    {
+        day: 'Friday',
+        classes: [
+            '_Soft. Modelling_ | ⏰9:30am | 🏠N3',
+            '_Theory & Survey_ | ⏰10:30am | 🏠N3',
+            '_Compilers_ | ⏰4:30pm | 🏠NNB2'
+        ]
+    }
+]
+
 
 
 // --------------------------------------------------
@@ -162,19 +208,42 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (msg.body === '!help' && !IS_MUTED) {
         await msg.reply(
-            "Hello there 🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n*!ping*: check if I'm available🙋🏽‍♂️\n*!help*: get commands that can be used with me\n*!mute*: get me to be quiet😅\n*!unmute*: opposite of command above🙂\n*!everyone*: ping everyone in the group😮"
+            `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n*!ping*: check if I'm available🙋🏽‍♂️\n*!help*: get commands that can be used with me\n*!mute*: get me to be quiet😅\n*!unmute*: opposite of command above🙂\n*!everyone*: ping everyone in the group😮`
         )
     }
 })
 
 
-// schedule or send a direct message to a user
+// Check classes for the week
 client.on('message', async (msg) => {
-    if (msg.body === '!stdm' && !IS_MUTED) {
+    if (msg.body === '!classes' && !IS_MUTED) {
+        let text = "If *Software Modelling* is your elective:\n\n";
+        CLASSES.forEach(class_obj => {
+            text = text + "*" + class_obj.day + "*:\n" + class_obj.classes.map(course => course + "\n").join('') + "\n";
+            // added join('') to map() to remove the default comma after each value in array
+        })
+        await msg.reply(text);
+    }
+})
+
+
+// Check class for today
+client.on('message', async (msg) => {
+    if (msg.body === '!class' && !IS_MUTED) {
+        await msg.reply(
+            "*Today's classes* ☀\n\n✅ *Done*:\n⏳ *In session*:\n💡 *Upcoming*:\n"
+        )
+    }
+})
+
+
+// Send a direct message to a user
+client.on('message', async (msg) => {
+    if (msg.body === '!dm' && !IS_MUTED) {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
 
-        chat_from_contact.sendMessage("Heyyy");
+        chat_from_contact.sendMessage("Sliding in DM - ☀");
     }
 })
 
