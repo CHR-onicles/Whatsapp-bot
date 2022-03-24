@@ -1,5 +1,7 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
+const LocalStorage = require('node-localstorage').LocalStorage;
+const localStorage = new LocalStorage('./node-localStorage');
 
 
 // --------------------------------------------------
@@ -8,8 +10,6 @@ const qrcode = require('qrcode-terminal');
 const SUPER_ADMIN = '233557632802';
 const BOT = '233551687450';
 const BOT_PUSHNAME = 'Ethereal';
-let IS_MUTED = false;
-
 
 
 // --------------------------------------------------
@@ -89,6 +89,10 @@ const pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
 }
 
+const getIsMutedStatus = () => {
+    return JSON.parse(localStorage.getItem('IS_MUTED') || false);
+}
+
 
 // --------------------------------------------------
 // BOT LOGIC FROM HERE DOWN
@@ -96,7 +100,7 @@ const pickRandomReply = (replies) => {
 
 // Ping
 client.on('message', msg => {
-    if (msg.body === '!ping' && !IS_MUTED) {
+    if (msg.body.toLowerCase() === '!ping' && !getIsMutedStatus()) {
         msg.reply('pong');
     }
 });
@@ -104,7 +108,7 @@ client.on('message', msg => {
 
 // Mention everyone
 client.on('message', async (msg) => {
-    if (msg.body === '!everyone' && !IS_MUTED) {
+    if (msg.body.toLowerCase() === '!everyone' && !getIsMutedStatus()) {
         const contact = await msg.getContact();
         if (contact.id.user !== SUPER_ADMIN) {
             await msg.reply("Only the boss can use this, so you don't abuse it🐦");
@@ -136,8 +140,8 @@ client.on('message', async (msg) => {
 // Reply if pinged
 client.on('message', async (msg) => {
 
-    if (msg.body[0] === '@' && !IS_MUTED) {
-        const first_word = msg.body.split(' ')[0];
+    if (msg.body.toLowerCase()[0] === '@' && !getIsMutedStatus()) {
+        const first_word = msg.body.toLowerCase().toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
 
         const PING_REPLIES = [
@@ -166,7 +170,7 @@ client.on('message', async (msg) => {
 
 // Mute
 client.on('message', async (msg) => {
-    if ((msg.body === '!🤫' || msg.body === '!mute' || msg.body === '!silence') && !IS_MUTED) {
+    if ((msg.body.toLowerCase() === '!🤫' || msg.body.toLowerCase().toLowerCase() === '!mute' || msg.body.toLowerCase().toLowerCase() === '!silence') && !getIsMutedStatus()) {
         const contact = await msg.getContact();
         if (contact.id.user === SUPER_ADMIN) {
             const MUTE_REPLIES = [
@@ -178,7 +182,8 @@ client.on('message', async (msg) => {
                 '🤐👍🏽'
             ]
             await msg.reply(pickRandomReply(MUTE_REPLIES));
-            IS_MUTED = true;
+            // IS_MUTED = true;
+            localStorage.setItem('IS_MUTED', 'true');
         }
     }
 })
@@ -186,8 +191,8 @@ client.on('message', async (msg) => {
 
 // Unmute
 client.on('message', async (msg) => {
-    if ((msg.body === '!unmute' || msg.body === '!speak') && IS_MUTED) {
-        const contact = await msg.getContact();
+    const contact = await msg.getContact();
+    if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase().toLowerCase() === '!speak') && getIsMutedStatus()) {
         if (contact.id.user === SUPER_ADMIN) {
             const UNMUTE_REPLIES = [
                 'Thanks sir',
@@ -196,9 +201,10 @@ client.on('message', async (msg) => {
                 'Speaking freely now 👍🏽',
             ]
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
-            IS_MUTED = false;
+            // IS_MUTED = false;
+            localStorage.setItem('IS_MUTED', 'false');
         }
-    } else if ((msg.body === '!unmute' || msg.body === '!speak') && !IS_MUTED) {
+    } else if ((msg.body.toLowerCase().toLowerCase() === '!unmute' || msg.body.toLowerCase().toLowerCase() === '!speak') && !getIsMutedStatus()) {
         await msg.reply(`Haven't been muted ${contact.id.user !== SUPER_ADMIN ? "fam" : "sir "}🐦`);
     }
 })
@@ -206,7 +212,7 @@ client.on('message', async (msg) => {
 
 // Help
 client.on('message', async (msg) => {
-    if (msg.body === '!help' && !IS_MUTED) {
+    if (msg.body.toLowerCase() === '!help' && !getIsMutedStatus()) {
         await msg.reply(
             `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n*!ping*: check if I'm available🙋🏽‍♂️\n*!help*: get commands that can be used with me\n*!mute*: get me to be quiet😅\n*!unmute*: opposite of command above🙂\n*!everyone*: ping everyone in the group😮`
         )
@@ -216,7 +222,7 @@ client.on('message', async (msg) => {
 
 // Check classes for the week
 client.on('message', async (msg) => {
-    if (msg.body === '!classes' && !IS_MUTED) {
+    if (msg.body.toLowerCase() === '!classes' && !getIsMutedStatus()) {
         let text = "If *Software Modelling* is your elective:\n\n";
         CLASSES.forEach(class_obj => {
             text = text + "*" + class_obj.day + "*:\n" + class_obj.classes.map(course => course + "\n").join('') + "\n";
@@ -229,9 +235,27 @@ client.on('message', async (msg) => {
 
 // Check class for today
 client.on('message', async (msg) => {
-    if (msg.body === '!class' && !IS_MUTED) {
+    if (msg.body.toLowerCase() === '!class' && !getIsMutedStatus()) {
+        const today_day = new Date().toString().split(' ')[0]; // to get day
+
+        if (today_day === 'Sat' || today_day === 'Sun') {
+            await msg.reply('Its the weekend! No classes today.')
+        }
+
+        const { classes } = CLASSES.find(class_obj => {
+            if (class_obj.day.slice(0, 3) === today_day) {
+                return class_obj;
+            }
+        });
+
+        console.log(classes);
+
+        // await msg.reply(
+        //     "*Today's classes* ☀\n\n✅ *Done*:\n⏳ *In session*:\n💡 *Upcoming*:\n"
+        // )
+
         await msg.reply(
-            "*Today's classes* ☀\n\n✅ *Done*:\n⏳ *In session*:\n💡 *Upcoming*:\n"
+            "*Today's classes* ☀\n\n"
         )
     }
 })
@@ -239,7 +263,7 @@ client.on('message', async (msg) => {
 
 // Send a direct message to a user
 client.on('message', async (msg) => {
-    if (msg.body === '!dm' && !IS_MUTED) {
+    if (msg.body.toLowerCase() === '!dm' && !getIsMutedStatus()) {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
 
