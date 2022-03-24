@@ -9,6 +9,7 @@ const SUPER_ADMIN = '233557632802';
 const BOT = '233551687450';
 let IS_MUTED = false;
 
+
 // --------------------------------------------------
 // Configurations
 // --------------------------------------------------
@@ -160,10 +161,20 @@ client.on('message', async (msg) => {
 // Help
 client.on('message', async (msg) => {
     if (msg.body === '!help' && !IS_MUTED) {
-        // const contact = await msg.getContact();
         await msg.reply(
             "Hello there 🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n*!ping*: check if I'm available🙋🏽‍♂️\n*!help*: get commands that can be used with me\n*!mute*: get me to be quiet😅\n*!unmute*: opposite of command above🙂\n*!everyone*: ping everyone in the group😮"
         )
+    }
+})
+
+
+// schedule or send a direct message to a user
+client.on('message', async (msg) => {
+    if (msg.body === '!stdm' && !IS_MUTED) {
+        const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+
+        chat_from_contact.sendMessage("Heyyy");
     }
 })
 
