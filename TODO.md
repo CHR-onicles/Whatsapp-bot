@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] Add command to check assignments, their descriptioins, due dates etc.  
 - [ ] Write documentation for bot commands  
 - [ ] Add more logic for when someone pings bot too much  
 - [ ] group all bot commands with (!)  
