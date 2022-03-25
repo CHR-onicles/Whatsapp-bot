@@ -18,38 +18,38 @@ const BOT_PUSHNAME = 'Ethereal';
 const CLASSES = [
     {
         day: 'Monday',
-        classes: [
-            '_Formal Methods_ | ⏰5:30pm | 🏠N3'
+        courses: [
+            { name: '_Formal Methods_ | ⏰5:30pm | 🏠N3', duration: 2 }
         ]
     },
     {
         day: 'Tuesday',
-        classes: [
-            '_Accounting_ | ⏰5:30pm | 🏠JQB23'
+        courses: [
+            { name: '_Accounting_ | ⏰5:30pm | 🏠JQB23', duration: 2 }
         ]
     },
     {
         day: 'Wednesday',
-        classes: [
-            '_Compilers_ | ⏰9:30am | 🏠E10',
-            '_Theory & Survey_ | ⏰3:30pm | 🏠JQB09',
-            '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1'
+        courses: [
+            { name: '_Compilers_ | ⏰9:30am | 🏠E10', duration: 2 },
+            { name: '_Theory & Survey_ | ⏰3:30pm | 🏠JQB09', duration: 2 },
+            { name: '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1', duration: 2 }
         ]
     },
     {
         day: 'Thursday',
-        classes: [
-            '_Project_ | ⏰8:30am | 🏠Online',
-            '_Formal Methods_ | ⏰12:30pm | 🏠JQB19',
-            '_Accounting_ | ⏰6:30pm | 🏠E10'
+        courses: [
+            { name: '_Project_ | ⏰8:30am | 🏠Online', duration: 2 },
+            { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
+            { name: '_Accounting_ | ⏰6:30pm | 🏠E10', duration: 1 }
         ]
     },
     {
         day: 'Friday',
-        classes: [
-            '_Soft. Modelling_ | ⏰9:30am | 🏠N3',
-            '_Theory & Survey_ | ⏰10:30am | 🏠N3',
-            '_Compilers_ | ⏰4:30pm | 🏠NNB2'
+        courses: [
+            { name: '_Soft. Modelling_ | ⏰9:30am | 🏠N3', duration: 1 },
+            { name: '_Theory & Survey_ | ⏰10:30am | 🏠N3', duration: 1 },
+            { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 }
         ]
     }
 ]
@@ -91,6 +91,19 @@ const pickRandomReply = (replies) => {
 
 const getIsMutedStatus = () => {
     return JSON.parse(localStorage.getItem('IS_MUTED') || false);
+}
+
+const extractTime = (course) => {
+    const time_portion = course.split('|')[1].trim();
+    const raw_time = time_portion.slice(1, time_portion.length);
+    let new_raw_time = null;
+
+    if (raw_time.includes('p') && !raw_time.includes('12')) {
+        const hour_24_format = +raw_time.split(':')[0] + 12;
+        new_raw_time = String(hour_24_format) + ':' + raw_time.split(':')[1];
+    }
+
+    return new_raw_time || raw_time;
 }
 
 
@@ -141,7 +154,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
 
     if (msg.body.toLowerCase()[0] === '@' && !getIsMutedStatus()) {
-        const first_word = msg.body.toLowerCase().toLowerCase().split(' ')[0];
+        const first_word = msg.body.toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
 
         const PING_REPLIES = [
@@ -170,7 +183,7 @@ client.on('message', async (msg) => {
 
 // Mute
 client.on('message', async (msg) => {
-    if ((msg.body.toLowerCase() === '!🤫' || msg.body.toLowerCase().toLowerCase() === '!mute' || msg.body.toLowerCase().toLowerCase() === '!silence') && !getIsMutedStatus()) {
+    if ((msg.body.toLowerCase() === '!🤫' || msg.body.toLowerCase() === '!mute' || msg.body.toLowerCase() === '!silence') && !getIsMutedStatus()) {
         const contact = await msg.getContact();
         if (contact.id.user === SUPER_ADMIN) {
             const MUTE_REPLIES = [
@@ -192,7 +205,7 @@ client.on('message', async (msg) => {
 // Unmute
 client.on('message', async (msg) => {
     const contact = await msg.getContact();
-    if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase().toLowerCase() === '!speak') && getIsMutedStatus()) {
+    if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && getIsMutedStatus()) {
         if (contact.id.user === SUPER_ADMIN) {
             const UNMUTE_REPLIES = [
                 'Thanks sir',
@@ -204,7 +217,7 @@ client.on('message', async (msg) => {
             // IS_MUTED = false;
             localStorage.setItem('IS_MUTED', 'false');
         }
-    } else if ((msg.body.toLowerCase().toLowerCase() === '!unmute' || msg.body.toLowerCase().toLowerCase() === '!speak') && !getIsMutedStatus()) {
+    } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && !getIsMutedStatus()) {
         await msg.reply(`Haven't been muted ${contact.id.user !== SUPER_ADMIN ? "fam" : "sir "}🐦`);
     }
 })
@@ -225,7 +238,7 @@ client.on('message', async (msg) => {
     if (msg.body.toLowerCase() === '!classes' && !getIsMutedStatus()) {
         let text = "If *Software Modelling* is your elective:\n\n";
         CLASSES.forEach(class_obj => {
-            text = text + "*" + class_obj.day + "*:\n" + class_obj.classes.map(course => course + "\n").join('') + "\n";
+            text += "*" + class_obj.day + "*:\n" + class_obj.courses.map(course => course.name + "\n").join('') + "\n";
             // added join('') to map() to remove the default comma after each value in array
         })
         await msg.reply(text);
@@ -242,21 +255,42 @@ client.on('message', async (msg) => {
             await msg.reply('Its the weekend! No classes today.')
         }
 
-        const { classes } = CLASSES.find(class_obj => {
+        const { courses } = CLASSES.find(class_obj => {
             if (class_obj.day.slice(0, 3) === today_day) {
                 return class_obj;
             }
         });
 
-        console.log(classes);
+        // console.log(courses);
 
-        // await msg.reply(
-        //     "*Today's classes* ☀\n\n✅ *Done*:\n⏳ *In session*:\n💡 *Upcoming*:\n"
-        // )
+        const cur_time = new Date();
+        const done_array = [];
+        const in_session_array = [];
+        const upcoming_array = [];
+        let text = "*Today's classes* ☀\n\n";
 
-        await msg.reply(
-            "*Today's classes* ☀\n\n"
-        )
+        courses.map(course => {
+            const class_time = extractTime(course.name);
+            const class_time_hrs = +class_time.split(':')[0]
+            const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+
+            if ((cur_time.getHours() < class_time_hrs) || (cur_time.getHours() === class_time_hrs && cur_time.getMinutes() < class_time_mins)) {
+                // console.log('Not time yet')
+                upcoming_array.push(course);
+            }
+            else if ((cur_time.getHours() === class_time_hrs) || (cur_time.getHours() < class_time_hrs + course.duration) || ((cur_time.getHours() <= class_time_hrs + course.duration) && cur_time.getMinutes() < class_time_mins)) {
+                // console.log('In session')
+                in_session_array.push(course);
+            }
+            else if ((cur_time.getHours() > (class_time_hrs + course.duration)) || (cur_time.getHours() >= (class_time_hrs + course.duration) && (cur_time.getMinutes() > class_time_mins))) {
+                // console.log('Past time')
+                done_array.push(course);
+            }
+        })
+
+
+        text += "✅ *Done*:\n" + done_array.map(({ name }) => `~${name}~\n`).join('') + "\n" + "⏳ *In session*:\n" + in_session_array.map(({ name }) => `${name}\n`).join('') + "\n" + "💡 *Upcoming*:\n" + upcoming_array.map(({ name }) => `${name}\n`).join('');
+        await msg.reply(text);
     }
 })
 

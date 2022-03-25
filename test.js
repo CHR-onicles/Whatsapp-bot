@@ -16,7 +16,7 @@ const extractTime = (course) => {
 
 const course = '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1';
 const cur_time = new Date();
-const duration = 2;
+const duration = 1;
 console.log(extractTime(course));
 
 console.log(cur_time.getHours(), cur_time.getMinutes());
