@@ -54,6 +54,37 @@ const CLASSES = [
     }
 ]
 
+const HELP_COMMANDS = [
+    {
+        command: "*!ping*",
+        desc: "check if I'm available 🙋🏽‍♂️"
+    },
+    {
+        command: "*!help*",
+        desc: "get commands that can be used with me 💡"
+    },
+    {
+        command: "*!mute*",
+        desc: "get me to be quiet 😅"
+    },
+    {
+        command: "*!unmute*",
+        desc: "allow me to talk 🙂"
+    },
+    {
+        command: "*!everyone*",
+        desc: "ping everyone in the group 😮"
+    },
+    {
+        command: "*!classes*",
+        desc: "get all the classes you have this week 📚"
+    },
+    {
+        command: "*!class*",
+        desc: "get today's classes 📕"
+    }
+]
+
 
 
 // --------------------------------------------------
@@ -226,9 +257,12 @@ client.on('message', async (msg) => {
 // Help
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase() === '!help' && !getIsMutedStatus()) {
-        await msg.reply(
-            `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n*!ping*: check if I'm available🙋🏽‍♂️\n*!help*: get commands that can be used with me\n*!mute*: get me to be quiet😅\n*!unmute*: opposite of command above🙂\n*!everyone*: ping everyone in the group😮`
-        )
+        let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
+
+        HELP_COMMANDS.forEach(obj => {
+            text += obj.command + ': ' + obj.desc + '\n';
+        })
+        await msg.reply(text);
     }
 })
 
@@ -252,7 +286,8 @@ client.on('message', async (msg) => {
         const today_day = new Date().toString().split(' ')[0]; // to get day
 
         if (today_day === 'Sat' || today_day === 'Sun') {
-            await msg.reply('Its the weekend! No classes today.')
+            await msg.reply('Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.');
+            return;
         }
 
         const { courses } = CLASSES.find(class_obj => {
@@ -260,8 +295,6 @@ client.on('message', async (msg) => {
                 return class_obj;
             }
         });
-
-        // console.log(courses);
 
         const cur_time = new Date();
         const done_array = [];
