@@ -1,7 +1,6 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const LocalStorage = require('node-localstorage').LocalStorage;
-const localStorage = new LocalStorage('./node-localStorage');
 
 
 // --------------------------------------------------
@@ -111,6 +110,7 @@ client.on('ready', () => {
 //     console.log('Client was authenticated successfully!');
 // });
 
+const localStorage = new LocalStorage('./node-localStorage');
 
 
 // --------------------------------------------------
@@ -226,7 +226,6 @@ client.on('message', async (msg) => {
                 '🤐👍🏽'
             ]
             await msg.reply(pickRandomReply(MUTE_REPLIES));
-            // IS_MUTED = true;
             localStorage.setItem('IS_MUTED', 'true');
         }
     }
@@ -245,7 +244,6 @@ client.on('message', async (msg) => {
                 'Speaking freely now 👍🏽',
             ]
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
-            // IS_MUTED = false;
             localStorage.setItem('IS_MUTED', 'false');
         }
     } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && !getIsMutedStatus()) {
@@ -320,7 +318,6 @@ client.on('message', async (msg) => {
                 done_array.push(course);
             }
         })
-
 
         text += "✅ *Done*:\n" + done_array.map(({ name }) => `~${name}~\n`).join('') + "\n" + "⏳ *In session*:\n" + in_session_array.map(({ name }) => `${name}\n`).join('') + "\n" + "💡 *Upcoming*:\n" + upcoming_array.map(({ name }) => `${name}\n`).join('');
         await msg.reply(text);
