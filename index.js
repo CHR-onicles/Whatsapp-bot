@@ -145,7 +145,7 @@ const extractTime = (course) => {
 // Ping
 client.on('message', msg => {
     if (msg.body.toLowerCase() === '!ping' && !getIsMutedStatus()) {
-        msg.reply('pong');
+        msg.reply('pong🏓');
     }
 });
 

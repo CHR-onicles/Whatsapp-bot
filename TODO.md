@@ -6,15 +6,13 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐Reformat help commands to show the ones available to different categories of users  
 - [ ] ⭐Add command to check assignments, their descriptioins, due dates etc.  
 - [ ] ⭐Write documentation for bot commands  
-- [ ] ⭐❔Add feature to forward links from class group chats to dm?  
-- [ ] ❗ Add more logic for when someone pings bot too much  
 
 ### In Progress
 
 
 ### Done ✓
 
-- [x] ⭐Add command to send timetable and a command to tell the classes we have for that specific day, their times and venues  
 
