@@ -145,7 +145,7 @@ const extractTime = (course) => {
 // Ping
 client.on('message', msg => {
     if (msg.body.toLowerCase() === '!ping' && !getIsMutedStatus()) {
-        msg.reply('pong🏓');
+        msg.reply('pong 🏓');
     }
 });
 
@@ -319,7 +319,18 @@ client.on('message', async (msg) => {
             }
         })
 
-        text += "✅ *Done*:\n" + done_array.map(({ name }) => `~${name}~\n`).join('') + "\n" + "⏳ *In session*:\n" + in_session_array.map(({ name }) => `${name}\n`).join('') + "\n" + "💡 *Upcoming*:\n" + upcoming_array.map(({ name }) => `${name}\n`).join('');
+        text += "✅ *Done*:\n" +
+            function () {
+                return !done_array.length ? '\t-\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
+            }()
+            + "\n" + "⏳ *In session*:\n" +
+            function () {
+                return !in_session_array.length ? '\t-\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
+            }()
+            + "\n" + "💡 *Upcoming*:\n" +
+            function () {
+                return !upcoming_array.length ? '\t-\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
+            }();
         await msg.reply(text);
     }
 })

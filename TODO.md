@@ -7,7 +7,6 @@ Project Description
 ### Todo
 
 - [ ] ⭐Reformat help commands to show the ones available to different categories of users  
-- [ ] ⭐Add command to check assignments, their descriptioins, due dates etc.  
 - [ ] ⭐Write documentation for bot commands  
 
 ### In Progress
