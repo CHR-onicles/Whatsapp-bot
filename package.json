@@ -10,5 +10,8 @@
   },
   "scripts": {
     "build" : "node src/index.js"
+  },
+  "engines": {
+    "node" : "14.x"
   }
 }
