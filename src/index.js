@@ -11,7 +11,7 @@ const { CLASSES, HELP_COMMANDS } = require('./data.js');
 const SUPER_ADMIN = '233557632802';
 const BOT = '233551687450';
 const BOT_PUSHNAME = 'Ethereal';
-const EPIC_DEVS_GROUP_ID =  '233558460645-1620635743';
+const EPIC_DEVS_GROUP_ID = '233558460645-1620635743';
 const L400_ASSIGNMENTS_GROUP_ID = ' 233241011931-1400749467';
 const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 
@@ -21,7 +21,7 @@ const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 // --------------------------------------------------
 
 const client = new Client({
-    authStrategy: new LocalAuth(), // to persist client session
+    authStrategy: new LocalAuth({dataPath: '../.wwebjs_auth/'}), // to persist client session
 });
 
 client.on('qr', (qr) => {
@@ -262,19 +262,19 @@ client.on('message', async (msg) => {
     if (msg.body.toLowerCase().includes('https')) {
         const chats = await client.getChats();
         const link_pattern = /(https?:\/\/[^\s]+)/;
-        const target_chat = chats.find(chat => chat.id.user === HIGH_COUNCIL_GROUP_ID);
+        const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID);
         const extracted_link = link_pattern.exec(msg.body)[0];
         const current_forwarded_links = JSON.parse(localStorage.getItem('FORWARDED_LINKS')) || [];
 
-        console.log('recognized a link');
-        console.log('extracted link:', extracted_link);
+        // console.log('recognized a link');
+        // console.log('extracted link:', extracted_link);
         if (current_forwarded_links.includes(extracted_link)) {
-            console.log("repeated link");
+            // console.log("repeated link");
             return;
         } else {
             localStorage.setItem('FORWARDED_LINKS', JSON.stringify([...current_forwarded_links, extracted_link]));
             await msg.forward(target_chat);
-            console.log('added new link');
+            // console.log('added new link');
         }
     }
 })

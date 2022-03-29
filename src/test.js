@@ -1,19 +1,4 @@
 
-const extractTime = (course) => {
-    const time_portion = course.split('|')[1].trim();
-    const raw_time = time_portion.slice(1, time_portion.length);
-    let new_raw_time = null;
-
-    if (raw_time.includes('p') && !raw_time.includes('12')) {
-        const hour_24_format = +raw_time.split(':')[0] + 12;
-        new_raw_time = String(hour_24_format) + ':' + raw_time.split(':')[1];
-    }
-
-    return new_raw_time || raw_time;
-}
-
-
-
 const course = '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1';
 const cur_time = new Date();
 const duration = 1;

@@ -1,8 +1,9 @@
 // --------------------------------------------------
 // Helper functions
 // --------------------------------------------------
+
 const LocalStorage = require('node-localstorage').LocalStorage;
-const localStorage = new LocalStorage('./node-localStorage');
+const localStorage = new LocalStorage('../node-localStorage');
 
 
 const pickRandomReply = (replies) => {
