@@ -21,12 +21,15 @@ const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 // --------------------------------------------------
 
 const client = new Client({
-    authStrategy: new LocalAuth({dataPath: '../.wwebjs_auth/'}), // to persist client session
+    authStrategy: new LocalAuth({ dataPath: '../.wwebjs_auth/' }), // to persist client session
 });
+
+client.setMaxListeners(0); // for an infinite number of event listeners
 
 client.on('qr', (qr) => {
     qrcode.generate(qr, { small: true });
 });
+
 
 client.on('ready', () => {
     console.log('Client is ready!');
@@ -257,7 +260,7 @@ client.on('message', async (msg) => {
 })
 
 
-// Forward messages with links to EPiC-Devs
+// Forward messages with links to EPiC Devs
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase().includes('https')) {
         const chats = await client.getChats();
@@ -268,13 +271,35 @@ client.on('message', async (msg) => {
 
         // console.log('recognized a link');
         // console.log('extracted link:', extracted_link);
-        if (current_forwarded_links.includes(extracted_link)) {
-            // console.log("repeated link");
-            return;
-        } else {
+        if (!current_forwarded_links.includes(extracted_link)) {
             localStorage.setItem('FORWARDED_LINKS', JSON.stringify([...current_forwarded_links, extracted_link]));
             await msg.forward(target_chat);
-            // console.log('added new link');
+            console.log('added new link');
+        } else {
+            console.log("repeated link");
+        }
+    }
+})
+
+
+// Forward messages with announcements to EPiC Devs
+client.on('message', async (msg) => {
+    if (msg.body.includes('❗') || msg.body.includes('‼')) {
+        // PS: There may be repeated messages in the FORWARDED_ANNOUNCEMENTS and
+        // FORWARDED_LINKS object depending on whether the exclamation or the link comes first.
+
+        const chats = await client.getChats();
+        const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID);
+        const current_forwarded_announcements = JSON.parse(localStorage.getItem('FORWARDED_ANNOUNCEMENTS')) || [];
+
+        // console.log('recognized an announcement');
+
+        if (!current_forwarded_announcements.includes(msg.body)) {
+            localStorage.setItem('FORWARDED_ANNOUNCEMENTS', JSON.stringify([...current_forwarded_announcements, msg.body]));
+            await msg.forward(target_chat);
+            console.log('added new announcement');
+        } else {
+            console.log('repeated announcement');
         }
     }
 })
