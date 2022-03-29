@@ -35,14 +35,6 @@ client.on('ready', () => {
     console.log('Client is ready!');
 });
 
-// client.on('ready', async () => {
-//     const chats = await client.getChats();
-//     chats.forEach(chat => {
-//         if (chat.isGroup) console.log(chat.id, chat.id.user);
-//     })
-//     console.log(await client.getChats());
-// })
-
 // client.on('auth_failure', () => {
 //     console.log('Client failed to authenticate!');
 // });
@@ -50,6 +42,7 @@ client.on('ready', () => {
 // client.on('authenticated', () => {
 //     console.log('Client was authenticated successfully!');
 // });
+/**/
 
 
 // --------------------------------------------------
@@ -249,7 +242,7 @@ client.on('message', async (msg) => {
 })
 
 
-// Send a direct message to a user (WIP)
+// Send a direct message to a user *(Work In Progress)*
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase() === '!dm' && !getIsMutedStatus()) {
         const contact = await msg.getContact();
@@ -286,7 +279,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (msg.body.includes('❗') || msg.body.includes('‼')) {
         // PS: There may be repeated messages in the FORWARDED_ANNOUNCEMENTS and
-        // FORWARDED_LINKS object depending on whether the exclamation or the link comes first.
+        // FORWARDED_LINKS local storage object depending on whether the exclamation 
+        // or the link comes first.
 
         const chats = await client.getChats();
         const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID);
