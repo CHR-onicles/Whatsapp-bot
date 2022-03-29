@@ -7,5 +7,8 @@
     "node-localstorage": "^2.2.1",
     "qrcode-terminal": "^0.12.0",
     "whatsapp-web.js": "^1.16.4"
+  },
+  "scripts": {
+    "build" : "node src/index.js"
   }
 }
