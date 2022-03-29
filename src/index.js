@@ -242,17 +242,6 @@ client.on('message', async (msg) => {
 })
 
 
-// Send a direct message to a user *(Work In Progress)*
-client.on('message', async (msg) => {
-    if (msg.body.toLowerCase() === '!dm' && !getIsMutedStatus()) {
-        const contact = await msg.getContact();
-        const chat_from_contact = await contact.getChat();
-
-        chat_from_contact.sendMessage("Sliding in DM - ☀");
-    }
-})
-
-
 // Forward messages with links to EPiC Devs
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase().includes('https')) {
@@ -295,6 +284,17 @@ client.on('message', async (msg) => {
         } else {
             console.log('repeated announcement');
         }
+    }
+})
+
+
+// Send a direct message to a user *(Work In Progress)*
+client.on('message', async (msg) => {
+    if (msg.body.toLowerCase() === '!dm' && !getIsMutedStatus()) {
+        const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+
+        chat_from_contact.sendMessage("Sliding in DM - ☀");
     }
 })
 

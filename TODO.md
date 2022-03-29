@@ -6,7 +6,6 @@ Project Description
 
 ### Todo
 
-- [ ] ⭐Reformat help commands to show the ones available to different categories of users  
 - [ ] ⭐Write documentation for bot commands  
 
 ### In Progress
