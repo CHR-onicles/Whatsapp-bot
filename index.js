@@ -91,7 +91,8 @@ const HELP_COMMANDS = [
 // --------------------------------------------------
 
 const client = new Client({
-    authStrategy: new LocalAuth() // to persist client session
+    authStrategy: new LocalAuth(), // to persist client session
+    headless: false
 });
 
 client.on('qr', (qr) => {
