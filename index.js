@@ -1,6 +1,8 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
-const LocalStorage = require('node-localstorage').LocalStorage;
+
+const { pickRandomReply, extractTime, getIsMutedStatus, localStorage } = require('./helpers.js');
+const { CLASSES, HELP_COMMANDS } = require('./data.js');
 
 
 // --------------------------------------------------
@@ -9,81 +11,9 @@ const LocalStorage = require('node-localstorage').LocalStorage;
 const SUPER_ADMIN = '233557632802';
 const BOT = '233551687450';
 const BOT_PUSHNAME = 'Ethereal';
-
-
-// --------------------------------------------------
-// Data
-// --------------------------------------------------
-const CLASSES = [
-    {
-        day: 'Monday',
-        courses: [
-            { name: '_Formal Methods_ | ⏰5:30pm | 🏠N3', duration: 2 }
-        ]
-    },
-    {
-        day: 'Tuesday',
-        courses: [
-            { name: '_Accounting_ | ⏰5:30pm | 🏠JQB23', duration: 2 }
-        ]
-    },
-    {
-        day: 'Wednesday',
-        courses: [
-            { name: '_Compilers_ | ⏰9:30am | 🏠E10', duration: 2 },
-            { name: '_Theory & Survey_ | ⏰3:30pm | 🏠JQB09', duration: 2 },
-            { name: '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1', duration: 2 }
-        ]
-    },
-    {
-        day: 'Thursday',
-        courses: [
-            { name: '_Project_ | ⏰8:30am | 🏠Online', duration: 2 },
-            { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
-            { name: '_Accounting_ | ⏰6:30pm | 🏠E10', duration: 1 }
-        ]
-    },
-    {
-        day: 'Friday',
-        courses: [
-            { name: '_Soft. Modelling_ | ⏰9:30am | 🏠N3', duration: 1 },
-            { name: '_Theory & Survey_ | ⏰10:30am | 🏠N3', duration: 1 },
-            { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 }
-        ]
-    }
-]
-
-const HELP_COMMANDS = [
-    {
-        command: "*!ping*",
-        desc: "check if I'm available 🙋🏽‍♂️"
-    },
-    {
-        command: "*!help*",
-        desc: "get commands that can be used with me 💡"
-    },
-    {
-        command: "*!mute*",
-        desc: "get me to be quiet 😅"
-    },
-    {
-        command: "*!unmute*",
-        desc: "allow me to talk 🙂"
-    },
-    {
-        command: "*!everyone*",
-        desc: "ping everyone in the group 😮"
-    },
-    {
-        command: "*!classes*",
-        desc: "get all the classes you have this week 📚"
-    },
-    {
-        command: "*!class*",
-        desc: "get today's classes 📕"
-    }
-]
-
+const EPIC_DEVS_GROUP_ID =  '233558460645-1620635743';
+const L400_ASSIGNMENTS_GROUP_ID = ' 233241011931-1400749467';
+const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 
 
 // --------------------------------------------------
@@ -92,7 +22,6 @@ const HELP_COMMANDS = [
 
 const client = new Client({
     authStrategy: new LocalAuth(), // to persist client session
-    headless: false
 });
 
 client.on('qr', (qr) => {
@@ -103,6 +32,14 @@ client.on('ready', () => {
     console.log('Client is ready!');
 });
 
+// client.on('ready', async () => {
+//     const chats = await client.getChats();
+//     chats.forEach(chat => {
+//         if (chat.isGroup) console.log(chat.id, chat.id.user);
+//     })
+//     console.log(await client.getChats());
+// })
+
 // client.on('auth_failure', () => {
 //     console.log('Client failed to authenticate!');
 // });
@@ -110,33 +47,6 @@ client.on('ready', () => {
 // client.on('authenticated', () => {
 //     console.log('Client was authenticated successfully!');
 // });
-
-const localStorage = new LocalStorage('./node-localStorage');
-
-
-// --------------------------------------------------
-// Helper functions
-// --------------------------------------------------
-const pickRandomReply = (replies) => {
-    return replies[Math.floor(Math.random() * replies.length)];
-}
-
-const getIsMutedStatus = () => {
-    return JSON.parse(localStorage.getItem('IS_MUTED') || false);
-}
-
-const extractTime = (course) => {
-    const time_portion = course.split('|')[1].trim();
-    const raw_time = time_portion.slice(1, time_portion.length);
-    let new_raw_time = null;
-
-    if (raw_time.includes('p') && !raw_time.includes('12')) {
-        const hour_24_format = +raw_time.split(':')[0] + 12;
-        new_raw_time = String(hour_24_format) + ':' + raw_time.split(':')[1];
-    }
-
-    return new_raw_time || raw_time;
-}
 
 
 // --------------------------------------------------
@@ -205,7 +115,6 @@ client.on('message', async (msg) => {
             `Yo 🐦`,
         ]
 
-        // console.log("first word:", first_word);
         if (first_word.slice(1, first_word.length) === BOT) {
             await msg.reply(pickRandomReply(PING_REPLIES));
         }
@@ -337,13 +246,36 @@ client.on('message', async (msg) => {
 })
 
 
-// Send a direct message to a user
+// Send a direct message to a user (WIP)
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase() === '!dm' && !getIsMutedStatus()) {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
 
         chat_from_contact.sendMessage("Sliding in DM - ☀");
+    }
+})
+
+
+// Forward messages with links to EPiC-Devs
+client.on('message', async (msg) => {
+    if (msg.body.toLowerCase().includes('https')) {
+        const chats = await client.getChats();
+        const link_pattern = /(https?:\/\/[^\s]+)/;
+        const target_chat = chats.find(chat => chat.id.user === HIGH_COUNCIL_GROUP_ID);
+        const extracted_link = link_pattern.exec(msg.body)[0];
+        const current_forwarded_links = JSON.parse(localStorage.getItem('FORWARDED_LINKS')) || [];
+
+        console.log('recognized a link');
+        console.log('extracted link:', extracted_link);
+        if (current_forwarded_links.includes(extracted_link)) {
+            console.log("repeated link");
+            return;
+        } else {
+            localStorage.setItem('FORWARDED_LINKS', JSON.stringify([...current_forwarded_links, extracted_link]));
+            await msg.forward(target_chat);
+            console.log('added new link');
+        }
     }
 })
 
