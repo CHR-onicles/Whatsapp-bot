@@ -32,7 +32,7 @@ client.on('qr', (qr) => {
 
 
 client.on('ready', () => {
-    console.log('Client is ready!');
+    console.log('Client is ready!\n');
 });
 
 // client.on('auth_failure', () => {
@@ -242,9 +242,14 @@ client.on('message', async (msg) => {
 })
 
 
-// Forward messages with links to EPiC Devs
+// Forward messages with links (in other groups) to EPiC Devs
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase().includes('https')) {
+        const current_chat = await msg.getChat();
+        if (current_chat.id.user === EPIC_DEVS_GROUP_ID) {
+            console.log("Link from EPiC Devs, so do nothing")
+            return;
+        }
         const chats = await client.getChats();
         const link_pattern = /(https?:\/\/[^\s]+)/;
         const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID);
@@ -264,12 +269,18 @@ client.on('message', async (msg) => {
 })
 
 
-// Forward messages with announcements to EPiC Devs
+// Forward messages with announcements (in other groups) to EPiC Devs
 client.on('message', async (msg) => {
     if (msg.body.includes('❗') || msg.body.includes('‼')) {
         // PS: There may be repeated messages in the FORWARDED_ANNOUNCEMENTS and
         // FORWARDED_LINKS local storage object depending on whether the exclamation 
         // or the link comes first.
+
+        const current_chat = await msg.getChat();
+        if (current_chat.id.user === EPIC_DEVS_GROUP_ID) {
+            console.log("Announcement from EPiC Devs, so do nothing")
+            return;
+        }
 
         const chats = await client.getChats();
         const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID);
