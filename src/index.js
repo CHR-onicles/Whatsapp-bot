@@ -227,15 +227,15 @@ client.on('message', async (msg) => {
 
         text += "✅ *Done*:\n" +
             function () {
-                return !done_array.length ? '\t-\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
+                return !done_array.length ? '🚫 None\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
             }()
             + "\n" + "⏳ *In session*:\n" +
             function () {
-                return !in_session_array.length ? '\t-\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
+                return !in_session_array.length ? '🚫 None\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
             }()
             + "\n" + "💡 *Upcoming*:\n" +
             function () {
-                return !upcoming_array.length ? '\t-\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
+                return !upcoming_array.length ? '🚫 None\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
             }();
         await msg.reply(text);
     }
