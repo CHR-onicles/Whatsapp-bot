@@ -10,9 +10,11 @@ const pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
 }
 
+
 const getIsMutedStatus = () => {
     return JSON.parse(localStorage.getItem('IS_MUTED') || false);
 }
+
 
 const extractTime = (course) => {
     const time_portion = course.split('|')[1].trim();
@@ -26,5 +28,14 @@ const extractTime = (course) => {
 
     return new_raw_time || raw_time;
 }
+
+
+// const getForwardedLinksFromLS = () => {
+    
+// }
+
+// const getForwardedAnnouncementsFromLS = () => {
+
+// }
 
 module.exports = { pickRandomReply, getIsMutedStatus, extractTime, localStorage }

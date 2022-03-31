@@ -6,7 +6,7 @@ Project Description
 
 ### Todo
 
-- [ ] ⭐Write documentation for bot commands  
+- [ ] ⭐Write full documentation for bot and its commands  
 
 ### In Progress
 
