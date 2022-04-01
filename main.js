@@ -1,7 +1,7 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const { pickRandomReply, extractTime, getIsMutedStatus, localStorage } = require('./helpers');
+const { pickRandomReply, extractTime, getIsMutedStatus } = require('./helpers');
 const { CLASSES, HELP_COMMANDS } = require('./data');
 
 
@@ -140,7 +140,7 @@ client.on('message', async (msg) => {
                 '🤐👍🏽'
             ]
             await msg.reply(pickRandomReply(MUTE_REPLIES));
-            localStorage.setItem('IS_MUTED', 'true');
+            // localStorage.setItem('IS_MUTED', 'true');
         }
     }
 })
@@ -158,7 +158,7 @@ client.on('message', async (msg) => {
                 'Speaking freely now 👍🏽',
             ]
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
-            localStorage.setItem('IS_MUTED', 'false');
+            // localStorage.setItem('IS_MUTED', 'false');
         }
     } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && !getIsMutedStatus()) {
         await msg.reply(`Haven't been muted ${contact.id.user !== SUPER_ADMIN ? "fam" : "sir "}🐦`);
@@ -264,12 +264,12 @@ client.on('message', async (msg) => {
             return;
         }
 
-        const current_forwarded_announcements = JSON.parse(localStorage.getItem('FORWARDED_ANNOUNCEMENTS')) || [];
+        const current_forwarded_announcements = [];
 
         // console.log('Recognized an announcement');
 
         if (!current_forwarded_announcements.includes(msg.body)) {
-            localStorage.setItem('FORWARDED_ANNOUNCEMENTS', JSON.stringify([...current_forwarded_announcements, msg.body]));
+            // localStorage.setItem('FORWARDED_ANNOUNCEMENTS', JSON.stringify([...current_forwarded_announcements, msg.body]));
             await msg.forward(target_chat);
             console.log('Added new announcement');
         } else {
@@ -285,12 +285,12 @@ client.on('message', async (msg) => {
         }
         const link_pattern = /(https?:\/\/[^\s]+)/;
         const extracted_link = link_pattern.exec(msg.body)[0];
-        const current_forwarded_links = JSON.parse(localStorage.getItem('FORWARDED_LINKS')) || [];
+        const current_forwarded_links =  [];
 
         // console.log('recognized a link');
         // console.log('extracted link:', extracted_link);
         if (!current_forwarded_links.includes(extracted_link)) {
-            localStorage.setItem('FORWARDED_LINKS', JSON.stringify([...current_forwarded_links, extracted_link]));
+            // localStorage.setItem('FORWARDED_LINKS', JSON.stringify([...current_forwarded_links, extracted_link]));
             await msg.forward(target_chat);
             console.log('Added new link');
         } else {

@@ -2,8 +2,8 @@
 // Helper functions
 // --------------------------------------------------
 
-const LocalStorage = require('node-localstorage').LocalStorage;
-const localStorage = new LocalStorage('../node-localStorage');
+// const LocalStorage = require('node-localstorage').LocalStorage;
+// const localStorage = new LocalStorage('../node-localStorage');
 
 
 const pickRandomReply = (replies) => {
@@ -12,7 +12,8 @@ const pickRandomReply = (replies) => {
 
 
 const getIsMutedStatus = () => {
-    return JSON.parse(localStorage.getItem('IS_MUTED') || false);
+    // return JSON.parse(localStorage.getItem('IS_MUTED') || false);
+    return false;
 }
 
 
@@ -38,4 +39,4 @@ const extractTime = (course) => {
 
 // }
 
-module.exports = { pickRandomReply, getIsMutedStatus, extractTime, localStorage }
+module.exports = { pickRandomReply, getIsMutedStatus, extractTime }
