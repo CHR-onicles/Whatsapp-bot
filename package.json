@@ -9,7 +9,7 @@
     "whatsapp-web.js": "^1.16.5"
   },
   "scripts": {
-    "start" : "node main.js -p $PORT"
+    "start" : "node main.js"
   },
   "engines": {
     "node" : "14.x"

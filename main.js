@@ -20,6 +20,9 @@ const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 // Configurations
 // --------------------------------------------------
 
+const port = process.env.PORT || 3000;
+app.listen(port, ()=> console.log(`server is running on port ${port}`));
+
 const client = new Client({
     authStrategy: new LocalAuth(), // to persist client session
     puppeteer: {headless: true, args: ['--no-sandbox','--disable-setuid-sandbox']}
