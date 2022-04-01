@@ -4,14 +4,15 @@
   "main": "main.js",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.17.3",
     "node-localstorage": "^2.2.1",
     "qrcode-terminal": "^0.12.0",
     "whatsapp-web.js": "^1.16.5"
   },
   "scripts": {
-    "start" : "node main.js"
+    "start": "node main.js"
   },
   "engines": {
-    "node" : "14.x"
+    "node": "14.x"
   }
 }
