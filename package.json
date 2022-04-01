@@ -1,7 +1,7 @@
 {
   "name": "Whatsapp-bot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "main.js",
   "license": "MIT",
   "dependencies": {
     "node-localstorage": "^2.2.1",
@@ -9,7 +9,7 @@
     "whatsapp-web.js": "^1.16.4"
   },
   "scripts": {
-    "start" : "node src/index.js"
+    "start" : "node main.js"
   },
   "engines": {
     "node" : "14.x"

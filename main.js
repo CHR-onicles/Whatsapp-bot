@@ -1,8 +1,8 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const { pickRandomReply, extractTime, getIsMutedStatus, localStorage } = require('./helpers.js');
-const { CLASSES, HELP_COMMANDS } = require('./data.js');
+const { pickRandomReply, extractTime, getIsMutedStatus, localStorage } = require('./helpers/index.js');
+const { CLASSES, HELP_COMMANDS } = require('./data/index.js');
 
 
 // --------------------------------------------------
@@ -11,7 +11,7 @@ const { CLASSES, HELP_COMMANDS } = require('./data.js');
 const SUPER_ADMIN = '233557632802';
 const BOT = '233551687450';
 const BOT_PUSHNAME = 'Ethereal';
-const EPIC_DEVS_GROUP_ID = '233558460645-1620635743';
+const EPIC_DEVS_GROUP_ID = '233558460645-1620635743'; // chat.id.user is better than chat.name as it is immutable
 const L400_ASSIGNMENTS_GROUP_ID = ' 233241011931-1400749467';
 const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 
@@ -21,7 +21,7 @@ const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 // --------------------------------------------------
 
 const client = new Client({
-    authStrategy: new LocalAuth({ dataPath: '../.wwebjs_auth/' }), // to persist client session
+    authStrategy: new LocalAuth() // to persist client session
 });
 
 client.setMaxListeners(0); // for an infinite number of event listeners
@@ -34,6 +34,15 @@ client.on('qr', (qr) => {
 client.on('ready', () => {
     console.log('Client is ready!\n');
 });
+
+client.on("disconnected", () => {
+    console.log("Oh no! Client is disconnected!");
+})
+
+// client.on('ready', async () => {
+//     const chats = await client.getChats();
+//     console.log(chats);
+// })
 
 // client.on('auth_failure', () => {
 //     console.log('Client failed to authenticate!');
