@@ -47,6 +47,11 @@ app.get("/", (req, res) => {
     );
 });
 
+app.all("*", (req, res) => {
+    res.status(404).send("<h1>Sorry, this page does not exist!</h1><a href='/'>Back to Home</a>")
+})
+
+
 app.listen(port, () => console.log(`server is running on port ${port}`));
 
 // client.on('ready', async () => {
