@@ -1,8 +1,8 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const { pickRandomReply, extractTime, getIsMutedStatus, localStorage } = require('./helpers/index.js');
-const { CLASSES, HELP_COMMANDS } = require('./data/index.js');
+const { pickRandomReply, extractTime, getIsMutedStatus, localStorage } = require('./helpers');
+const { CLASSES, HELP_COMMANDS } = require('./data');
 
 
 // --------------------------------------------------
