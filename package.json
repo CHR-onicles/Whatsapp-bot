@@ -6,7 +6,7 @@
   "dependencies": {
     "node-localstorage": "^2.2.1",
     "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.16.4"
+    "whatsapp-web.js": "^1.16.5"
   },
   "scripts": {
     "start" : "node main.js"
