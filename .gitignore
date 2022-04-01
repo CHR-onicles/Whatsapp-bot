@@ -128,4 +128,4 @@ dist
 
 # Bot stuff
 .wwebjs_auth/
-node-localStorage/
+# node-localStorage/
