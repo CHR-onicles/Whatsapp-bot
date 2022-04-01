@@ -21,7 +21,8 @@ const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 // --------------------------------------------------
 
 const client = new Client({
-    authStrategy: new LocalAuth() // to persist client session
+    authStrategy: new LocalAuth(), // to persist client session
+    puppeteer: {headless: true, args: ['--no-sandbox','--disable-setuid-sandbox']}
 });
 
 client.setMaxListeners(0); // for an infinite number of event listeners
