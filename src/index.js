@@ -76,13 +76,12 @@ client.on('message', async (msg) => {
 
                 mentions.push(contact);
                 text += `@${participant.id.user} `;
-                // console.log(participant);
             }
 
-            await chat.sendMessage(text, { mentions });
+            await msg.reply(text, "", { mentions });
         } else {
-            await msg.reply("Can't do this - I may break :(");
-            console.log('No participants - probably not a group chat!');
+            await msg.reply("Can't do this - This is not a  group chat 😗");
+            console.log("Called !everyone in a chat that is not a group chat");
         }
     }
 });
