@@ -127,5 +127,5 @@ dist
 .pnp.*
 
 # Bot stuff
-# .wwebjs_auth/
+.wwebjs_auth/
 # node-localStorage/
