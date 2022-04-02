@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐Properly restructure files like other bots on github  
 - [ ] ⭐Write full documentation for bot and its commands  
 
 ### In Progress
