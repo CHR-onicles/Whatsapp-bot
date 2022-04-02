@@ -2,9 +2,6 @@
 // Helper functions
 // --------------------------------------------------
 
-// const LocalStorage = require('node-localstorage').LocalStorage;
-// const localStorage = new LocalStorage('../node-localStorage');
-
 
 const pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
@@ -29,14 +26,5 @@ const extractTime = (course) => {
 
     return new_raw_time || raw_time;
 }
-
-
-// const getForwardedLinksFromLS = () => {
-    
-// }
-
-// const getForwardedAnnouncementsFromLS = () => {
-
-// }
 
 module.exports = { pickRandomReply, getIsMutedStatus, extractTime }
