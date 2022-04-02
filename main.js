@@ -334,7 +334,7 @@ client.on('message', async (msg) => {
         const current_time = new Date();
         const {hours, minutes, seconds} = msToHMS(current_time - BOT_START_TIME);
 
-        await msg.reply(`🟢 *Uptime:* ${hours ? hours : 0}hrs ${minutes ? minutes : 0}mins ${seconds ? seconds : 0}secs.`)
+        await msg.reply(`🟢 *Uptime:* ${hours ? hours : 0}${hours === 1 ? 'hr' : 'hrs'} ${minutes ? minutes : 0}${minutes === 1 ? 'min' : 'mins'} ${seconds ? seconds : 0}secs.`);
     }
 })
 
