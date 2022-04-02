@@ -27,7 +27,7 @@ let token = "";
 
 const client = new Client({
     // authStrategy: new LocalAuth(), // to persist client session
-    authStrategy: new LegacySessionAuth({session: config.session}),
+    authStrategy: new LegacySessionAuth(),
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
