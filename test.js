@@ -1,6 +1,3 @@
-let uptime = 0;
+const {msToHMS} = require('./helpers');
 
-setInterval(() => {
-    uptime += 1;
-    console.log(uptime);
-}, 1000);
+console.log(msToHMS(8372));

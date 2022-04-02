@@ -2,7 +2,7 @@ const app = require('express')();
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const { pickRandomReply, extractTime, getIsMutedStatus } = require('./helpers');
+const { pickRandomReply, extractTime, getIsMutedStatus, msToHMS } = require('./helpers');
 const { CLASSES, HELP_COMMANDS } = require('./data');
 
 
@@ -332,8 +332,9 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase() === '!uptime') {
         const current_time = new Date();
-        const uptime = Math.floor((BOT_START_TIME - current_time) / 1000);
-        await msg.reply(`Been awake for _${uptime}_ seconds.`)
+        const {hours, minutes, seconds} = msToHMS(current_time - BOT_START_TIME);
+
+        await msg.reply(`🟢 *Uptime:* ${hours ? hours : 0}hrs ${minutes ? minutes : 0}mins ${seconds ? seconds : 0}secs.`)
     }
 })
 
