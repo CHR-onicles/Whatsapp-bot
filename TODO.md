@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐Properly flesh out uptime logic  
 - [ ] ⭐Properly restructure files like other bots on github  
 - [ ] ⭐Write full documentation for bot and its commands  
 

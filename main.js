@@ -1,7 +1,6 @@
 const app = require('express')();
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
-const os = require('os');
 
 const { pickRandomReply, extractTime, getIsMutedStatus } = require('./helpers');
 const { CLASSES, HELP_COMMANDS } = require('./data');
@@ -17,6 +16,7 @@ const EPIC_DEVS_GROUP_ID = '233558460645-1620635743'; // chat.id.user is better 
 const L400_ASSIGNMENTS_GROUP_ID = ' 233241011931-1400749467';
 const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 const port = process.env.PORT || 3000;
+let BOT_START_TIME = null;
 
 
 // --------------------------------------------------
@@ -36,6 +36,7 @@ client.on('qr', (qr) => {
 
 client.on('ready', () => {
     console.log('Client is ready!\n');
+    BOT_START_TIME = new Date();
 });
 
 client.on("disconnected", () => {
@@ -330,7 +331,9 @@ client.on('message', async (msg) => {
 // Check bot uptime
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase() === '!uptime') {
-        await msg.reply(`Been awake for _${os.uptime()}_ seconds.`)
+        const current_time = new Date();
+        const uptime = Math.floor((BOT_START_TIME - current_time) / 1000);
+        await msg.reply(`Been awake for _${uptime}_ seconds.`)
     }
 })
 
