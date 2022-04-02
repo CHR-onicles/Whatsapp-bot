@@ -2,9 +2,6 @@
 // Helper functions
 // --------------------------------------------------
 
-const LocalStorage = require('node-localstorage').LocalStorage;
-const localStorage = new LocalStorage('../node-localStorage');
-
 
 const pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
@@ -12,7 +9,8 @@ const pickRandomReply = (replies) => {
 
 
 const getIsMutedStatus = () => {
-    return JSON.parse(localStorage.getItem('IS_MUTED') || false);
+    // return JSON.parse(localStorage.getItem('IS_MUTED') || false);
+    return false;
 }
 
 
@@ -29,13 +27,4 @@ const extractTime = (course) => {
     return new_raw_time || raw_time;
 }
 
-
-// const getForwardedLinksFromLS = () => {
-    
-// }
-
-// const getForwardedAnnouncementsFromLS = () => {
-
-// }
-
-module.exports = { pickRandomReply, getIsMutedStatus, extractTime, localStorage }
+module.exports = { pickRandomReply, getIsMutedStatus, extractTime }

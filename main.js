@@ -1,7 +1,8 @@
+const app = require('express')();
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const { pickRandomReply, extractTime, getIsMutedStatus, localStorage } = require('./helpers');
+const { pickRandomReply, extractTime, getIsMutedStatus } = require('./helpers');
 const { CLASSES, HELP_COMMANDS } = require('./data');
 
 
@@ -14,6 +15,7 @@ const BOT_PUSHNAME = 'Ethereal';
 const EPIC_DEVS_GROUP_ID = '233558460645-1620635743'; // chat.id.user is better than chat.name as it is immutable
 const L400_ASSIGNMENTS_GROUP_ID = ' 233241011931-1400749467';
 const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
+const port = process.env.PORT || 3000;
 
 
 // --------------------------------------------------
@@ -21,7 +23,8 @@ const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 // --------------------------------------------------
 
 const client = new Client({
-    authStrategy: new LocalAuth() // to persist client session
+    authStrategy: new LocalAuth(), // to persist client session
+    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
 client.setMaxListeners(0); // for an infinite number of event listeners
@@ -30,7 +33,6 @@ client.on('qr', (qr) => {
     qrcode.generate(qr, { small: true });
 });
 
-
 client.on('ready', () => {
     console.log('Client is ready!\n');
 });
@@ -38,6 +40,19 @@ client.on('ready', () => {
 client.on("disconnected", () => {
     console.log("Oh no! Client is disconnected!");
 })
+
+app.get("/", (req, res) => {
+    res.send(
+        '<h1>This server is powered by Ethereal Bot</h1>'
+    );
+});
+
+app.all("*", (req, res) => {
+    res.status(404).send("<h1>Sorry, this page does not exist!</h1><a href='/'>Back to Home</a>")
+})
+
+
+app.listen(port, () => console.log(`server is running on port ${port}`));
 
 // client.on('ready', async () => {
 //     const chats = await client.getChats();
@@ -140,7 +155,7 @@ client.on('message', async (msg) => {
                 '🤐👍🏽'
             ]
             await msg.reply(pickRandomReply(MUTE_REPLIES));
-            localStorage.setItem('IS_MUTED', 'true');
+            // localStorage.setItem('IS_MUTED', 'true');
         }
     }
 })
@@ -158,7 +173,7 @@ client.on('message', async (msg) => {
                 'Speaking freely now 👍🏽',
             ]
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
-            localStorage.setItem('IS_MUTED', 'false');
+            // localStorage.setItem('IS_MUTED', 'false');
         }
     } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && !getIsMutedStatus()) {
         await msg.reply(`Haven't been muted ${contact.id.user !== SUPER_ADMIN ? "fam" : "sir "}🐦`);
@@ -264,12 +279,12 @@ client.on('message', async (msg) => {
             return;
         }
 
-        const current_forwarded_announcements = JSON.parse(localStorage.getItem('FORWARDED_ANNOUNCEMENTS')) || [];
+        const current_forwarded_announcements = [];
 
         // console.log('Recognized an announcement');
 
         if (!current_forwarded_announcements.includes(msg.body)) {
-            localStorage.setItem('FORWARDED_ANNOUNCEMENTS', JSON.stringify([...current_forwarded_announcements, msg.body]));
+            // localStorage.setItem('FORWARDED_ANNOUNCEMENTS', JSON.stringify([...current_forwarded_announcements, msg.body]));
             await msg.forward(target_chat);
             console.log('Added new announcement');
         } else {
@@ -285,12 +300,12 @@ client.on('message', async (msg) => {
         }
         const link_pattern = /(https?:\/\/[^\s]+)/;
         const extracted_link = link_pattern.exec(msg.body)[0];
-        const current_forwarded_links = JSON.parse(localStorage.getItem('FORWARDED_LINKS')) || [];
+        const current_forwarded_links = [];
 
         // console.log('recognized a link');
         // console.log('extracted link:', extracted_link);
         if (!current_forwarded_links.includes(extracted_link)) {
-            localStorage.setItem('FORWARDED_LINKS', JSON.stringify([...current_forwarded_links, extracted_link]));
+            // localStorage.setItem('FORWARDED_LINKS', JSON.stringify([...current_forwarded_links, extracted_link]));
             await msg.forward(target_chat);
             console.log('Added new link');
         } else {
