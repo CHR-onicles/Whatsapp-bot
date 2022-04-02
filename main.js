@@ -1,10 +1,9 @@
 const app = require('express')();
-const { Client, LegacySessionAuth } = require('whatsapp-web.js');
+const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const { pickRandomReply, extractTime, getIsMutedStatus, msToHMS } = require('./helpers');
 const { CLASSES, HELP_COMMANDS } = require('./data');
-const config = require('./config');
 
 
 // --------------------------------------------------
@@ -18,7 +17,6 @@ const L400_ASSIGNMENTS_GROUP_ID = ' 233241011931-1400749467';
 const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = null;
-let token = "";
 
 
 // --------------------------------------------------
@@ -26,8 +24,7 @@ let token = "";
 // --------------------------------------------------
 
 const client = new Client({
-    // authStrategy: new LocalAuth(), // to persist client session
-    authStrategy: new LegacySessionAuth(),
+    authStrategy: new LocalAuth(), // to persist client session
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
@@ -40,12 +37,6 @@ client.on('qr', (qr) => {
 client.on('ready', () => {
     console.log('Client is ready!\n');
     BOT_START_TIME = new Date();
-});
-
-
-client.on("authenticated", (session) => {
-  token = session;
-  console.log(JSON.stringify(token));
 });
 
 client.on("disconnected", () => {
