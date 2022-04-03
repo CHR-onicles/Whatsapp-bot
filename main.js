@@ -1,8 +1,8 @@
 const app = require('express')();
-const { Client, LocalAuth } = require('whatsapp-web.js');
+const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const { pickRandomReply, extractTime, getIsMutedStatus, msToHMS } = require('./helpers');
+const { pickRandomReply, extractTime, getIsMutedStatus, msToHMS, extractCommand } = require('./helpers');
 const { CLASSES, HELP_COMMANDS } = require('./data');
 
 
@@ -77,7 +77,7 @@ app.listen(port, () => console.log(`server is running on port ${port}`));
 
 // Ping
 client.on('message', msg => {
-    if (msg.body.toLowerCase() === '!ping' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!ping' && !getIsMutedStatus()) {
         msg.reply('pong 🏓');
     }
 });
@@ -85,7 +85,7 @@ client.on('message', msg => {
 
 // Mention everyone
 client.on('message', async (msg) => {
-    if (msg.body.toLowerCase() === '!everyone' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!everyone' && !getIsMutedStatus()) {
         const contact = await msg.getContact();
         if (contact.id.user !== SUPER_ADMIN) {
             await msg.reply("Only the boss can use this, so you don't abuse it🐦");
@@ -145,7 +145,7 @@ client.on('message', async (msg) => {
 
 // Mute
 client.on('message', async (msg) => {
-    if ((msg.body.toLowerCase() === '!🤫' || msg.body.toLowerCase() === '!mute' || msg.body.toLowerCase() === '!silence') && !getIsMutedStatus()) {
+    if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && !getIsMutedStatus()) {
         const contact = await msg.getContact();
         if (contact.id.user === SUPER_ADMIN) {
             const MUTE_REPLIES = [
@@ -166,7 +166,7 @@ client.on('message', async (msg) => {
 // Unmute
 client.on('message', async (msg) => {
     const contact = await msg.getContact();
-    if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && getIsMutedStatus()) {
+    if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && getIsMutedStatus()) {
         if (contact.id.user === SUPER_ADMIN) {
             const UNMUTE_REPLIES = [
                 'Thanks sir',
@@ -185,7 +185,7 @@ client.on('message', async (msg) => {
 
 // Help
 client.on('message', async (msg) => {
-    if (msg.body.toLowerCase() === '!help' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!help' && !getIsMutedStatus()) {
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
 
         HELP_COMMANDS.forEach(obj => {
@@ -198,7 +198,7 @@ client.on('message', async (msg) => {
 
 // Check classes for the week
 client.on('message', async (msg) => {
-    if (msg.body.toLowerCase() === '!classes' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!classes' && !getIsMutedStatus()) {
         let text = "If *Software Modelling* is your elective:\n\n";
         CLASSES.forEach(class_obj => {
             text += "*" + class_obj.day + "*:\n" + class_obj.courses.map(course => course.name + "\n").join('') + "\n";
@@ -211,7 +211,7 @@ client.on('message', async (msg) => {
 
 // Check class for today
 client.on('message', async (msg) => {
-    if (msg.body.toLowerCase() === '!class' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!class' && !getIsMutedStatus()) {
         const today_day = new Date().toString().split(' ')[0]; // to get day
 
         if (today_day === 'Sat' || today_day === 'Sun') {
@@ -317,9 +317,9 @@ client.on('message', async (msg) => {
 })
 
 
-// Send a direct message to a user *(Work In Progress)*
+//! Send a direct message to a user *(Work In Progress)*
 client.on('message', async (msg) => {
-    if (msg.body.toLowerCase() === '!dm' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!dm' && !getIsMutedStatus()) {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
 
@@ -330,13 +330,47 @@ client.on('message', async (msg) => {
 
 // Check bot uptime
 client.on('message', async (msg) => {
-    if (msg.body.toLowerCase() === '!uptime') {
+    if (extractCommand(msg) === '!uptime') {
         const current_time = new Date();
         const { hours, minutes, seconds } = msToHMS(current_time - BOT_START_TIME);
+        // await msg.reply('Not in deployment');
         await msg.reply(`🟢 *Uptime:* ${hours ? hours : 0}${hours === 1 ? 'hr' : 'hrs'} ${minutes ? minutes : 0}${minutes === 1 ? 'min' : 'mins'} ${seconds ? seconds : 0}secs.`);
     }
 })
 
+
+// Send button - Will prolly be better under "bot ping" command
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!options') {
+        const list = new List(
+            '\nThis is a list of commands the bot can perform',
+            'See options',
+            [{
+                title: 'everyone', rows: [
+                    { id: '1', title: '!help', description: 'Help commands' },
+                    { id: '2', title: '!classes', description: 'Classes for the week' },
+                    { id: '3', title: '!class', description: "Today's class" },
+                    { id: '4', title: '!uptime', description: 'How long bot has been active' },
+                    { id: '5', title: '!everyone', description: 'Ping everyone in the group' },
+                ]
+            }],
+            'Hey there 👋🏽',
+            'Powered by Ethereal bot'
+        );
+        // const button = new Buttons(
+        //     "Body of message",
+        //     [
+        //         { id: '1', body: 'button 1' },
+        //         { id: '2', body: 'button 2' },
+        //     ],
+        //     'Title of message',
+        //     'Powered by Ethereal bot'
+        // );
+        // const chat = await msg.getChat();
+        // msg.reply(button)
+        msg.reply(list);
+    }
+})
 
 
 

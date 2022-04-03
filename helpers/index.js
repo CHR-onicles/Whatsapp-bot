@@ -28,6 +28,15 @@ const extractTime = (course) => {
 }
 
 
+const extractCommand = (msg) => {
+    const first_word = msg?.body.toLowerCase().split(/(\s+|\n+)/)[0];
+    // console.log(first_word)
+    if (first_word[0] === '!') {
+        return first_word;
+    }
+}
+
+
 const msToHMS = (duration) => {
     let seconds = Math.floor((duration / 1000) % 60),
         minutes = Math.floor((duration / (1000 * 60)) % 60),
@@ -40,4 +49,4 @@ const msToHMS = (duration) => {
     return { hours, minutes, seconds }
 }
 
-module.exports = { pickRandomReply, getIsMutedStatus, extractTime, msToHMS }
+module.exports = { pickRandomReply, getIsMutedStatus, extractTime, msToHMS, extractCommand }
