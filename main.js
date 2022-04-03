@@ -339,19 +339,26 @@ client.on('message', async (msg) => {
 })
 
 
-// Send button - Will prolly be better under "bot ping" command
+//! Send button - Will prolly be better under "bot ping" command
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!options') {
+        const contact = await msg.getContact();
         const list = new List(
             '\nThis is a list of commands the bot can perform',
             'See options',
             [{
-                title: 'everyone', rows: [
+                title: 'Commands available to everyone', rows: [
                     { id: '1', title: '!help', description: 'Help commands' },
                     { id: '2', title: '!classes', description: 'Classes for the week' },
                     { id: '3', title: '!class', description: "Today's class" },
                     { id: '4', title: '!uptime', description: 'How long bot has been active' },
-                    { id: '5', title: '!everyone', description: 'Ping everyone in the group' },
+                ]
+            },
+            contact.id.user === SUPER_ADMIN && {
+                title: 'Commands available to the boss only', rows: [
+                    {id: '5', title: '!everyone', description: 'Ping everyone in the group'},
+                    {id: '6', title: '!mute', description: 'Shut the bot up'},
+                    {id: '7', title: '!unmute', description: 'Allow the bot to talk'},
                 ]
             }],
             'Hey there 👋🏽',
