@@ -128,3 +128,7 @@ dist
 
 # Bot stuff
 .wwebjs_auth/
+
+# Personal stuff
+test.js
+TODO.md
