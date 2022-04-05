@@ -6,7 +6,7 @@ require('dotenv').config();
 require('./utils/db');
 const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
 const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus } = require('./middleware');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink } = require('./middleware');
 
 
 
@@ -265,12 +265,12 @@ client.on('message', async (msg) => {
             return;
         }
 
-        const current_forwarded_announcements = [];
+        const current_forwarded_announcements = await getAllAnnouncements();
 
         // console.log('Recognized an announcement');
 
         if (!current_forwarded_announcements.includes(msg.body)) {
-            // localStorage.setItem('FORWARDED_ANNOUNCEMENTS', JSON.stringify([...current_forwarded_announcements, msg.body]));
+            await addAnnouncement(msg.body);
             await msg.forward(target_chat);
             console.log('Added new announcement');
         } else {
@@ -286,12 +286,13 @@ client.on('message', async (msg) => {
         }
         const link_pattern = /(https?:\/\/[^\s]+)/;
         const extracted_link = link_pattern.exec(msg.body)[0];
-        const current_forwarded_links = [];
+        const current_forwarded_links = await getAllLinks();
+        // console.log(current_forwarded_links)
 
         // console.log('recognized a link');
         // console.log('extracted link:', extracted_link);
         if (!current_forwarded_links.includes(extracted_link)) {
-            // localStorage.setItem('FORWARDED_LINKS', JSON.stringify([...current_forwarded_links, extracted_link]));
+            await addLink(msg.body);
             await msg.forward(target_chat);
             console.log('Added new link');
         } else {

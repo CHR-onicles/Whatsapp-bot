@@ -17,3 +17,25 @@ exports.getMutedStatus = async () => {
     const status = await isMuted();
     return status;
 }
+
+exports.getAllLinks = async () => {
+    const links = await getAllLinks();
+    // console.log('Links:', links);
+    return links;
+}
+
+exports.addLink = async (link) => {
+    await addLink(link);
+    console.log('New Link added');
+}
+
+exports.getAllAnnouncements = async () => {
+    const ann = await getAllAnnouncements();
+    // console.log('Announcements:', ann);
+    return ann;
+}
+
+exports.addAnnouncement = async (ann) => {
+    await addAnnouncement(ann);
+    console.log('New announcement added');
+}

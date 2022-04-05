@@ -26,12 +26,13 @@ const DEFAULT_ID = { _id: 1 };
             console.log(err);
         }
     }
-})()
+})();
+
 
 // EXPORTS
 
 exports.isMuted = async () => {
-    const status = await MiscellaneousModel.findOne({}, { isMuted: 1 });
+    const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isMuted: 1 });
     // console.log(status);
     return status.isMuted;
 }
@@ -55,9 +56,9 @@ exports.unmute = async () => {
 }
 
 exports.getAllLinks = async () => {
-    const links = await MiscellaneousModel.distinct("allLinks");
-    // console.log(links);
-    return links;
+    const links = await MiscellaneousModel.findOne(DEFAULT_ID, {allLinks: 1});
+    // console.log(links.allLinks);
+    return links.allLinks;
 }
 
 exports.addLink = async (newLink) => {
@@ -79,9 +80,9 @@ exports.removeAllLinks = async () => {
 }
 
 exports.getAllAnnouncements = async () => {
-    const announcements = await MiscellaneousModel.distinct("allAnnouncements");
-    // console.log(announcements);
-    return announcements;
+    const ann = await MiscellaneousModel.findOne(DEFAULT_ID, {allAnnouncements: 1});
+    // console.log(ann.allAnnouncements);
+    return ann.allAnnouncements;
 }
 
 exports.addAnnouncement = async (newAnnouncement) => {
