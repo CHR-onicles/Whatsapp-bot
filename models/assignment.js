@@ -11,7 +11,7 @@ const AssignmentSchema = new Schema({
     done: { type: Boolean, default: false }
 });
 
-const AssignmentModel = model("AssignmentModel", AssignmentSchema);
+const AssignmentModel = model("Assignment", AssignmentSchema);
 
 // const ass1 = new Assignment({ course: "CSCD 415", desc: "Compilers Assignment", dueDate: new Date(), done: false });
 // (async () => { await ass1.save() })();

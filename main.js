@@ -1,11 +1,13 @@
 const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
+require('dotenv').config();
 
 const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
 const { CLASSES, HELP_COMMANDS } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus } = require('./middleware');
 require('./utils/db');
+
 
 
 // --------------------------------------------------

@@ -13,23 +13,23 @@ const MiscellaneousSchema = new Schema({
     numOfCommands: Number, // to be used later
 });
 
-const MiscellaneousModel = model("MiscellaneousModel", MiscellaneousSchema);
+const MiscellaneousModel = model("Miscellaneous", MiscellaneousSchema);
 const DEFAULT_ID = { _id: 1 };
 
-
-// EXPORTS
-exports.initializeMiscModel = async () => {
+(initializeMiscModel = async () => {
     const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: ['233557632802'] });
     try {
         await misc.save();
     } catch (err) {
         console.log(err)
     }
-}
+})()
+
+// EXPORTS
 
 exports.isMuted = async () => {
-    const status = await MiscellaneousModel.findOne({}, {isMuted: 1});
-    console.log(status);
+    const status = await MiscellaneousModel.findOne({}, { isMuted: 1 });
+    // console.log(status);
     return status.isMuted;
 }
 
@@ -53,7 +53,7 @@ exports.unmute = async () => {
 
 exports.getAllLinks = async () => {
     const links = await MiscellaneousModel.distinct("allLinks");
-    console.log(links);
+    // console.log(links);
     return links;
 }
 
@@ -77,7 +77,7 @@ exports.removeAllLinks = async () => {
 
 exports.getAllAnnouncements = async () => {
     const announcements = await MiscellaneousModel.distinct("allAnnouncements");
-    console.log(announcements);
+    // console.log(announcements);
     return announcements;
 }
 
