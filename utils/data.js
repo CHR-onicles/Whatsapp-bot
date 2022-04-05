@@ -2,7 +2,7 @@
 // Data
 // --------------------------------------------------
 
-const CLASSES = [
+exports.CLASSES = [
     {
         day: 'Monday',
         courses: [
@@ -41,7 +41,7 @@ const CLASSES = [
     }
 ]
 
-const HELP_COMMANDS = [
+exports.HELP_COMMANDS = [
     {
         command: "*!ping*",
         desc: "check if I'm available 🙋🏽‍♂️"
@@ -72,4 +72,21 @@ const HELP_COMMANDS = [
     }
 ]
 
-module.exports = { CLASSES, HELP_COMMANDS }
+exports.MUTE_REPLIES = [
+    'Yes sir',
+    'Roger that🐦',
+    'Sigh...oki 😔',
+    '👍🏽',
+    'Got it 👍🏽',
+    '🤐👍🏽',
+    '✅'
+]
+
+exports.UNMUTE_REPLIES = [
+    'Thanks sir',
+    'Finally🐦',
+    '🥳',
+    'Speaking freely now 👍🏽',
+    'Acknowledged ✅',
+    'Ya yeet🐦'
+]
