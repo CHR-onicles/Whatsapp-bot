@@ -75,7 +75,7 @@ exports.HELP_COMMANDS = [
 exports.MUTE_REPLIES = [
     'Yes sir',
     'Roger that🐦',
-    'Sigh...oki',
+    'Sigh...oki 😔',
     '👍🏽',
     'Got it 👍🏽',
     '🤐👍🏽',

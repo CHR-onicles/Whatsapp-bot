@@ -3,10 +3,10 @@ const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
+require('./utils/db');
 const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
 const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus } = require('./middleware');
-require('./utils/db');
 
 
 
@@ -64,10 +64,6 @@ app.listen(port, () => console.log(`server is running on port ${port}`));
 //     const chats = await client.getChats();
 //     console.log(chats);
 // })
-
-// client.on('auth_failure', () => {
-//     console.log('Client failed to authenticate!');
-// });
 
 // client.on('authenticated', () => {
 //     console.log('Client was authenticated successfully!');
@@ -328,7 +324,7 @@ client.on('message', async (msg) => {
 })
 
 
-//! Send button - Will prolly be better under "bot ping" command
+//! Send button - Will prolly be better under "bot ping" command *(Work In Progress)*
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!options' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
