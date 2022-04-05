@@ -16,12 +16,15 @@ const MiscellaneousSchema = new Schema({
 const MiscellaneousModel = model("Miscellaneous", MiscellaneousSchema);
 const DEFAULT_ID = { _id: 1 };
 
-(initializeMiscModel = async () => {
-    const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: ['233557632802'] });
-    try {
-        await misc.save();
-    } catch (err) {
-        console.log(err)
+
+(async () => {
+    if (await MiscellaneousModel.findOne({ _id: 1 }) === null) {
+        const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: ['233557632802'] });
+        try {
+            await misc.save();
+        } catch (err) {
+            console.log(err);
+        }
     }
 })()
 

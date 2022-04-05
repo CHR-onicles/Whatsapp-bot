@@ -4,7 +4,7 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
-const { CLASSES, HELP_COMMANDS } = require('./utils/data');
+const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus } = require('./middleware');
 require('./utils/db');
 
@@ -28,7 +28,7 @@ let BOT_START_TIME = null;
 // --------------------------------------------------
 
 const client = new Client({
-    authStrategy: new LocalAuth(), // to persist client session
+    authStrategy: new LocalAuth(),
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
@@ -82,8 +82,6 @@ app.listen(port, () => console.log(`server is running on port ${port}`));
 // Ping
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!ping' && await getMutedStatus() === false) {
-        const v = await getMutedStatus();
-        console.log('in ping command:', v)
         msg.reply('pong 🏓');
     }
 });
@@ -154,14 +152,6 @@ client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         if (contact.id.user === SUPER_ADMIN) {
-            const MUTE_REPLIES = [
-                'Yes sir',
-                'Roger that🐦',
-                'Sigh...oki',
-                '👍🏽',
-                'Got it 👍🏽',
-                '🤐👍🏽'
-            ]
             msg.reply(pickRandomReply(MUTE_REPLIES));
             await muteBot();
         }
@@ -174,12 +164,6 @@ client.on('message', async (msg) => {
     const contact = await msg.getContact();
     if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
         if (contact.id.user === SUPER_ADMIN) {
-            const UNMUTE_REPLIES = [
-                'Thanks sir',
-                'Finally🐦',
-                '🥳',
-                'Speaking freely now 👍🏽',
-            ]
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
@@ -339,7 +323,6 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === '!uptime' && await getMutedStatus() === false) {
         const current_time = new Date();
         const { hours, minutes, seconds } = msToHMS(current_time - BOT_START_TIME);
-        // await msg.reply('Not in deployment');
         await msg.reply(`🟢 *Uptime:* ${hours ? hours : 0}${hours === 1 ? 'hr' : 'hrs'} ${minutes ? minutes : 0}${minutes === 1 ? 'min' : 'mins'} ${seconds ? seconds : 0}secs.`);
     }
 })
