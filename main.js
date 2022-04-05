@@ -272,7 +272,6 @@ client.on('message', async (msg) => {
         if (!current_forwarded_announcements.includes(msg.body)) {
             await addAnnouncement(msg.body);
             await msg.forward(target_chat);
-            console.log('Added new announcement');
         } else {
             console.log('Repeated announcement');
         }
@@ -294,7 +293,6 @@ client.on('message', async (msg) => {
         if (!current_forwarded_links.includes(extracted_link)) {
             await addLink(msg.body);
             await msg.forward(target_chat);
-            console.log('Added new link');
         } else {
             console.log("Repeated link");
         }

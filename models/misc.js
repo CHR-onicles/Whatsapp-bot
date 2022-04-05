@@ -17,16 +17,17 @@ const MiscellaneousModel = model("Miscellaneous", MiscellaneousSchema);
 const DEFAULT_ID = { _id: 1 };
 
 
-(async () => {
-    if (await MiscellaneousModel.findOne({ _id: 1 }) === null) {
-        const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: ['233557632802'] });
-        try {
-            await misc.save();
-        } catch (err) {
-            console.log(err);
-        }
-    }
-})();
+// Find better way of doing code below
+// (async () => {
+//     if (await MiscellaneousModel.findOne({ _id: 1 }) === null) {
+//         const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: ['233557632802'] });
+//         try {
+//             await misc.save();
+//         } catch (err) {
+//             console.log(err);
+//         }
+//     }
+// })();
 
 
 // EXPORTS
@@ -40,7 +41,7 @@ exports.isMuted = async () => {
 exports.mute = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isMuted: true } });
-        console.log(res);
+        // console.log(res);
     } catch (error) {
         console.log(error)
     }
@@ -49,7 +50,7 @@ exports.mute = async () => {
 exports.unmute = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isMuted: false } });
-        console.log(res);
+        // console.log(res);
     } catch (error) {
         console.log(error);
     }
@@ -64,7 +65,7 @@ exports.getAllLinks = async () => {
 exports.addLink = async (newLink) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { allLinks: newLink } });
-        console.log(res);
+        // console.log(res);
     } catch (error) {
         console.log(error);
     }
@@ -73,7 +74,7 @@ exports.addLink = async (newLink) => {
 exports.removeAllLinks = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { allLinks: [] } });
-        console.log(res);
+        // console.log(res);
     } catch (error) {
         console.log(error)
     }
@@ -88,7 +89,7 @@ exports.getAllAnnouncements = async () => {
 exports.addAnnouncement = async (newAnnouncement) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { allAnnouncements: newAnnouncement } });
-        console.log(res);
+        // console.log(res);
     } catch (error) {
         console.log(error)
     }
@@ -97,7 +98,7 @@ exports.addAnnouncement = async (newAnnouncement) => {
 exports.removeAllAnnouncements = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { allAnnouncements: [] } });
-        console.log(res);
+        // console.log(res);
     } catch (error) {
         console.log(error);
     }
@@ -112,7 +113,7 @@ exports.getAllSuperAdmins = async () => {
 exports.addSuperAdmin = async (newAdmin) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { superAdmins: newAdmin } });
-        console.log(res);
+        // console.log(res);
     } catch (error) {
         console.log(error)
     }
@@ -121,7 +122,7 @@ exports.addSuperAdmin = async (newAdmin) => {
 exports.removeSuperAdmin = async (admin) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { superAdmins: admin } });
-        console.log(res);
+        // console.log(res);
     } catch (error) {
         console.log(error);
     }
