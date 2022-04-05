@@ -13,12 +13,10 @@ const { muteBot, unmuteBot, getMutedStatus } = require('./middleware');
 // --------------------------------------------------
 // Global variables
 // --------------------------------------------------
-const SUPER_ADMIN = '233557632802';
-const BOT = '233551687450';
+const SUPER_ADMIN = process.env.SUPER_ADMIN;
+const BOT_NUMBER = process.env.BOT_NUMBER;
 const BOT_PUSHNAME = 'Ethereal';
-const EPIC_DEVS_GROUP_ID = '233558460645-1620635743'; // chat.id.user is better than chat.name as it is immutable
-// const L400_ASSIGNMENTS_GROUP_ID = ' 233241011931-1400749467';
-// const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
+const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // chat.id.user is better than chat.name as it is immutable
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = null;
 
@@ -136,7 +134,7 @@ client.on('message', async (msg) => {
             `Yo 🐦`,
         ]
 
-        if (first_word.slice(1, first_word.length) === BOT) {
+        if (first_word.slice(1, first_word.length) === BOT_NUMBER) {
             await msg.reply(pickRandomReply(PING_REPLIES));
         }
     }
@@ -257,12 +255,12 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     const current_chat = await msg.getChat();
     const chats = await client.getChats();
-    const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID);
+    const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID_USER);
 
     //* For Announcements
     if (msg.body.includes('❗') || msg.body.includes('‼')) {
 
-        if (current_chat.id.user === EPIC_DEVS_GROUP_ID) {
+        if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Announcement from EPiC Devs, so do nothing")
             return;
         }
@@ -282,7 +280,7 @@ client.on('message', async (msg) => {
 
     //* For links
     else if (msg.body.toLowerCase().includes('https')) {
-        if (current_chat.id.user === EPIC_DEVS_GROUP_ID) {
+        if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
