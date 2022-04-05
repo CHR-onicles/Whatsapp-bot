@@ -2,8 +2,10 @@ const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const { pickRandomReply, extractTime, getIsMutedStatus, msToHMS, extractCommand } = require('./helpers');
-const { CLASSES, HELP_COMMANDS } = require('./data');
+const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
+const { CLASSES, HELP_COMMANDS } = require('./utils/data');
+const { muteBot, unmuteBot, getMutedStatus } = require('./middleware');
+require('./utils/db');
 
 
 // --------------------------------------------------
@@ -13,8 +15,8 @@ const SUPER_ADMIN = '233557632802';
 const BOT = '233551687450';
 const BOT_PUSHNAME = 'Ethereal';
 const EPIC_DEVS_GROUP_ID = '233558460645-1620635743'; // chat.id.user is better than chat.name as it is immutable
-const L400_ASSIGNMENTS_GROUP_ID = ' 233241011931-1400749467';
-const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
+// const L400_ASSIGNMENTS_GROUP_ID = ' 233241011931-1400749467';
+// const HIGH_COUNCIL_GROUP_ID = '233557632802-1618870529';
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = null;
 
@@ -76,8 +78,10 @@ app.listen(port, () => console.log(`server is running on port ${port}`));
 // --------------------------------------------------
 
 // Ping
-client.on('message', msg => {
-    if (extractCommand(msg) === '!ping' && !getIsMutedStatus()) {
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!ping' && await getMutedStatus() === false) {
+        const v = await getMutedStatus();
+        console.log('in ping command:', v)
         msg.reply('pong 🏓');
     }
 });
@@ -85,7 +89,7 @@ client.on('message', msg => {
 
 // Mention everyone
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!everyone' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         if (contact.id.user !== SUPER_ADMIN) {
             await msg.reply("Only the boss can use this, so you don't abuse it🐦");
@@ -116,7 +120,7 @@ client.on('message', async (msg) => {
 // Reply if pinged
 client.on('message', async (msg) => {
 
-    if (msg.body.toLowerCase()[0] === '@' && !getIsMutedStatus()) {
+    if (msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) {
         const first_word = msg.body.toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
 
@@ -145,7 +149,7 @@ client.on('message', async (msg) => {
 
 // Mute
 client.on('message', async (msg) => {
-    if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && !getIsMutedStatus()) {
+    if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         if (contact.id.user === SUPER_ADMIN) {
             const MUTE_REPLIES = [
@@ -156,8 +160,8 @@ client.on('message', async (msg) => {
                 'Got it 👍🏽',
                 '🤐👍🏽'
             ]
-            await msg.reply(pickRandomReply(MUTE_REPLIES));
-            // localStorage.setItem('IS_MUTED', 'true');
+            msg.reply(pickRandomReply(MUTE_REPLIES));
+            await muteBot();
         }
     }
 })
@@ -166,7 +170,7 @@ client.on('message', async (msg) => {
 // Unmute
 client.on('message', async (msg) => {
     const contact = await msg.getContact();
-    if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && getIsMutedStatus()) {
+    if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
         if (contact.id.user === SUPER_ADMIN) {
             const UNMUTE_REPLIES = [
                 'Thanks sir',
@@ -175,9 +179,9 @@ client.on('message', async (msg) => {
                 'Speaking freely now 👍🏽',
             ]
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
-            // localStorage.setItem('IS_MUTED', 'false');
+            await unmuteBot();
         }
-    } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && !getIsMutedStatus()) {
+    } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && await getMutedStatus() === false) {
         await msg.reply(`Haven't been muted ${contact.id.user !== SUPER_ADMIN ? "fam" : "sir "}🐦`);
     }
 })
@@ -185,7 +189,7 @@ client.on('message', async (msg) => {
 
 // Help
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!help' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!help' && await getMutedStatus() === false) {
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
 
         HELP_COMMANDS.forEach(obj => {
@@ -198,7 +202,7 @@ client.on('message', async (msg) => {
 
 // Check classes for the week
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!classes' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
         let text = "If *Software Modelling* is your elective:\n\n";
         CLASSES.forEach(class_obj => {
             text += "*" + class_obj.day + "*:\n" + class_obj.courses.map(course => course.name + "\n").join('') + "\n";
@@ -211,7 +215,7 @@ client.on('message', async (msg) => {
 
 // Check class for today
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!class' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!class' && await getMutedStatus() === false) {
         const today_day = new Date().toString().split(' ')[0]; // to get day
 
         if (today_day === 'Sat' || today_day === 'Sun') {
@@ -319,7 +323,7 @@ client.on('message', async (msg) => {
 
 //! Send a direct message to a user *(Work In Progress)*
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!dm' && !getIsMutedStatus()) {
+    if (extractCommand(msg) === '!dm' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
 
@@ -330,7 +334,7 @@ client.on('message', async (msg) => {
 
 // Check bot uptime
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!uptime') {
+    if (extractCommand(msg) === '!uptime' && await getMutedStatus() === false) {
         const current_time = new Date();
         const { hours, minutes, seconds } = msToHMS(current_time - BOT_START_TIME);
         // await msg.reply('Not in deployment');
@@ -341,7 +345,7 @@ client.on('message', async (msg) => {
 
 //! Send button - Will prolly be better under "bot ping" command
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!options') {
+    if (extractCommand(msg) === '!options' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const list = new List(
             '\nThis is a list of commands the bot can perform',
@@ -356,9 +360,9 @@ client.on('message', async (msg) => {
             },
             contact.id.user === SUPER_ADMIN && {
                 title: 'Commands available to the boss only', rows: [
-                    {id: '5', title: '!everyone', description: 'Ping everyone in the group'},
-                    {id: '6', title: '!mute', description: 'Shut the bot up'},
-                    {id: '7', title: '!unmute', description: 'Allow the bot to talk'},
+                    { id: '5', title: '!everyone', description: 'Ping everyone in the group' },
+                    { id: '6', title: '!mute', description: 'Shut the bot up' },
+                    { id: '7', title: '!unmute', description: 'Allow the bot to talk' },
                 ]
             }],
             'Hey there 👋🏽',

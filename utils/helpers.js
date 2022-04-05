@@ -3,18 +3,12 @@
 // --------------------------------------------------
 
 
-const pickRandomReply = (replies) => {
+exports.pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
 }
 
 
-const getIsMutedStatus = () => {
-    // return JSON.parse(localStorage.getItem('IS_MUTED') || false);
-    return false;
-}
-
-
-const extractTime = (course) => {
+exports.extractTime = (course) => {
     const time_portion = course.split('|')[1].trim();
     const raw_time = time_portion.slice(1, time_portion.length);
     let new_raw_time = null;
@@ -28,7 +22,7 @@ const extractTime = (course) => {
 }
 
 
-const extractCommand = (msg) => {
+exports.extractCommand = (msg) => {
     const first_word = msg?.body.toLowerCase().split(/(\s+|\n+)/)[0];
     // console.log(first_word)
     if (first_word[0] === '!') {
@@ -37,7 +31,7 @@ const extractCommand = (msg) => {
 }
 
 
-const msToHMS = (duration) => {
+exports.msToHMS = (duration) => {
     let seconds = Math.floor((duration / 1000) % 60),
         minutes = Math.floor((duration / (1000 * 60)) % 60),
         hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
@@ -48,5 +42,3 @@ const msToHMS = (duration) => {
 
     return { hours, minutes, seconds }
 }
-
-module.exports = { pickRandomReply, getIsMutedStatus, extractTime, msToHMS, extractCommand }
