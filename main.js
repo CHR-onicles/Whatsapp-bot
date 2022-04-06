@@ -5,8 +5,8 @@ require('dotenv').config();
 
 require('./utils/db');
 const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
-const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink } = require('./middleware');
+const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES } = require('./utils/data');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
 
 
 
@@ -58,10 +58,10 @@ app.all("*", (req, res) => {
 
 app.listen(port, () => console.log(`server is running on port ${port}`));
 
-// client.on('ready', async () => {
-//     const chats = await client.getChats();
-//     console.log(chats);
-// })
+client.on('ready', async () => {
+    const chats = await client.getChats();
+    console.log(chats[0]);
+})
 
 // client.on('authenticated', () => {
 //     console.log('Client was authenticated successfully!');
@@ -113,10 +113,9 @@ client.on('message', async (msg) => {
 
 // Reply if pinged
 client.on('message', async (msg) => {
-
     if (msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) {
         const first_word = msg.body.toLowerCase().split(' ')[0];
-        const contact = await msg.getContact();
+        const contact = await msg.getContact(); // will be used by the replies array later
 
         const PING_REPLIES = [
             `${contact.id.user !== SUPER_ADMIN ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
@@ -134,8 +133,34 @@ client.on('message', async (msg) => {
             `Yo 🐦`,
         ]
 
+        const list = new List(
+            '\nThis is a list of commands the bot can perform',
+            'See options',
+            [{
+                title: 'Commands available to everyone', rows: [
+                    { id: '1', title: '!help', description: 'Help commands' },
+                    { id: '2', title: '!classes', description: 'Classes for the week' },
+                    { id: '3', title: '!class', description: "Today's class" },
+                    { id: '4', title: '!uptime', description: 'How long bot has been active' },
+                    { id: '5', title: '!notify', description: 'Get notified for class' },
+                    { id: '6', title: '!notify stop', description: 'Stop getting notified for class' },
+                ]
+            },
+                // {
+                //     title: 'Commands available to EPiC Devs only', rows: [
+                //         { id: '100', title: '!everyone', description: 'Ping everyone in the group' },
+                //         { id: '101', title: '!mute', description: 'Shut the bot up' },
+                //         { id: '102', title: '!unmute', description: 'Allow the bot to talk' },
+                //     ]
+                // }
+            ],
+            pickRandomReply(PING_REPLIES),
+            'Powered by Ethereal bot'
+        );
+
+
         if (first_word.slice(1, first_word.length) === BOT_NUMBER) {
-            await msg.reply(pickRandomReply(PING_REPLIES));
+            await msg.reply(list);
         }
     }
 });
@@ -300,15 +325,13 @@ client.on('message', async (msg) => {
 })
 
 
-//! Send a direct message to a user *(Work In Progress)*
-client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!dm' && await getMutedStatus() === false) {
-        const contact = await msg.getContact();
-        const chat_from_contact = await contact.getChat();
+//! Schedule a direct message to a user - smaller function *(Work In Progress)*
+const scheduleDM = async (msg, time, actual_text) => {
+    const contact = await msg.getContact();
+    const chat_from_contact = await contact.getChat();
 
-        chat_from_contact.sendMessage("Sliding in DM - ☀");
-    }
-})
+    chat_from_contact.sendMessage("Sliding in DM - ☀");
+}
 
 
 // Check bot uptime
@@ -321,43 +344,39 @@ client.on('message', async (msg) => {
 })
 
 
-//! Send button - Will prolly be better under "bot ping" command *(Work In Progress)*
+// Add user to notification list for class
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!options' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === '!notify' &&
+        msg.body.toLowerCase().split(' ')[1] !== 'stop' &&
+        await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const list = new List(
-            '\nThis is a list of commands the bot can perform',
-            'See options',
-            [{
-                title: 'Commands available to everyone', rows: [
-                    { id: '1', title: '!help', description: 'Help commands' },
-                    { id: '2', title: '!classes', description: 'Classes for the week' },
-                    { id: '3', title: '!class', description: "Today's class" },
-                    { id: '4', title: '!uptime', description: 'How long bot has been active' },
-                ]
-            },
-            contact.id.user === SUPER_ADMIN && {
-                title: 'Commands available to the boss only', rows: [
-                    { id: '5', title: '!everyone', description: 'Ping everyone in the group' },
-                    { id: '6', title: '!mute', description: 'Shut the bot up' },
-                    { id: '7', title: '!unmute', description: 'Allow the bot to talk' },
-                ]
-            }],
-            'Hey there 👋🏽',
-            'Powered by Ethereal bot'
-        );
-        // const button = new Buttons(
-        //     "Body of message",
-        //     [
-        //         { id: '1', body: 'button 1' },
-        //         { id: '2', body: 'button 2' },
-        //     ],
-        //     'Title of message',
-        //     'Powered by Ethereal bot'
-        // );
-        // const chat = await msg.getChat();
-        // msg.reply(button)
-        msg.reply(list);
+        const chat_from_contact = await contact.getChat();
+
+        const current_subscribed = await getUsersToNotifyForClass();
+        if (!current_subscribed.includes(contact.id.user)) {
+            msg.reply(pickRandomReply(NOTIFY_REPLIES));
+            chat_from_contact.sendMessage("Will now notify you for class 🐦");
+            await addUserToBeNotified(contact.id.user);
+        } else {
+            await msg.reply("You are already subscribed🐦");
+            console.log('Already subscribed')
+        }
+    }
+})
+
+
+// Stop user from being notified for class
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!notify' && msg.body.toLowerCase().split(' ')[1] === 'stop') {
+        const contact = await msg.getContact();
+        const current_subscribed = await getUsersToNotifyForClass();
+
+        if (current_subscribed.includes(contact.id.user)) {
+            await removeUserToBeNotified(contact.id.user);
+            msg.reply("I won't remind you to go to class ✅");
+        } else {
+            await msg.reply("You weren't subscribed in the first place 🤔");
+        }
     }
 })
 
