@@ -43,3 +43,13 @@ exports.msToHMS = (duration) => {
 
     return { hours, minutes, seconds }
 }
+
+
+// exports.createDynamicVariable = () => {
+//     const current_time = new Date().getTime();
+//     const new_var = 'a' + current_time;
+//     globalThis[new_var] = 0;
+//     TIMEOUT_VARIABLES.push(new_var);
+//     console.log(this.TIMEOUT_VARIABLES)
+//     return new_var;
+// }

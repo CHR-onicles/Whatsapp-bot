@@ -20,7 +20,7 @@ exports.CLASSES = [
         courses: [
             { name: '_Compilers_ | ⏰9:30am | 🏠E10', duration: 2 },
             { name: '_Theory & Survey_ | ⏰3:30pm | 🏠JQB09', duration: 2 },
-            { name: '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1', duration: 2 }
+            { name: '_Soft. Modelling_ | ⏰11:30pm | 🏠LOT1', duration: 2 }
         ]
     },
     {
