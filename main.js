@@ -397,7 +397,7 @@ client.on('message', async (msg) => {
             chat_from_contact.sendMessage("Will now notify you for class 🐦");
             await addUserToBeNotified(contact.id.user);
         } else {
-            await msg.reply("You are already subscribed🐦");
+            await msg.reply("You are already being notified for class🐦");
             console.log('Already subscribed')
         }
     }
@@ -458,19 +458,19 @@ const notificationTimeCalc = (course) => {
     if (time_left_in_ms < 0) return;
 
     if (two_hrs_ms > time_left_in_ms) {
-        console.log("Less than 2hrs left to remind");
+        console.log("Less than 2hrs left to remind for", course.name.split('|')[0]);
     } else {
         timeout_two_hrs = time_left_in_ms - two_hrs_ms;
     }
 
     if (one_hr_ms > time_left_in_ms) {
-        console.log("Less than 1 hr left to remind");
+        console.log("Less than 1 hr left to remind for", course.name.split('|')[0]);
     } else {
         timeout_one_hr = time_left_in_ms - one_hr_ms;
     }
 
     if (thirty_mins_ms > time_left_in_ms) {
-        console.log("Less than 30 mins left to remind");
+        console.log("Less than 30 mins left to remind for", course.name.split('|')[0]);
     } else {
         timeout_thirty_mins = time_left_in_ms - thirty_mins_ms;
     }
