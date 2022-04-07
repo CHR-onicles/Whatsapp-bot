@@ -430,7 +430,7 @@ const scheduleDM = async (chat, timeout, text_to_be_sent) => {
 
 
 // Continuously notify users who have opted in to class notifications
-const notificationTimeCalc = () => {
+const notificationTimeCalc = (course) => {
     // restart self(BOD) when the day begins, possibly at 03:00 if bot is still online
     const today_day = new Date().toString().split(' ')[0];
 
@@ -449,40 +449,33 @@ const notificationTimeCalc = () => {
         return;
     }
 
-    const { courses } = CLASSES.find(class_obj => {
-        if (class_obj.day.slice(0, 3) === today_day) {
-            return class_obj;
-        }
-    });
+    const class_time = extractTime(course.name);
+    const class_time_hrs = +class_time.split(':')[0];
+    const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
 
-    courses.map(course => {
-        const class_time = extractTime(course.name);
-        const class_time_hrs = +class_time.split(':')[0];
-        const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+    const cur_time = new Date();
+    const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
+    const time_left_in_ms = new_class_time - cur_time;
+    if (time_left_in_ms < 0) return;
 
-        const cur_time = new Date();
-        const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
-        const time_left_in_ms = new_class_time - cur_time;
-        if (time_left_in_ms < 0) return;
+    if (two_hrs_ms > time_left_in_ms) {
+        console.log("Less than 2hrs left to remind");
+    } else {
+        timeout_two_hrs = time_left_in_ms - two_hrs_ms;
+    }
 
-        if (two_hrs_ms > time_left_in_ms) {
-            console.log("Less than 2hrs left to remind");
-        } else {
-            timeout_two_hrs = time_left_in_ms - two_hrs_ms;
-        }
+    if (one_hr_ms > time_left_in_ms) {
+        console.log("Less than 1 hr left to remind");
+    } else {
+        timeout_one_hr = time_left_in_ms - one_hr_ms;
+    }
 
-        if (one_hr_ms > time_left_in_ms) {
-            console.log("Less than 1 hr left to remind");
-        } else {
-            timeout_one_hr = time_left_in_ms - one_hr_ms;
-        }
+    if (thirty_mins_ms > time_left_in_ms) {
+        console.log("Less than 30 mins left to remind");
+    } else {
+        timeout_thirty_mins = time_left_in_ms - thirty_mins_ms;
+    }
 
-        if (thirty_mins_ms > time_left_in_ms) {
-            console.log("Less than 30 mins left to remind");
-        } else {
-            timeout_thirty_mins = time_left_in_ms - thirty_mins_ms;
-        }
-    })
     console.log(timeout_two_hrs, timeout_one_hr, timeout_thirty_mins)
     return { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins };
 }
@@ -493,23 +486,23 @@ client.on('ready', async () => {
     const today_day = new Date().toString().split(' ')[0];
     const subscribed_users = await getUsersToNotifyForClass();
     const chats = await client.getChats();
-    const { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins } = notificationTimeCalc();
-    const will_send_2hr_notif = false;
-    const will_send_1hr_notif = false;
-    const will_send_30mins_notif = false;
+    let will_send_2hr_notif = false;
+    let will_send_1hr_notif = false;
+    let will_send_30mins_notif = false;
 
-    
+
     const { courses } = CLASSES.find(class_obj => {
         if (class_obj.day.slice(0, 3) === today_day) {
             return class_obj;
         }
     });
-    
+
     courses.forEach(course => {
         const class_time = extractTime(course.name);
         const class_time_hrs = +class_time.split(':')[0];
         const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
-    
+        const { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins } = notificationTimeCalc(course);
+
         const cur_time = new Date();
         const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
         const time_left_in_ms = new_class_time - cur_time;
@@ -521,33 +514,25 @@ client.on('ready', async () => {
             if (index === 0) { // to make sure the code below runs only once to prevent repeated messages
                 if (timeout_two_hrs > 0) {
                     ++VARIABLES_COUNTER;
-                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder!\nYou have ' + course.name.split('|')[0]+ ' in 2 hours')}, timeout_two_hrs)")
+                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours')}, timeout_two_hrs)")
                     will_send_2hr_notif = true;
+                    console.log('Sending 2hr notif for', course.name.split('|')[0])
                 }
                 if (timeout_one_hr > 0) {
                     ++VARIABLES_COUNTER;
                     eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour')}, timeout_one_hr)")
                     will_send_1hr_notif = true;
+                    console.log('Sending 1hr notif for', course.name.split('|')[0])
                 }
                 if (timeout_thirty_mins > 0) {
                     ++VARIABLES_COUNTER;
                     eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes')}, timeout_thirty_mins)")
                     will_send_30mins_notif = true;
+                    console.log('Sending 30min notif for', course.name.split('|')[0])
                 }
             }
         })
     })
-
-    if (will_send_2hr_notif) {
-        console.log('Sending 2hr notif')
-    }
-    if (will_send_1hr_notif) {
-        console.log('Sending 1hr notif')
-    }
-    if (will_send_30mins_notif) {
-        console.log('Sending 30mins notif')
-    }
-
 })
 
 app.get('/reset-notif-calc', (req, res) => {
