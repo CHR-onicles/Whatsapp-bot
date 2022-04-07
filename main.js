@@ -4,9 +4,9 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
-const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink } = require('./middleware');
+const { pickRandomReply, extractTime, msToHMS, extractCommand, createDynamicVariable } = require('./utils/helpers');
+const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES } = require('./utils/data');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
 
 
 
@@ -18,7 +18,8 @@ const BOT_NUMBER = process.env.BOT_NUMBER;
 const BOT_PUSHNAME = 'Ethereal';
 const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // chat.id.user is better than chat.name as it is immutable
 const port = process.env.PORT || 3000;
-let BOT_START_TIME = null;
+let BOT_START_TIME = 0;
+let VARIABLES_COUNTER = 0;
 
 
 // --------------------------------------------------
@@ -60,7 +61,7 @@ app.listen(port, () => console.log(`server is running on port ${port}`));
 
 // client.on('ready', async () => {
 //     const chats = await client.getChats();
-//     console.log(chats);
+//     console.log(chats[0]);
 // })
 
 // client.on('authenticated', () => {
@@ -77,6 +78,10 @@ app.listen(port, () => console.log(`server is running on port ${port}`));
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!ping' && await getMutedStatus() === false) {
         msg.reply('pong 🏓');
+        const contact = await msg.getContact();
+        console.log('Contact:', contact);
+        const chatFC = await contact.getChat();
+        console.log('ChatFC:', chatFC)
     }
 });
 
@@ -113,10 +118,9 @@ client.on('message', async (msg) => {
 
 // Reply if pinged
 client.on('message', async (msg) => {
-
     if (msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) {
         const first_word = msg.body.toLowerCase().split(' ')[0];
-        const contact = await msg.getContact();
+        const contact = await msg.getContact(); // will be used by the replies array later
 
         const PING_REPLIES = [
             `${contact.id.user !== SUPER_ADMIN ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
@@ -134,8 +138,34 @@ client.on('message', async (msg) => {
             `Yo 🐦`,
         ]
 
+        const list = new List(
+            '\nThis is a list of commands the bot can perform',
+            'See options',
+            [{
+                title: 'Commands available to everyone', rows: [
+                    { id: '1', title: '!help', description: 'Help commands' },
+                    { id: '2', title: '!class', description: "Today's class" },
+                    { id: '3', title: '!classes', description: 'Classes for the week' },
+                    { id: '4', title: '!uptime', description: 'How long bot has been active' },
+                    { id: '5', title: '!notify', description: 'Get notified for class' },
+                    { id: '6', title: '!notify stop', description: 'Stop getting notified for class' },
+                ]
+            },
+                // {
+                //     title: 'Commands available to EPiC Devs only', rows: [
+                //         { id: '100', title: '!everyone', description: 'Ping everyone in the group' },
+                //         { id: '101', title: '!mute', description: 'Shut the bot up' },
+                //         { id: '102', title: '!unmute', description: 'Allow the bot to talk' },
+                //     ]
+                // }
+            ],
+            pickRandomReply(PING_REPLIES),
+            'Powered by Ethereal bot'
+        );
+
+
         if (first_word.slice(1, first_word.length) === BOT_NUMBER) {
-            await msg.reply(pickRandomReply(PING_REPLIES));
+            await msg.reply(list);
         }
     }
 });
@@ -215,7 +245,7 @@ client.on('message', async (msg) => {
         const upcoming_array = [];
         let text = "*Today's classes* ☀\n\n";
 
-        courses.map(course => {
+        courses.forEach(course => {
             const class_time = extractTime(course.name);
             const class_time_hrs = +class_time.split(':')[0]
             const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
@@ -300,16 +330,48 @@ client.on('message', async (msg) => {
 })
 
 
-//! Send a direct message to a user *(Work In Progress)*
-client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!dm' && await getMutedStatus() === false) {
-        const contact = await msg.getContact();
-        const chat_from_contact = await contact.getChat();
+//! Schedule DM
+// client.on('message', async (msg) => {
+//     if (extractCommand(msg) === '!sdm' && await getMutedStatus() === false) {
+//         const contact = await msg.getContact();
+//         const chat_from_contact = await contact.getChat();
+//         // write regex test here
+//         const pattern = /!sdm\s+[1-9](h|m|s)\s+("|')[\w\s]+("|')/
+//         if (!pattern.test(msg.body)) {
+//             await msg.reply(`❌ Wrong format\n\n✅ The correct format is:\n*!sdm (1-9)(h|m|s) ("message")*\n\nExample: !sdm 5m "How are you?"\n\nThis sends the message: 'How are you?' in 5 minutes`)
+//         } else {
+//             await msg.reply("✅");
 
-        chat_from_contact.sendMessage("Sliding in DM - ☀");
-    }
-})
+//             const time = msg.body.split(' ')[1];
+//             const time_value = +time[0];
+//             const time_unit = time[1].toLowerCase();
+//             let message = null;
 
+//             if (msg.body.includes(`"`)) {
+//                 message = msg.body.split(`"`)[1];
+//             } else if (msg.body.includes(`'`)) {
+//                 message = msg.body.split(`'`)[1];
+//             }
+//             let timeout = null;
+
+//             switch (time_unit) {
+//                 case 's':
+//                     timeout = time_value * 1000;
+//                     break;
+//                 case 'm':
+//                     timeout = time_value * 60 * 1000;
+//                     break;
+//                 default:
+//                     break;
+//             }
+
+//             setTimeout(async () => {
+//                 await chat_from_contact.sendMessage(message);
+//             }, timeout);
+//         }
+//     }
+// })
+/**/
 
 // Check bot uptime
 client.on('message', async (msg) => {
@@ -321,46 +383,163 @@ client.on('message', async (msg) => {
 })
 
 
-//! Send button - Will prolly be better under "bot ping" command *(Work In Progress)*
+// Add user to notification list for class
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!options' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === '!notify' &&
+        msg.body.toLowerCase().split(' ')[1] !== 'stop' &&
+        await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const list = new List(
-            '\nThis is a list of commands the bot can perform',
-            'See options',
-            [{
-                title: 'Commands available to everyone', rows: [
-                    { id: '1', title: '!help', description: 'Help commands' },
-                    { id: '2', title: '!classes', description: 'Classes for the week' },
-                    { id: '3', title: '!class', description: "Today's class" },
-                    { id: '4', title: '!uptime', description: 'How long bot has been active' },
-                ]
-            },
-            contact.id.user === SUPER_ADMIN && {
-                title: 'Commands available to the boss only', rows: [
-                    { id: '5', title: '!everyone', description: 'Ping everyone in the group' },
-                    { id: '6', title: '!mute', description: 'Shut the bot up' },
-                    { id: '7', title: '!unmute', description: 'Allow the bot to talk' },
-                ]
-            }],
-            'Hey there 👋🏽',
-            'Powered by Ethereal bot'
-        );
-        // const button = new Buttons(
-        //     "Body of message",
-        //     [
-        //         { id: '1', body: 'button 1' },
-        //         { id: '2', body: 'button 2' },
-        //     ],
-        //     'Title of message',
-        //     'Powered by Ethereal bot'
-        // );
-        // const chat = await msg.getChat();
-        // msg.reply(button)
-        msg.reply(list);
+        const chat_from_contact = await contact.getChat();
+
+        const current_subscribed = await getUsersToNotifyForClass();
+        if (!current_subscribed.includes(contact.id.user)) {
+            msg.reply(pickRandomReply(NOTIFY_REPLIES));
+            chat_from_contact.sendMessage("Will now notify you for class 🐦");
+            await addUserToBeNotified(contact.id.user);
+        } else {
+            await msg.reply("You are already subscribed🐦");
+            console.log('Already subscribed')
+        }
     }
 })
 
+
+// Stop user from being notified for class
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!notify' && msg.body.toLowerCase().split(' ')[1] === 'stop') {
+        const contact = await msg.getContact();
+        const current_subscribed = await getUsersToNotifyForClass();
+
+        if (current_subscribed.includes(contact.id.user)) {
+            await removeUserToBeNotified(contact.id.user);
+            msg.reply("I won't remind you to go to class ✅");
+        } else {
+            await msg.reply("You weren't subscribed in the first place 🤔");
+        }
+    }
+})
+
+
+//! Schedule a direct message to a user - smaller function *(Work In Progress)*
+const scheduleDM = async (chat, timeout, text_to_be_sent) => {
+    setTimeout(async () => {
+        await chat.sendMessage(text_to_be_sent);
+    }, timeout);
+}
+
+
+// Continuously notify users who have opted in to class notifications
+const notificationTimeCalc = (course) => {
+    // restart self(BOD) when the day begins, possibly at 03:00 if bot is still online
+    const today_day = new Date().toString().split(' ')[0];
+
+    // CONSTANTS for notification times
+    const two_hrs_ms = 120 * 60 * 1000;
+    const one_hr_ms = 60 * 60 * 1000;
+    const thirty_mins_ms = 30 * 60 * 1000;
+
+
+    // timeouts for the 3 reminder times
+    let timeout_two_hrs = 0;
+    let timeout_one_hr = 0;
+    let timeout_thirty_mins = 0;
+
+    if (today_day === 'Sat' || today_day === 'Sun') {
+        return;
+    }
+
+    const class_time = extractTime(course.name);
+    const class_time_hrs = +class_time.split(':')[0];
+    const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+
+    const cur_time = new Date();
+    const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
+    const time_left_in_ms = new_class_time - cur_time;
+    if (time_left_in_ms < 0) return;
+
+    if (two_hrs_ms > time_left_in_ms) {
+        console.log("Less than 2hrs left to remind");
+    } else {
+        timeout_two_hrs = time_left_in_ms - two_hrs_ms;
+    }
+
+    if (one_hr_ms > time_left_in_ms) {
+        console.log("Less than 1 hr left to remind");
+    } else {
+        timeout_one_hr = time_left_in_ms - one_hr_ms;
+    }
+
+    if (thirty_mins_ms > time_left_in_ms) {
+        console.log("Less than 30 mins left to remind");
+    } else {
+        timeout_thirty_mins = time_left_in_ms - thirty_mins_ms;
+    }
+
+    console.log(timeout_two_hrs, timeout_one_hr, timeout_thirty_mins)
+    return { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins };
+}
+
+
+//! Start timer function to set notification
+client.on('ready', async () => {
+    //! refactor everything below into function to be reused
+    //! the command !notify stop should run the function again to reinitialize stuff
+    const today_day = new Date().toString().split(' ')[0];
+    const subscribed_users = await getUsersToNotifyForClass();
+    const chats = await client.getChats();
+    let will_send_2hr_notif = false;
+    let will_send_1hr_notif = false;
+    let will_send_30mins_notif = false;
+
+
+    const { courses } = CLASSES.find(class_obj => {
+        if (class_obj.day.slice(0, 3) === today_day) {
+            return class_obj;
+        }
+    });
+
+    courses.forEach(course => {
+        const class_time = extractTime(course.name);
+        const class_time_hrs = +class_time.split(':')[0];
+        const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+        const { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins } = notificationTimeCalc(course);
+
+        const cur_time = new Date();
+        const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
+        const time_left_in_ms = new_class_time - cur_time;
+        if (time_left_in_ms < 0) return;
+
+        subscribed_users.forEach((user, index) => {
+            const chat_from_user = chats.find(chat => chat.id.user === user);
+
+            if (index === 0) { // to make sure the code below runs only once to prevent repeated messages
+                if (timeout_two_hrs > 0) {
+                    ++VARIABLES_COUNTER;
+                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours')}, timeout_two_hrs)")
+                    will_send_2hr_notif = true;
+                    console.log('Sending 2hr notif for', course.name.split('|')[0])
+                }
+                if (timeout_one_hr > 0) {
+                    ++VARIABLES_COUNTER;
+                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour')}, timeout_one_hr)")
+                    will_send_1hr_notif = true;
+                    console.log('Sending 1hr notif for', course.name.split('|')[0])
+                }
+                if (timeout_thirty_mins > 0) {
+                    ++VARIABLES_COUNTER;
+                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!')}, timeout_thirty_mins)")
+                    will_send_30mins_notif = true;
+                    console.log('Sending 30min notif for', course.name.split('|')[0])
+                }
+            }
+        })
+    })
+})
+
+app.get('/reset-notif-calc', (req, res) => {
+    // add check for if peopleToNotify is empty, cancel operation for that day or something
+    res.send('<h1>Restarting the class notification calculation function.</h1>')
+})
 
 
 client.initialize();

@@ -1,6 +1,6 @@
 // MAIN MIDDLEWARE TO HANDLE INTERACTIONS WITH DATABASE
 
-const { isMuted, mute, unmute, getAllLinks, getAllAnnouncements, addSuperAdmin, addAnnouncement, addLink, removeSuperAdmin } = require('../models/misc');
+const { isMuted, mute, unmute, getAllLinks, getAllAnnouncements, addSuperAdmin, addAnnouncement, addLink, removeSuperAdmin, getUsersToNotifyForClass, addUserToBeNotified, removeUserToBeNotified } = require('../models/misc');
 
 
 exports.muteBot = async () => {
@@ -38,4 +38,20 @@ exports.getAllAnnouncements = async () => {
 exports.addAnnouncement = async (ann) => {
     await addAnnouncement(ann);
     console.log('New announcement added');
+}
+
+exports.getUsersToNotifyForClass = async () => {
+    const users = await getUsersToNotifyForClass();
+    // console.log(users);
+    return users;
+}
+
+exports.addUserToBeNotified = async (user) => {
+    await addUserToBeNotified(user);
+    console.log("User: " + user + " subscribed to be notified for class");
+}
+
+exports.removeUserToBeNotified = async (user) => {
+    await removeUserToBeNotified(user);
+    console.log("User: " + user + " unsubscribed from being notified for class");
 }

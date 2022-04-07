@@ -47,6 +47,10 @@ exports.HELP_COMMANDS = [
         desc: "check if I'm available 🙋🏽‍♂️"
     },
     {
+        command: "*!uptime*",
+        desc: "see how long I've been awake🟢"
+    },
+    {
         command: "*!help*",
         desc: "get commands that can be used with me 💡"
     },
@@ -69,6 +73,14 @@ exports.HELP_COMMANDS = [
     {
         command: "*!class*",
         desc: "get today's classes 📕"
+    },
+    {
+        command: "*!notify",
+        desc: "get notified for class 🔔"
+    },
+    {
+        command: "*!notify stop",
+        desc: "stop getting notified for class 🔕"
     }
 ]
 
@@ -89,4 +101,11 @@ exports.UNMUTE_REPLIES = [
     'Speaking freely now 👍🏽',
     'Acknowledged ✅',
     'Ya yeet🐦'
+]
+
+exports.NOTIFY_REPLIES = [
+    'Check dm 🐦',
+    '✅',
+    'Dm 🐦',
+    'Pms 🐦',
 ]

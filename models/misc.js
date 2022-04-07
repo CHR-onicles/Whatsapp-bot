@@ -10,6 +10,7 @@ const MiscellaneousSchema = new Schema({
     allLinks: [String],
     allAnnouncements: [String],
     superAdmins: [String],
+    notifyForClass: [String],
     numOfCommands: Number, // to be used later
 });
 
@@ -57,7 +58,7 @@ exports.unmute = async () => {
 }
 
 exports.getAllLinks = async () => {
-    const links = await MiscellaneousModel.findOne(DEFAULT_ID, {allLinks: 1});
+    const links = await MiscellaneousModel.findOne(DEFAULT_ID, { allLinks: 1 });
     // console.log(links.allLinks);
     return links.allLinks;
 }
@@ -81,7 +82,7 @@ exports.removeAllLinks = async () => {
 }
 
 exports.getAllAnnouncements = async () => {
-    const ann = await MiscellaneousModel.findOne(DEFAULT_ID, {allAnnouncements: 1});
+    const ann = await MiscellaneousModel.findOne(DEFAULT_ID, { allAnnouncements: 1 });
     // console.log(ann.allAnnouncements);
     return ann.allAnnouncements;
 }
@@ -122,6 +123,30 @@ exports.addSuperAdmin = async (newAdmin) => {
 exports.removeSuperAdmin = async (admin) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { superAdmins: admin } });
+        // console.log(res);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getUsersToNotifyForClass = async () => {
+    const res = await MiscellaneousModel.findOne(DEFAULT_ID, { notifyForClass: 1 });
+    // console.log(res);
+    return res.notifyForClass;
+}
+
+exports.addUserToBeNotified = async (newUser) => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { notifyForClass: newUser } });
+        // console.log(res);
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+exports.removeUserToBeNotified = async (user) => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, {$pull: {notifyForClass: user}});
         // console.log(res);
     } catch (error) {
         console.log(error);
