@@ -144,8 +144,8 @@ client.on('message', async (msg) => {
             [{
                 title: 'Commands available to everyone', rows: [
                     { id: '1', title: '!help', description: 'Help commands' },
-                    { id: '2', title: '!classes', description: 'Classes for the week' },
-                    { id: '3', title: '!class', description: "Today's class" },
+                    { id: '2', title: '!class', description: "Today's class" },
+                    { id: '3', title: '!classes', description: 'Classes for the week' },
                     { id: '4', title: '!uptime', description: 'How long bot has been active' },
                     { id: '5', title: '!notify', description: 'Get notified for class' },
                     { id: '6', title: '!notify stop', description: 'Stop getting notified for class' },
@@ -483,6 +483,8 @@ const notificationTimeCalc = (course) => {
 
 //! Start timer function to set notification
 client.on('ready', async () => {
+    //! refactor everything below into function to be reused
+    //! the command !notify stop should run the function again to reinitialize stuff
     const today_day = new Date().toString().split(' ')[0];
     const subscribed_users = await getUsersToNotifyForClass();
     const chats = await client.getChats();
@@ -526,7 +528,7 @@ client.on('ready', async () => {
                 }
                 if (timeout_thirty_mins > 0) {
                     ++VARIABLES_COUNTER;
-                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes')}, timeout_thirty_mins)")
+                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!')}, timeout_thirty_mins)")
                     will_send_30mins_notif = true;
                     console.log('Sending 30min notif for', course.name.split('|')[0])
                 }
