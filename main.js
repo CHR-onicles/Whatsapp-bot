@@ -474,9 +474,9 @@ client.on('ready', async () => {
     const today_day = new Date().toString().split(' ')[0];
     const subscribed_users = await getUsersToNotifyForClass();
     const chats = await client.getChats();
-    let will_send_2hr_notif = false;
-    let will_send_1hr_notif = false;
-    let will_send_30mins_notif = false;
+    // let will_send_2hr_notif = false;
+    // let will_send_1hr_notif = false;
+    // let will_send_30mins_notif = false;
 
 
     const { courses } = CLASSES.find(class_obj => {
@@ -496,29 +496,29 @@ client.on('ready', async () => {
         const time_left_in_ms = new_class_time - cur_time;
         if (time_left_in_ms < 0) return;
 
-        subscribed_users.forEach((user, index) => {
+        subscribed_users.forEach(user => {
             const chat_from_user = chats.find(chat => chat.id.user === user);
 
-            if (index === 0) { // to make sure the code below runs only once to prevent repeated messages
-                if (timeout_two_hrs > 0) {
-                    ++VARIABLES_COUNTER;
-                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours')}, timeout_two_hrs)")
-                    will_send_2hr_notif = true;
-                    console.log('Sending 2hr notif for', course.name.split('|')[0])
-                }
-                if (timeout_one_hr > 0) {
-                    ++VARIABLES_COUNTER;
-                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour')}, timeout_one_hr)")
-                    will_send_1hr_notif = true;
-                    console.log('Sending 1hr notif for', course.name.split('|')[0])
-                }
-                if (timeout_thirty_mins > 0) {
-                    ++VARIABLES_COUNTER;
-                    eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!')}, timeout_thirty_mins)")
-                    will_send_30mins_notif = true;
-                    console.log('Sending 30min notif for', course.name.split('|')[0])
-                }
+            // if (index === 0) { // to make sure the code below runs only once to prevent repeated messages
+            if (timeout_two_hrs > 0) {
+                ++VARIABLES_COUNTER;
+                eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours')}, timeout_two_hrs)")
+                // will_send_2hr_notif = true;
+                console.log('Sending 2hr notif for', course.name.split('|')[0], ' to', user)
             }
+            if (timeout_one_hr > 0) {
+                ++VARIABLES_COUNTER;
+                eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour')}, timeout_one_hr)")
+                // will_send_1hr_notif = true;
+                console.log('Sending 1hr notif for', course.name.split('|')[0], ' to', user)
+            }
+            if (timeout_thirty_mins > 0) {
+                ++VARIABLES_COUNTER;
+                eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!')}, timeout_thirty_mins)")
+                // will_send_30mins_notif = true;
+                console.log('Sending 30min notif for', course.name.split('|')[0], ' to', user)
+            }
+            // }
         })
     })
 })
