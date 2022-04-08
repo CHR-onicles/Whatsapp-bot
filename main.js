@@ -442,7 +442,7 @@ const notificationTimeCalc = (course) => {
     const cur_time = new Date();
     const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
     const time_left_in_ms = new_class_time - cur_time;
-    if (time_left_in_ms < 0) return;
+    // if (time_left_in_ms < 0) return;
 
     if (two_hrs_ms > time_left_in_ms) {
         console.log("Less than 2hrs left to remind for", course.name.split('|')[0]);
