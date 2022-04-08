@@ -4,7 +4,7 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { pickRandomReply, extractTime, msToHMS, extractCommand, createDynamicVariable } = require('./utils/helpers');
+const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
 const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
 
@@ -78,10 +78,6 @@ app.listen(port, () => console.log(`server is running on port ${port}`));
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!ping' && await getMutedStatus() === false) {
         msg.reply('pong 🏓');
-        const contact = await msg.getContact();
-        console.log('Contact:', contact);
-        const chatFC = await contact.getChat();
-        console.log('ChatFC:', chatFC)
     }
 });
 
@@ -335,7 +331,6 @@ client.on('message', async (msg) => {
 //     if (extractCommand(msg) === '!sdm' && await getMutedStatus() === false) {
 //         const contact = await msg.getContact();
 //         const chat_from_contact = await contact.getChat();
-//         // write regex test here
 //         const pattern = /!sdm\s+[1-9](h|m|s)\s+("|')[\w\s]+("|')/
 //         if (!pattern.test(msg.body)) {
 //             await msg.reply(`❌ Wrong format\n\n✅ The correct format is:\n*!sdm (1-9)(h|m|s) ("message")*\n\nExample: !sdm 5m "How are you?"\n\nThis sends the message: 'How are you?' in 5 minutes`)
