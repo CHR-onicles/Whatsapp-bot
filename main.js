@@ -420,14 +420,6 @@ client.on('message', async (msg) => {
 })
 
 
-//! Schedule a direct message to a user - smaller function *(Work In Progress)*
-const scheduleDM = async (chat, timeout, text_to_be_sent) => {
-    setTimeout(async () => {
-        await chat.sendMessage(text_to_be_sent);
-    }, timeout);
-}
-
-
 // Continuously notify users who have opted in to class notifications
 const notificationTimeCalc = (course) => {
     // restart self(BOD) when the day begins, possibly at 03:00 if bot is still online
