@@ -211,7 +211,7 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
         let text = "If *Software Modelling* is your elective:\n\n";
         CLASSES.forEach(class_obj => {
-            text += "*" + class_obj.day + "*:\n" + class_obj.courses.map(course => course.name + "\n").join('') + "\n";
+            text += "*" + class_obj.day + "*:\n" + class_obj.courses.map(course => '→ ' + course.name + "\n").join('') + "\n";
             // added join('') to map() to remove the default comma after each value in array
         })
         await msg.reply(text);
@@ -467,7 +467,6 @@ client.on('ready', async () => {
     const subscribed_users = await getUsersToNotifyForClass();
     const chats = await client.getChats();
 
-
     if (today_day === 'Sat' || today_day === 'Sun') {
         console.log("No courses to be notified for during the weekend!");
         return;
@@ -478,7 +477,6 @@ client.on('ready', async () => {
             return class_obj;
         }
     });
-
 
     courses.forEach(course => {
         const class_time = extractTime(course.name);
@@ -513,9 +511,24 @@ client.on('ready', async () => {
     })
 })
 
+// Endpoint to hit in order to restart calculations for class notifications
 app.get('/reset-notif-calc', (req, res) => {
     // add check for if peopleToNotify is empty, cancel operation for that day or something
     res.send('<h1>Restarting the class notification calculation function.</h1>')
+})
+
+
+// Get users on class notifications list
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
+        const contact = await msg.getContact();
+        if (contact.id.user !== SUPER_ADMIN) {
+            await msg.reply("Sorry, this command is not available to you.")
+        }
+        const users = await getUsersToNotifyForClass();
+
+        await msg.reply('The following users have agreed to be notified for class:\n\n' + users.map(user =>  '→ ' + user + '\n').join(''));
+    }
 })
 
 

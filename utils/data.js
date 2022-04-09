@@ -100,12 +100,13 @@ exports.UNMUTE_REPLIES = [
     '🥳',
     'Speaking freely now 👍🏽',
     'Acknowledged ✅',
-    'Ya yeet🐦'
+    'Ya yeet🐦',
+    '✅',
 ]
 
 exports.NOTIFY_REPLIES = [
     'Check dm 🐦',
     '✅',
     'Dm 🐦',
-    'Pms 🐦',
+    'Check your Pms 🐦',
 ]
