@@ -75,11 +75,11 @@ exports.HELP_COMMANDS = [
         desc: "get today's classes 📕"
     },
     {
-        command: "*!notify",
+        command: "*!notify*",
         desc: "get notified for class 🔔"
     },
     {
-        command: "*!notify stop",
+        command: "*!notify stop*",
         desc: "stop getting notified for class 🔕"
     }
 ]

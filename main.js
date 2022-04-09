@@ -389,7 +389,7 @@ client.on('message', async (msg) => {
         const current_subscribed = await getUsersToNotifyForClass();
         if (!current_subscribed.includes(contact.id.user)) {
             msg.reply(pickRandomReply(NOTIFY_REPLIES));
-            chat_from_contact.sendMessage("Will now notify you for class 🐦");
+            chat_from_contact.sendMessage("You will now be notified periodically for class 🐦");
             await addUserToBeNotified(contact.id.user);
         } else {
             await msg.reply("You are already being notified for class🐦");
@@ -417,23 +417,15 @@ client.on('message', async (msg) => {
 
 // Continuously notify users who have opted in to class notifications
 const notificationTimeCalc = (course) => {
-    // restart self(BOD) when the day begins, possibly at 03:00 if bot is still online
-    const today_day = new Date().toString().split(' ')[0];
-
-    // CONSTANTS for notification times
+    // Constants for notification times
     const two_hrs_ms = 120 * 60 * 1000;
     const one_hr_ms = 60 * 60 * 1000;
     const thirty_mins_ms = 30 * 60 * 1000;
 
-
-    // timeouts for the 3 reminder times
+    // Timeouts for the 3 reminder times
     let timeout_two_hrs = 0;
     let timeout_one_hr = 0;
     let timeout_thirty_mins = 0;
-
-    if (today_day === 'Sat' || today_day === 'Sun') {
-        return;
-    }
 
     const class_time = extractTime(course.name);
     const class_time_hrs = +class_time.split(':')[0];
@@ -476,11 +468,17 @@ client.on('ready', async () => {
     const chats = await client.getChats();
 
 
+    if (today_day === 'Sat' || today_day === 'Sun') {
+        console.log("No courses to be notified for during the weekend!");
+        return;
+    }
+
     const { courses } = CLASSES.find(class_obj => {
         if (class_obj.day.slice(0, 3) === today_day) {
             return class_obj;
         }
     });
+
 
     courses.forEach(course => {
         const class_time = extractTime(course.name);
