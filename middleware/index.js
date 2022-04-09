@@ -55,3 +55,8 @@ exports.removeUserToBeNotified = async (user) => {
     await removeUserToBeNotified(user);
     console.log("User: " + user + " unsubscribed from being notified for class");
 }
+
+exports.getUsersToNotifyForClass = async () => {
+    const users = await getUsersToNotifyForClass();
+    return users;
+}

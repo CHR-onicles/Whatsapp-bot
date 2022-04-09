@@ -75,11 +75,11 @@ exports.HELP_COMMANDS = [
         desc: "get today's classes 📕"
     },
     {
-        command: "*!notify",
+        command: "*!notify*",
         desc: "get notified for class 🔔"
     },
     {
-        command: "*!notify stop",
+        command: "*!notify stop*",
         desc: "stop getting notified for class 🔕"
     }
 ]
@@ -100,12 +100,13 @@ exports.UNMUTE_REPLIES = [
     '🥳',
     'Speaking freely now 👍🏽',
     'Acknowledged ✅',
-    'Ya yeet🐦'
+    'Ya yeet🐦',
+    '✅',
 ]
 
 exports.NOTIFY_REPLIES = [
     'Check dm 🐦',
     '✅',
     'Dm 🐦',
-    'Pms 🐦',
+    'Check your Pms 🐦',
 ]
