@@ -43,44 +43,59 @@ exports.CLASSES = [
 
 exports.HELP_COMMANDS = [
     {
+        availableTo: 'everyone',
         command: "*!ping*",
         desc: "check if I'm available 🙋🏽‍♂️"
     },
     {
+        availableTo: 'everyone',
         command: "*!uptime*",
         desc: "see how long I've been awake🟢"
     },
     {
+        availableTo: 'everyone',
         command: "*!help*",
         desc: "get commands that can be used with me 💡"
     },
     {
+        availableTo: 'admin',
         command: "*!mute*",
         desc: "get me to be quiet 😅"
     },
     {
+        availableTo: 'admin',
         command: "*!unmute*",
         desc: "allow me to talk 🙂"
     },
     {
+        availableTo: 'admin',
         command: "*!everyone*",
         desc: "ping everyone in the group 😮"
     },
     {
+        availableTo: 'everyone',
         command: "*!classes*",
         desc: "get all the classes you have this week 📚"
     },
     {
+        availableTo: 'everyone',
         command: "*!class*",
         desc: "get today's classes 📕"
     },
     {
+        availableTo: 'everyone',
         command: "*!notify*",
         desc: "get notified for class 🔔"
     },
     {
+        availableTo: 'everyone',
         command: "*!notify stop*",
         desc: "stop getting notified for class 🔕"
+    },
+    {
+        availableTo: 'admin',
+        command: "*!subs*",
+        desc: "get users who want to be notified for class"
     }
 ]
 
@@ -109,4 +124,34 @@ exports.NOTIFY_REPLIES = [
     '✅',
     'Dm 🐦',
     'Check your Pms 🐦',
+]
+
+exports.LINKS_BLACKLIST = [
+    'instagram',
+    'facebook',
+    'sefbenonline',
+    'audiomack',
+    'betway',
+    'sportybet',
+    'spotify',
+    'soundcloud',
+    'premierleague',
+    'hypeghnewsroom',
+    'museafrica',
+    'ghananewspoint',
+    'tunesgod',
+    'modernghana',
+]
+
+exports.WORDS_IN_LINKS_BLACKLIST = [
+    'music',
+    'bet',
+    'gift',
+    'anime',
+    'game',
+    'gaming',
+    'crypto',
+    'movie',
+    'VGMA',
+    'blog',
 ]
