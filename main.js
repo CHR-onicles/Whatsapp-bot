@@ -5,7 +5,7 @@ require('dotenv').config();
 
 require('./utils/db');
 const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
-const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES } = require('./utils/data');
+const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
 
 
@@ -19,7 +19,7 @@ const BOT_PUSHNAME = 'Ethereal';
 const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // chat.id.user is better than chat.name as it is immutable
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
-let VARIABLES_COUNTER = 0;
+let VARIABLES_COUNTER = 0; // used in eval statement later
 
 
 // --------------------------------------------------
@@ -57,7 +57,7 @@ app.all("*", (req, res) => {
 })
 
 
-app.listen(port, () => console.log(`server is running on port ${port}`));
+app.listen(port, () => console.log(`Server is running on port ${port}`));
 
 // client.on('ready', async () => {
 //     const chats = await client.getChats();
@@ -83,7 +83,7 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         if (contact.id.user !== GRANDMASTER) {
-            await msg.reply("Only the boss can use this, so you don't abuse it🐦");
+            await msg.reply("Only admins can use this, so that it is not abused 🐦");
             return;
         }
         const chat = await msg.getChat();
@@ -313,6 +313,17 @@ client.on('message', async (msg) => {
         const current_forwarded_links = await getAllLinks();
         // console.log(current_forwarded_links)
 
+        const blacklisted_stuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
+
+        for (let i = 0; i < blacklisted_stuff.length; ++i) {
+            if (extracted_link.includes(blacklisted_stuff[i])) {
+                console.log("Link contains a blacklisted item:", blacklisted_stuff[i]);
+                // add blackListedLinkCounter to schema later;
+                return;
+            }
+        }
+
+
         // console.log('recognized a link');
         // console.log('extracted link:', extracted_link);
         if (!current_forwarded_links.includes(msg.body)) {
@@ -325,7 +336,7 @@ client.on('message', async (msg) => {
 })
 
 
-//! Schedule DM
+//! Schedule DM - could be turned into a custom reminder feature for users
 // client.on('message', async (msg) => {
 //     if (extractCommand(msg) === '!sdm' && await getMutedStatus() === false) {
 //         const contact = await msg.getContact();
