@@ -519,9 +519,9 @@ client.on('ready', async () => {
     })
 })
 
-// Endpoint to hit in order to restart calculations for class notifications
+//! Endpoint to hit in order to restart calculations for class notifications *(WORK IN PROGRESS)*
 app.get('/reset-notif-calc', (req, res) => {
-    // todo: add check for if peopleToNotify is empty, cancel operation for that day or something
+    // todo: add check for if peopleToNotify is empty, cancel operation till next check
     res.send('<h1>Restarting the class notification calculation function.</h1>')
 })
 

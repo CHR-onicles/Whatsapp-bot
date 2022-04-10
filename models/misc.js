@@ -21,7 +21,7 @@ const DEFAULT_ID = { _id: 1 };
 // Find better way of doing code below
 // (async () => {
 //     if (await MiscellaneousModel.findOne({ _id: 1 }) === null) {
-//         const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: ['233557632802'] });
+//         const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: [process.env.GRANDMASTER] });
 //         try {
 //             await misc.save();
 //         } catch (err) {

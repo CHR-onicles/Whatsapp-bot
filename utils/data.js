@@ -95,7 +95,7 @@ exports.HELP_COMMANDS = [
     {
         availableTo: 'admin',
         command: "*!subs*",
-        desc: "get users who want to be notified for class"
+        desc: "get users who want to be notified for class 👯‍♂️"
     }
 ]
 
