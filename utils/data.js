@@ -153,4 +153,5 @@ exports.WORDS_IN_LINKS_BLACKLIST = [
     'crypto',
     'movie',
     'VGMA',
+    'blog',
 ]

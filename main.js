@@ -303,7 +303,6 @@ client.on('message', async (msg) => {
     else if (msg.body.toLowerCase().includes('https') ||
         msg.body.toLowerCase().includes('http') ||
         msg.body.toLowerCase().includes('www')) {
-        // add blacklist filter for ad links and social media links ??
         if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Link from EPiC Devs, so do nothing")
             return;
@@ -318,7 +317,6 @@ client.on('message', async (msg) => {
         for (let i = 0; i < blacklisted_stuff.length; ++i) {
             if (extracted_link.includes(blacklisted_stuff[i])) {
                 console.log("Link contains a blacklisted item:", blacklisted_stuff[i]);
-                // add blackListedLinkCounter to schema later;
                 return;
             }
         }
@@ -523,7 +521,7 @@ client.on('ready', async () => {
 
 // Endpoint to hit in order to restart calculations for class notifications
 app.get('/reset-notif-calc', (req, res) => {
-    // add check for if peopleToNotify is empty, cancel operation for that day or something
+    // todo: add check for if peopleToNotify is empty, cancel operation for that day or something
     res.send('<h1>Restarting the class notification calculation function.</h1>')
 })
 
