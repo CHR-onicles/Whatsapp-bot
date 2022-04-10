@@ -110,3 +110,32 @@ exports.NOTIFY_REPLIES = [
     'Dm 🐦',
     'Check your Pms 🐦',
 ]
+
+exports.LINKS_BLACKLIST = [
+    'instagram',
+    'facebook',
+    'sefbenonline',
+    'audiomack',
+    'betway',
+    'sportybet',
+    'spotify',
+    'soundcloud',
+    'premierleague',
+    'hypeghnewsroom',
+    'museafrica',
+    'ghananewspoint',
+    'tunesgod',
+    'modernghana',
+]
+
+exports.WORDS_IN_LINKS_BLACKLIST = [
+    'music',
+    'bet',
+    'gift',
+    'anime',
+    'game',
+    'gaming',
+    'crypto',
+    'movie',
+    'VGMA',
+]

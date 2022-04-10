@@ -13,7 +13,7 @@ const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, ad
 // --------------------------------------------------
 // Global variables
 // --------------------------------------------------
-const SUPER_ADMIN = process.env.SUPER_ADMIN;
+const GRANDMASTER = process.env.GRANDMASTER;
 const BOT_NUMBER = process.env.BOT_NUMBER;
 const BOT_PUSHNAME = 'Ethereal';
 const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // chat.id.user is better than chat.name as it is immutable
@@ -63,10 +63,6 @@ app.listen(port, () => console.log(`server is running on port ${port}`));
 //     const chats = await client.getChats();
 //     console.log(chats[0]);
 // })
-
-// client.on('authenticated', () => {
-//     console.log('Client was authenticated successfully!');
-// });
 /**/
 
 
@@ -86,7 +82,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user !== SUPER_ADMIN) {
+        if (contact.id.user !== GRANDMASTER) {
             await msg.reply("Only the boss can use this, so you don't abuse it🐦");
             return;
         }
@@ -119,12 +115,12 @@ client.on('message', async (msg) => {
         const contact = await msg.getContact(); // will be used by the replies array later
 
         const PING_REPLIES = [
-            `${contact.id.user !== SUPER_ADMIN ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
-            `I'm here ${contact.id.user === SUPER_ADMIN ? 'sir' : 'fam'}🐦`,
-            `Alive and well ${contact.id.user === SUPER_ADMIN ? 'sir' : 'fam'}🐦`,
-            `Speak forth ${contact.id.user === SUPER_ADMIN ? 'sir' : 'fam'}🐦`,
-            `${contact.id.user !== SUPER_ADMIN ? "Shoo🐦" : "Sir 🐦"}`,
-            `${contact.id.user !== SUPER_ADMIN ? "🙄" : "Boss 🐦"}`,
+            `${contact.id.user !== GRANDMASTER ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
+            `I'm here ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
+            `Alive and well ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
+            `Speak forth ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
+            `${contact.id.user !== GRANDMASTER ? "Shoo🐦" : "Sir 🐦"}`,
+            `${contact.id.user !== GRANDMASTER ? "🙄" : "Boss 🐦"}`,
             `Up and running 🐦`,
             `🙋🏽‍♂️`,
             `👋🏽`,
@@ -171,7 +167,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user === SUPER_ADMIN) {
+        if (contact.id.user === GRANDMASTER) {
             msg.reply(pickRandomReply(MUTE_REPLIES));
             await muteBot();
         }
@@ -183,12 +179,12 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     const contact = await msg.getContact();
     if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
-        if (contact.id.user === SUPER_ADMIN) {
+        if (contact.id.user === GRANDMASTER) {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
     } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && await getMutedStatus() === false) {
-        await msg.reply(`Haven't been muted ${contact.id.user !== SUPER_ADMIN ? "fam" : "sir "}🐦`);
+        await msg.reply(`Haven't been muted ${contact.id.user !== GRANDMASTER ? "fam" : "sir "}🐦`);
     }
 })
 
@@ -304,19 +300,22 @@ client.on('message', async (msg) => {
     }
 
     //* For links
-    else if (msg.body.toLowerCase().includes('https')) {
+    else if (msg.body.toLowerCase().includes('https') ||
+        msg.body.toLowerCase().includes('http') ||
+        msg.body.toLowerCase().includes('www')) {
+        // add blacklist filter for ad links and social media links ??
         if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
-        const link_pattern = /(https?:\/\/[^\s]+)/;
+        const link_pattern = /(https?:\/\/[^\s]+)/; // Pattern to recognize a link
         const extracted_link = link_pattern.exec(msg.body)[0];
         const current_forwarded_links = await getAllLinks();
         // console.log(current_forwarded_links)
 
         // console.log('recognized a link');
         // console.log('extracted link:', extracted_link);
-        if (!current_forwarded_links.includes(extracted_link)) {
+        if (!current_forwarded_links.includes(msg.body)) {
             await addLink(msg.body);
             await msg.forward(target_chat);
         } else {
@@ -522,12 +521,12 @@ app.get('/reset-notif-calc', (req, res) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user !== SUPER_ADMIN) {
+        if (contact.id.user !== GRANDMASTER) {
             await msg.reply("Sorry, this command is not available to you.")
         }
         const users = await getUsersToNotifyForClass();
 
-        await msg.reply('The following users have agreed to be notified for class:\n\n' + users.map(user =>  '→ ' + user + '\n').join(''));
+        await msg.reply('The following users have agreed to be notified for class:\n\n' + users.map(user => '→ ' + user + '\n').join(''));
     }
 })
 
