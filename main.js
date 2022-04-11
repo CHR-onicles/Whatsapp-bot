@@ -4,7 +4,7 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { pickRandomReply, extractTime, msToHMS, extractCommand } = require('./utils/helpers');
+const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs } = require('./utils/helpers');
 const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
 
@@ -382,7 +382,7 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === '!uptime' && await getMutedStatus() === false) {
         const current_time = new Date();
         const { days, hours, minutes, seconds } = msToHMS(current_time - BOT_START_TIME);
-        await msg.reply(`🟢 *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : 0}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : 0}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs.`);
+        await msg.reply(`🟢 *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : 0}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`);
     }
 })
 
@@ -410,7 +410,7 @@ client.on('message', async (msg) => {
 
 // Stop user from being notified for class
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!notify' && msg.body.toLowerCase().split(' ')[1] === 'stop') {
+    if (extractCommand(msg) === '!notify' && extractCommandArgs(msg) === 'stop') {
         const contact = await msg.getContact();
         const current_subscribed = await getUsersToNotifyForClass();
 

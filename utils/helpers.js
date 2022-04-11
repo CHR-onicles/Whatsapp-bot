@@ -32,6 +32,12 @@ exports.extractCommand = (msg) => {
 }
 
 
+exports.extractCommandArgs = (msg, index=1) => {
+    const args = msg.body.toLowerCase().split(' '); // enforce arguments being separated from commands strictly by space(s)
+    return args[index];
+}
+
+
 exports.msToHMS = (duration) => {
     if (duration < 0) {
         throw new Error('The duration cannot be negative!');
