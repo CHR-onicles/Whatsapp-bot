@@ -33,13 +33,18 @@ exports.extractCommand = (msg) => {
 
 
 exports.msToHMS = (duration) => {
+    if (duration < 0) {
+        throw new Error('The duration cannot be negative!');
+    }
     let seconds = Math.floor((duration / 1000) % 60),
         minutes = Math.floor((duration / (1000 * 60)) % 60),
-        hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+        hours = Math.floor((duration / (1000 * 60 * 60)) % 24),
+        days = Math.floor((duration / (1000 * 60 * 60)) / 24);
 
+    // days = (days < 10) ? "0" + days : days;
     // hours = (hours < 10) ? "0" + hours : hours;
     // minutes = (minutes < 10) ? "0" + minutes : minutes;
     // seconds = (seconds < 10) ? "0" + seconds : seconds;
 
-    return { hours, minutes, seconds }
+    return { days, hours, minutes, seconds }
 }

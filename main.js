@@ -275,6 +275,7 @@ client.on('message', async (msg) => {
 
 // Forward messages with links/announcements (in other groups) to EPiC Devs
 client.on('message', async (msg) => {
+    if (await getMutedStatus() === true) return;
     const current_chat = await msg.getChat();
     const chats = await client.getChats();
     const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID_USER);
@@ -380,8 +381,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!uptime' && await getMutedStatus() === false) {
         const current_time = new Date();
-        const { hours, minutes, seconds } = msToHMS(current_time - BOT_START_TIME);
-        await msg.reply(`🟢 *Uptime:* ${hours ? hours : 0}${hours === 1 ? 'hr' : 'hrs'} ${minutes ? minutes : 0}${minutes === 1 ? 'min' : 'mins'} ${seconds ? seconds : 0}secs.`);
+        const { days, hours, minutes, seconds } = msToHMS(current_time - BOT_START_TIME);
+        await msg.reply(`🟢 *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : 0}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : 0}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs.`);
     }
 })
 
