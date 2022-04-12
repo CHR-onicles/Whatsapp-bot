@@ -127,7 +127,7 @@ dist
 .pnp.*
 
 # Bot stuff
-# .wwebjs_auth/
+.wwebjs_auth/
 
 # Personal stuff
 test.js

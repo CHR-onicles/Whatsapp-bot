@@ -26,21 +26,21 @@ let BOT_START_TIME = 0;
 // Configurations
 // --------------------------------------------------
 
-const authStrategy = new LocalAuth(
-    // dataPath: storage.sessionPath,
-    // don't use dataPath to keep it default to ./wwwjs_auth
-)
+// const authStrategy = new LocalAuth(
+//     // dataPath: storage.sessionPath,
+//     // don't use dataPath to keep it default to ./wwwjs_auth
+// )
 
-const worker = `${authStrategy.dataPath}/session/Default/Service Worker`
-if (fs.existsSync(worker)) {
-    fs.rmdirSync(worker, { recursive: true })
-}
+// const worker = `${authStrategy.dataPath}/session/Default/Service Worker`
+// if (fs.existsSync(worker)) {
+//     fs.rmdirSync(worker, { recursive: true })
+// }
 
 const client = new Client({
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
-    takeoverOnConflict: true,
-    takeoverTimeoutMs: 10,
-    authStrategy,
+    // takeoverOnConflict: true,
+    // takeoverTimeoutMs: 10,
+    authStrategy: new LocalAuth(),
 });
 
 client.setMaxListeners(0); // for an infinite number of event listeners
