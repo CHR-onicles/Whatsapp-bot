@@ -1,0 +1,48 @@
+2022/04/12-13:14:04.647 39ec Reusing MANIFEST A:\A_SOURCE\Local\Web Dev\R HEMI\Whatsapp-bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2022/04/12-13:14:04.647 39ec Recovering log #412
+2022/04/12-13:14:05.197 39ec Reusing old log A:\A_SOURCE\Local\Web Dev\R HEMI\Whatsapp-bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000412.log 
+2022/04/12-13:14:05.197 39ec Delete type=2 #405
+2022/04/12-13:14:05.197 39ec Delete type=2 #406
+2022/04/12-13:14:05.197 39ec Delete type=2 #407
+2022/04/12-13:14:05.197 39ec Delete type=2 #408
+2022/04/12-13:14:05.197 39ec Delete type=2 #409
+2022/04/12-13:14:05.197 39ec Delete type=2 #410
+2022/04/12-13:14:05.197 39ec Delete type=2 #413
+2022/04/12-13:14:22.264 3530 Level-0 table #422: started
+2022/04/12-13:14:22.525 3530 Level-0 table #422: 1199710 bytes OK
+2022/04/12-13:14:22.594 3530 Delete type=0 #412
+2022/04/12-13:14:22.969 3fa4 Compacting 1@1 + 6@2 files
+2022/04/12-13:14:23.803 3fa4 Generated table #423@1: 29761 keys, 2221245 bytes
+2022/04/12-13:14:24.755 3fa4 Generated table #424@1: 2933 keys, 2161242 bytes
+2022/04/12-13:14:25.525 3fa4 Generated table #425@1: 13293 keys, 2193918 bytes
+2022/04/12-13:14:26.170 3fa4 Generated table #426@1: 17545 keys, 2196192 bytes
+2022/04/12-13:14:27.446 3fa4 Generated table #427@1: 97927 keys, 2247525 bytes
+2022/04/12-13:14:27.816 3fa4 Generated table #428@1: 47550 keys, 985572 bytes
+2022/04/12-13:14:27.816 3fa4 Compacted 1@1 + 6@2 files => 12005694 bytes
+2022/04/12-13:14:27.897 3fa4 compacted to: files[ 0 0 6 0 0 0 0 ]
+2022/04/12-13:14:32.241 3fa4 Level-0 table #430: started
+2022/04/12-13:14:32.461 3fa4 Level-0 table #430: 1088588 bytes OK
+2022/04/12-13:14:32.531 3fa4 Delete type=2 #414
+2022/04/12-13:14:32.531 3fa4 Delete type=2 #415
+2022/04/12-13:14:32.531 3fa4 Delete type=2 #416
+2022/04/12-13:14:32.532 3fa4 Delete type=2 #417
+2022/04/12-13:14:32.532 3fa4 Delete type=2 #418
+2022/04/12-13:14:32.532 3fa4 Delete type=2 #419
+2022/04/12-13:14:32.532 3fa4 Delete type=0 #421
+2022/04/12-13:14:32.532 3fa4 Delete type=2 #422
+2022/04/12-13:14:33.655 3fa4 Compacting 1@1 + 6@2 files
+2022/04/12-13:14:33.996 3fa4 Generated table #431@1: 32518 keys, 2214550 bytes
+2022/04/12-13:14:34.207 3fa4 Generated table #432@1: 2782 keys, 2158288 bytes
+2022/04/12-13:14:34.472 3fa4 Generated table #433@1: 11184 keys, 2182076 bytes
+2022/04/12-13:14:34.758 3fa4 Generated table #434@1: 19650 keys, 2216121 bytes
+2022/04/12-13:14:35.125 3fa4 Generated table #435@1: 87035 keys, 2234630 bytes
+2022/04/12-13:14:35.384 3fa4 Generated table #436@1: 60021 keys, 1248010 bytes
+2022/04/12-13:14:35.384 3fa4 Compacted 1@1 + 6@2 files => 12253675 bytes
+2022/04/12-13:14:35.452 3fa4 compacted to: files[ 0 0 6 0 0 0 0 ]
+2022/04/12-13:14:35.453 3fa4 Delete type=2 #423
+2022/04/12-13:14:35.454 3fa4 Delete type=2 #424
+2022/04/12-13:14:35.454 3fa4 Delete type=2 #425
+2022/04/12-13:14:35.454 3fa4 Delete type=2 #426
+2022/04/12-13:14:35.454 3fa4 Delete type=2 #427
+2022/04/12-13:14:35.455 3fa4 Delete type=2 #428
+2022/04/12-13:14:35.455 3fa4 Delete type=2 #430

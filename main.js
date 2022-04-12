@@ -2,6 +2,7 @@ const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 require('dotenv').config();
+const fs = require('fs');
 
 require('./utils/db');
 const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications } = require('./utils/helpers');
@@ -25,8 +26,18 @@ let BOT_START_TIME = 0;
 // Configurations
 // --------------------------------------------------
 
+const authStrategy = new LocalAuth(
+    // dataPath: storage.sessionPath,
+    // don't use dataPath to keep it default to ./wwwjs_auth
+)
+
+const worker = `${authStrategy.dataPath}/session/Default/Service Worker`
+if (fs.existsSync(worker)) {
+    fs.rmdirSync(worker, { recursive: true })
+}
+
 const client = new Client({
-    authStrategy: new LocalAuth(),
+    authStrategy,
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
@@ -47,7 +58,6 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
-
 
 
 // --------------------------------------------------
