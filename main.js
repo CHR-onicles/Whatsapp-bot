@@ -4,7 +4,7 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs } = require('./utils/helpers');
+const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications } = require('./utils/helpers');
 const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
 
@@ -19,7 +19,6 @@ const BOT_PUSHNAME = 'Ethereal';
 const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // chat.id.user is better than chat.name as it is immutable
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
-let VARIABLES_COUNTER = 0; // used in eval statement later
 
 
 // --------------------------------------------------
@@ -35,11 +34,6 @@ client.setMaxListeners(0); // for an infinite number of event listeners
 
 client.on('qr', (qr) => {
     qrcode.generate(qr, { small: true });
-});
-
-client.on('ready', () => {
-    console.log('Client is ready!\n');
-    BOT_START_TIME = new Date();
 });
 
 client.on("disconnected", () => {
@@ -69,6 +63,14 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 // --------------------------------------------------
 // BOT LOGIC FROM HERE DOWN
 // --------------------------------------------------
+
+// Bot inits
+client.on('ready', () => {
+    console.log('Client is ready!\n');
+    BOT_START_TIME = new Date();
+    await startNotificationCalculation(client);
+});
+
 
 // Ping
 client.on('message', async (msg) => {
@@ -377,6 +379,7 @@ client.on('message', async (msg) => {
 // })
 /**/
 
+
 // Check bot uptime
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!uptime' && await getMutedStatus() === false) {
@@ -417,6 +420,8 @@ client.on('message', async (msg) => {
         if (current_subscribed.includes(contact.id.user)) {
             await removeUserToBeNotified(contact.id.user);
             msg.reply("I won't remind you to go to class ✅");
+            stopOngoingNotifications();
+            await startNotificationCalculation(client);
         } else {
             await msg.reply("You weren't subscribed in the first place 🤔");
         }
@@ -424,106 +429,11 @@ client.on('message', async (msg) => {
 })
 
 
-// Continuously notify users who have opted in to class notifications
-const notificationTimeCalc = (course) => {
-    // Constants for notification times
-    const two_hrs_ms = 120 * 60 * 1000;
-    const one_hr_ms = 60 * 60 * 1000;
-    const thirty_mins_ms = 30 * 60 * 1000;
-
-    // Timeouts for the 3 reminder times
-    let timeout_two_hrs = 0;
-    let timeout_one_hr = 0;
-    let timeout_thirty_mins = 0;
-
-    const class_time = extractTime(course.name);
-    const class_time_hrs = +class_time.split(':')[0];
-    const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
-
-    const cur_time = new Date();
-    const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
-    const time_left_in_ms = new_class_time - cur_time;
-    // if (time_left_in_ms < 0) return;
-
-    if (two_hrs_ms > time_left_in_ms) {
-        console.log("Less than 2hrs left to remind for", course.name.split('|')[0]);
-    } else {
-        timeout_two_hrs = time_left_in_ms - two_hrs_ms;
-    }
-
-    if (one_hr_ms > time_left_in_ms) {
-        console.log("Less than 1 hr left to remind for", course.name.split('|')[0]);
-    } else {
-        timeout_one_hr = time_left_in_ms - one_hr_ms;
-    }
-
-    if (thirty_mins_ms > time_left_in_ms) {
-        console.log("Less than 30 mins left to remind for", course.name.split('|')[0]);
-    } else {
-        timeout_thirty_mins = time_left_in_ms - thirty_mins_ms;
-    }
-
-    console.log(timeout_two_hrs, timeout_one_hr, timeout_thirty_mins)
-    return { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins };
-}
-
-
-//! Start timer function to set notification
-client.on('ready', async () => {
-    //! refactor everything below into function to be reused
-    //! the command !notify stop should run the function again to reinitialize stuff
-    const today_day = new Date().toString().split(' ')[0];
-    const subscribed_users = await getUsersToNotifyForClass();
-    const chats = await client.getChats();
-
-    if (today_day === 'Sat' || today_day === 'Sun') {
-        console.log("No courses to be notified for during the weekend!");
-        return;
-    }
-
-    const { courses } = CLASSES.find(class_obj => {
-        if (class_obj.day.slice(0, 3) === today_day) {
-            return class_obj;
-        }
-    });
-
-    courses.forEach(course => {
-        const class_time = extractTime(course.name);
-        const class_time_hrs = +class_time.split(':')[0];
-        const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
-        const { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins } = notificationTimeCalc(course);
-
-        const cur_time = new Date();
-        const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
-        const time_left_in_ms = new_class_time - cur_time;
-        if (time_left_in_ms < 0) return;
-
-        subscribed_users.forEach(user => {
-            const chat_from_user = chats.find(chat => chat.id.user === user);
-
-            if (timeout_two_hrs > 0) {
-                ++VARIABLES_COUNTER;
-                eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours')}, timeout_two_hrs)")
-                console.log('Sending 2hr notif for', course.name.split('|')[0], ' to', user)
-            }
-            if (timeout_one_hr > 0) {
-                ++VARIABLES_COUNTER;
-                eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour')}, timeout_one_hr)")
-                console.log('Sending 1hr notif for', course.name.split('|')[0], ' to', user)
-            }
-            if (timeout_thirty_mins > 0) {
-                ++VARIABLES_COUNTER;
-                eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!')}, timeout_thirty_mins)")
-                console.log('Sending 30min notif for', course.name.split('|')[0], ' to', user)
-            }
-        })
-    })
-})
-
-//! Endpoint to hit in order to restart calculations for class notifications *(WORK IN PROGRESS)*
-app.get('/reset-notif-calc', (req, res) => {
-    // todo: add check for if peopleToNotify is empty, cancel operation till next check
-    res.send('<h1>Restarting the class notification calculation function.</h1>')
+// Endpoint to hit in order to restart calculations for class notifications
+app.get('/reset-notif-calc', async (req, res) => {
+    stopOngoingNotifications();
+    await startNotificationCalculation(client);
+    res.send('<h1>Restarting the class notification calculation function.</h1>');
 })
 
 
