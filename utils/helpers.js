@@ -159,7 +159,7 @@ const startNotificationCalculation = async (client) => {
 
 
 const stopOngoingNotifications = () => {
-    for (let i = 0; i < VARIABLES_COUNTER; ++i) {
+    for (let i = 1; i < VARIABLES_COUNTER; ++i) {
         eval("clearTimeout(t" + i + ")");
         console.log(`Cleared timeout t${i}`);
     }

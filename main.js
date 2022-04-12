@@ -46,18 +46,8 @@ app.get("/", (req, res) => {
     );
 });
 
-app.all("*", (req, res) => {
-    res.status(404).send("<h1>Sorry, this page does not exist!</h1><a href='/'>Back to Home</a>")
-})
-
-
 app.listen(port, () => console.log(`Server is running on port ${port}`));
 
-// client.on('ready', async () => {
-//     const chats = await client.getChats();
-//     console.log(chats[0]);
-// })
-/**/
 
 
 // --------------------------------------------------
@@ -69,6 +59,8 @@ client.on('ready', async () => {
     console.log('Client is ready!\n');
     BOT_START_TIME = new Date();
     await startNotificationCalculation(client);
+    //     const chats = await client.getChats();
+    //     console.log(chats[0]);
 });
 
 
@@ -397,12 +389,17 @@ client.on('message', async (msg) => {
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
+        const cur_chat = await msg.getChat();
 
         const current_subscribed = await getUsersToNotifyForClass();
         if (!current_subscribed.includes(contact.id.user)) {
-            msg.reply(pickRandomReply(NOTIFY_REPLIES));
-            chat_from_contact.sendMessage("You will now be notified periodically for class 🐦");
+            if (cur_chat.isGroup) {
+                msg.reply(pickRandomReply(NOTIFY_REPLIES));
+            }
+            chat_from_contact.sendMessage("🔔 You will now be notified periodically for class.\n\nExpect me🐦");
             await addUserToBeNotified(contact.id.user);
+            stopOngoingNotifications();
+            await startNotificationCalculation(client);
         } else {
             await msg.reply("You are already being notified for class🐦");
             console.log('Already subscribed')
@@ -429,14 +426,6 @@ client.on('message', async (msg) => {
 })
 
 
-// Endpoint to hit in order to restart calculations for class notifications
-app.get('/reset-notif-calc', async (req, res) => {
-    stopOngoingNotifications();
-    await startNotificationCalculation(client);
-    res.send('<h1>Restarting the class notification calculation function.</h1>');
-})
-
-
 // Get users on class notifications list
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
@@ -448,6 +437,18 @@ client.on('message', async (msg) => {
 
         await msg.reply('The following users have agreed to be notified for class:\n\n' + users.map(user => '→ ' + user + '\n').join(''));
     }
+})
+
+// Endpoint to hit in order to restart calculations for class notifications
+app.get('/reset-notif-calc', async (req, res) => {
+    stopOngoingNotifications();
+    await startNotificationCalculation(client);
+    res.send('<h1>Restarting the class notification calculation function.</h1>');
+})
+
+
+app.all("*", (req, res) => {
+    res.status(404).send("<h1>Sorry, this page does not exist!</h1><a href='/'>Back to Home</a>")
 })
 
 
