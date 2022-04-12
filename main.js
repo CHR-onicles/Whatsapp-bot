@@ -37,8 +37,10 @@ if (fs.existsSync(worker)) {
 }
 
 const client = new Client({
+    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
+    takeoverOnConflict: true,
+    takeoverTimeoutMs: 10,
     authStrategy,
-    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
 client.setMaxListeners(0); // for an infinite number of event listeners
