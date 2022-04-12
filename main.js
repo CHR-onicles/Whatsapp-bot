@@ -65,7 +65,7 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 // --------------------------------------------------
 
 // Bot inits
-client.on('ready', () => {
+client.on('ready', async () => {
     console.log('Client is ready!\n');
     BOT_START_TIME = new Date();
     await startNotificationCalculation(client);
