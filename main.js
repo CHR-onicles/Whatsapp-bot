@@ -6,7 +6,7 @@ const fs = require('fs');
 
 require('./utils/db');
 const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications } = require('./utils/helpers');
-const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
+const { CLASSES, ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
 
 
@@ -150,7 +150,7 @@ client.on('message', async (msg) => {
                 ]
             },
                 // {
-                //     title: 'Commands available to EPiC Devs only', rows: [
+                //     title: 'Commands available to admins only', rows: [
                 //         { id: '100', title: '!everyone', description: 'Ping everyone in the group' },
                 //         { id: '101', title: '!mute', description: 'Shut the bot up' },
                 //         { id: '102', title: '!unmute', description: 'Allow the bot to talk' },
@@ -195,7 +195,7 @@ client.on('message', async (msg) => {
 })
 
 
-// Help
+// Help //todo: edit to show only commands available to specific users
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!help' && await getMutedStatus() === false) {
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
@@ -210,13 +210,52 @@ client.on('message', async (msg) => {
 
 // Check classes for the week
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
-        let text = "If *Software Modelling* is your elective:\n\n";
-        CLASSES.forEach(class_obj => {
-            text += "*" + class_obj.day + "*:\n" + class_obj.courses.map(course => '→ ' + course.name + "\n").join('') + "\n";
-            // added join('') to map() to remove the default comma after each value in array
-        })
+    if (msg.type === 'list_response') {
+        // console.log(msg.selectedRowId);
+        let text = "";
+        if (msg.selectedRowId === '11') {
+            text += "Timetable for *Data Mining* as elective:\n\n"
+            ALL_CLASSES.forEach(class_obj => {
+                const filtered_courses = class_obj.courses.filter(course => !course.name.includes("Networking") && !course.name.includes("Soft. Modelling"))
+                // console.log(filtered_courses);
+                text += "*" + class_obj.day + "*:\n" + filtered_courses.map(course => '→ ' + course.name + "\n").join('') + "\n";
+                // added join('') to map() to remove the default comma after each value in array
+            })
+
+        } else if (msg.selectedRowId === '12') {
+            text += "Timetable for *Networking* as elective:\n\n"
+            ALL_CLASSES.forEach(class_obj => {
+                const filtered_courses = class_obj.courses.filter(course => !course.name.includes("Data Mining") && !course.name.includes("Soft. Modelling"))
+                text += "*" + class_obj.day + "*:\n" + filtered_courses.map(course => '→ ' + course.name + "\n").join('') + "\n";
+            })
+
+        } else if (msg.selectedRowId === '13') {
+            text += "Timetable for *Software Modelling* as elective:\n\n"
+            ALL_CLASSES.forEach(class_obj => {
+                const filtered_courses = class_obj.courses.filter(course => !course.name.includes("Data Mining") && !course.name.includes("Networking"))
+                text += "*" + class_obj.day + "*:\n" + filtered_courses.map(course => '→ ' + course.name + "\n").join('') + "\n";
+            })
+        }
+
         await msg.reply(text);
+    }
+
+    if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
+        const list = new List(
+            '\nMake a choice from the list of electives',
+            'See options',
+            [{
+                title: 'Commands available to everyone', rows: [
+                    { id: '11', title: 'Data Mining', description: 'For those offering Data Mining' },
+                    { id: '12', title: 'Networking', description: "For those offering Networking" },
+                    { id: '13', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                ]
+            }
+            ],
+            'What elective do you offer?',
+            'Powered by Ethereal bot'
+        );
+        await msg.reply(list);
     }
 })
 
@@ -314,7 +353,7 @@ client.on('message', async (msg) => {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
-        const link_pattern = /(https?:\/\/[^\s]+)/; // Pattern to recognize a link
+        const link_pattern = /(https?:\/\/[^\s]+)|(www.[^\s]+)/; // Pattern to recognize a link with http, https or www
         const extracted_link = link_pattern.exec(msg.body)[0];
         const current_forwarded_links = await getAllLinks();
         // console.log(current_forwarded_links)
@@ -451,6 +490,7 @@ client.on('message', async (msg) => {
     }
 })
 
+
 // Endpoint to hit in order to restart calculations for class notifications
 app.get('/reset-notif-calc', async (req, res) => {
     stopOngoingNotifications();
@@ -458,10 +498,11 @@ app.get('/reset-notif-calc', async (req, res) => {
     res.send('<h1>Restarting the class notification calculation function.</h1>');
 })
 
-
+// All other pages should be returned as 404
 app.all("*", (req, res) => {
     res.status(404).send("<h1>Sorry, this page does not exist!</h1><a href='/'>Back to Home</a>")
 })
 
 
+// Start bot
 client.initialize();

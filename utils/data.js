@@ -41,6 +41,49 @@ exports.CLASSES = [
     }
 ]
 
+exports.ALL_CLASSES = [
+    {
+        day: 'Monday',
+        courses: [
+            { name: '_Formal Methods_ | ⏰5:30pm | 🏠N3', duration: 2 }
+        ]
+    },
+    {
+        day: 'Tuesday',
+        courses: [
+            { name: '_Accounting_ | ⏰5:30pm | 🏠JQB23', duration: 2 },
+            { name: '_Networking_ | ⏰11:30am | 🏠MATH05', duration: 2 }
+        ]
+    },
+    {
+        day: 'Wednesday',
+        courses: [
+            { name: '_Compilers_ | ⏰9:30am | 🏠E10', duration: 2 },
+            { name: '_Theory & Survey_ | ⏰3:30pm | 🏠JQB09', duration: 2 },
+            { name: '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1', duration: 2 }
+        ]
+    },
+    {
+        day: 'Thursday',
+        courses: [
+            { name: '_Project_ | ⏰8:30am | 🏠Online', duration: 2 },
+            { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
+            { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
+            { name: '_Networking_ | ⏰5:30pm | 🏠E10', duration: 1 },
+            { name: '_Accounting_ | ⏰6:30pm | 🏠E10', duration: 1 }
+        ]
+    },
+    {
+        day: 'Friday',
+        courses: [
+            { name: '_Soft. Modelling_ | ⏰9:30am | 🏠N3', duration: 1 },
+            { name: '_Theory & Survey_ | ⏰10:30am | 🏠N3', duration: 1 },
+            { name: '_Data Mining_ | ⏰3:30pm | 🏠NNB2', duration: 1 },
+            { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 }
+        ]
+    }
+]
+
 exports.HELP_COMMANDS = [
     {
         availableTo: 'everyone',
