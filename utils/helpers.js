@@ -168,4 +168,29 @@ const stopOngoingNotifications = () => {
 }
 
 
-module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications }
+const allClassesReply = (all_classes, course, text) => {
+    let filtered_courses = null;
+    if (course === "Data Mining") {
+        text += "Timetable for *Data Mining* as elective:\n\n"
+        all_classes.forEach(class_obj => {
+            filtered_courses = class_obj.courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
+            text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+        })
+    } else if (course === "Networking") {
+        text += "Timetable for *Networking* as elective:\n\n"
+        all_classes.forEach(class_obj => {
+            filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"))
+            text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+        })
+    } else if (course === "Software Modelling") {
+        text += "Timetable for *Software Modelling* as elective:\n\n"
+        all_classes.forEach(class_obj => {
+            filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"))
+            text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+        })
+    }
+    return text;
+}
+
+
+module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply }

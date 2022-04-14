@@ -5,7 +5,7 @@ require('dotenv').config();
 const fs = require('fs');
 
 require('./utils/db');
-const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications } = require('./utils/helpers');
+const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply } = require('./utils/helpers');
 const { CLASSES, ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
 
@@ -70,7 +70,7 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 client.on('ready', async () => {
     console.log('Client is ready!\n');
     BOT_START_TIME = new Date();
-    await startNotificationCalculation(client);
+    // await startNotificationCalculation(client);
     //     const chats = await client.getChats();
     //     console.log(chats[0]);
 });
@@ -210,37 +210,25 @@ client.on('message', async (msg) => {
 
 // Check classes for the week
 client.on('message', async (msg) => {
-    if (msg.type === 'list_response') {
-        // console.log(msg.selectedRowId);
+    if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
+        const contact = await msg.getContact();
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
-        if (msg.selectedRowId === '11') {
-            text += "Timetable for *Data Mining* as elective:\n\n"
-            ALL_CLASSES.forEach(class_obj => {
-                const filtered_courses = class_obj.courses.filter(course => !course.name.includes("Networking") && !course.name.includes("Soft. Modelling"))
-                // console.log(filtered_courses);
-                text += "*" + class_obj.day + "*:\n" + filtered_courses.map(course => '→ ' + course.name + "\n").join('') + "\n";
-                // added join('') to map() to remove the default comma after each value in array
-            })
 
-        } else if (msg.selectedRowId === '12') {
-            text += "Timetable for *Networking* as elective:\n\n"
-            ALL_CLASSES.forEach(class_obj => {
-                const filtered_courses = class_obj.courses.filter(course => !course.name.includes("Data Mining") && !course.name.includes("Soft. Modelling"))
-                text += "*" + class_obj.day + "*:\n" + filtered_courses.map(course => '→ ' + course.name + "\n").join('') + "\n";
-            })
-
-        } else if (msg.selectedRowId === '13') {
-            text += "Timetable for *Software Modelling* as elective:\n\n"
-            ALL_CLASSES.forEach(class_obj => {
-                const filtered_courses = class_obj.courses.filter(course => !course.name.includes("Data Mining") && !course.name.includes("Networking"))
-                text += "*" + class_obj.day + "*:\n" + filtered_courses.map(course => '→ ' + course.name + "\n").join('') + "\n";
-            })
+        if (dataMining.includes(contact.id.user)) {
+            text += allClassesReply(ALL_CLASSES, 'Data Mining', text)
+            await msg.reply(text);
+            return;
+        } else if (networking.includes(contact.id.user)) {
+            text += allClassesReply(ALL_CLASSES, 'Networking', text)
+            await msg.reply(text);
+            return;
+        } else if (softModelling.includes(contact.id.user)) {
+            text += allClassesReply(ALL_CLASSES, 'Software Modelling', text)
+            await msg.reply(text);
+            return;
         }
 
-        await msg.reply(text);
-    }
-
-    if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
         const list = new List(
             '\nMake a choice from the list of electives',
             'See options',
@@ -257,8 +245,21 @@ client.on('message', async (msg) => {
         );
         await msg.reply(list);
     }
-})
 
+    if (msg.type === 'list_response') {
+        let text = "";
+        // console.log(msg.selectedRowId);
+        if (msg.selectedRowId === '11') {
+            text += allClassesReply(ALL_CLASSES, 'Data Mining', text);
+        } else if (msg.selectedRowId === '12') {
+            text += allClassesReply(ALL_CLASSES, 'Networking', text);
+        } else if (msg.selectedRowId === '13') {
+            text += allClassesReply(ALL_CLASSES, 'Software Modelling', text);
+        }
+
+        await msg.reply(text);
+    }
+})
 
 // Check class for today
 client.on('message', async (msg) => {
@@ -481,12 +482,12 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user !== GRANDMASTER) {
-            await msg.reply("Sorry, this command is not available to you.")
-        }
-        const users = await getUsersToNotifyForClass();
+        if (contact.id.user !== GRANDMASTER) await msg.reply("Sorry, this command is not available to you.")
 
-        await msg.reply('The following users have agreed to be notified for class:\n\n' + users.map(user => '→ ' + user + '\n').join(''));
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+
+        await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
+            + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
     }
 })
 

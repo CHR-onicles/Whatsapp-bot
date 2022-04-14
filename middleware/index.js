@@ -41,9 +41,9 @@ exports.addAnnouncement = async (ann) => {
 }
 
 exports.getUsersToNotifyForClass = async () => {
-    const users = await getUsersToNotifyForClass();
-    // console.log(users);
-    return users;
+    const { electiveDataMining: dataMining, electiveNetworking: networking, electiveSoftModelling: softModelling } = await getUsersToNotifyForClass();
+    console.log(dataMining, networking, softModelling);
+    return { dataMining, networking, softModelling };
 }
 
 exports.addUserToBeNotified = async (user) => {
@@ -54,9 +54,4 @@ exports.addUserToBeNotified = async (user) => {
 exports.removeUserToBeNotified = async (user) => {
     await removeUserToBeNotified(user);
     console.log("User: " + user + " unsubscribed from being notified for class");
-}
-
-exports.getUsersToNotifyForClass = async () => {
-    const users = await getUsersToNotifyForClass();
-    return users;
 }

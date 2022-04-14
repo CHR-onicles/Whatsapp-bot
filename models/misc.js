@@ -1,4 +1,4 @@
-// Miscellaneous stuff for the bot
+// Miscellaneous stuff relating to the bot or stuff which cannot go under any specific schema
 
 const { Schema, model } = require('mongoose');
 
@@ -10,7 +10,10 @@ const MiscellaneousSchema = new Schema({
     allLinks: [String],
     allAnnouncements: [String],
     superAdmins: [String],
-    notifyForClass: [String],
+    notifyForClass: [String], // no longer necessary as you can get this by concatenating all the electives
+    electiveDataMining: [String],
+    electiveSoftModelling: [String],
+    electiveNetworking: [String],
     numOfCommands: Number, // to be used later
 });
 
@@ -18,10 +21,10 @@ const MiscellaneousModel = model("Miscellaneous", MiscellaneousSchema);
 const DEFAULT_ID = { _id: 1 };
 
 
-// Find better way of doing code below
+//! Find better way of doing code below, if internet is slow, it executes query before connecting to DB which creates an error
 // (async () => {
 //     if (await MiscellaneousModel.findOne({ _id: 1 }) === null) {
-//         const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: [process.env.GRANDMASTER] });
+//         const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: [process.env.GRANDMASTER], electiveSoftModelling: [process.env.GRANDMASTER] });
 //         try {
 //             await misc.save();
 //         } catch (err) {
@@ -129,26 +132,27 @@ exports.removeSuperAdmin = async (admin) => {
     }
 }
 
+//! redo all code below this point
 exports.getUsersToNotifyForClass = async () => {
-    const res = await MiscellaneousModel.findOne(DEFAULT_ID, { notifyForClass: 1 });
-    // console.log(res);
-    return res.notifyForClass;
+    const resUsers = await MiscellaneousModel.findOne(DEFAULT_ID, { electiveDataMining: 1, electiveNetworking: 1, electiveSoftModelling: 1 });
+    return resUsers;
 }
 
-exports.addUserToBeNotified = async (newUser) => {
-    try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { notifyForClass: newUser } });
-        // console.log(res);
-    } catch (error) {
-        console.log(error)
-    }
-}
+// exports.addUserToBeNotified = async (newUser) => {
+//     try {
+//         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { notifyForClass: newUser } });
+//         // console.log(res);
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
 
-exports.removeUserToBeNotified = async (user) => {
-    try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, {$pull: {notifyForClass: user}});
-        // console.log(res);
-    } catch (error) {
-        console.log(error);
-    }
-}
+// exports.removeUserToBeNotified = async (user) => {
+//     try {
+//         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, {$pull: {notifyForClass: user}});
+//         // console.log(res);
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
+
