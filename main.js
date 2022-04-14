@@ -330,7 +330,6 @@ const todayClassReply = async (text, elective) => {
         }
     });
 
-
     const cur_time = new Date();
     const done_array = [];
     const in_session_array = [];
@@ -497,8 +496,7 @@ client.on('message', async (msg) => {
 })
 
 
-//todo: Add user to notification list for class *REWRITE*
-// todo: ask user for elective choice
+//Add user to notification list for class
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!notify' &&
         extractCommandArgs(msg) !== 'stop' &&
@@ -554,10 +552,17 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === '!notify' && extractCommandArgs(msg) === 'stop') {
         const contact = await msg.getContact();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        const total_users = [...dataMining, ...networking, ...softModelling]
 
-        if (dataMining.includes(contact.id.user) || networking.includes(contact.id.user) || softModelling.includes(contact.id.user)) {
-            await removeUserToBeNotified(contact.id.user); //todo: implement find and delete
-            msg.reply("I won't remind you to go to class ✅");
+        if (total_users.includes(contact.id.user)) {
+            if (dataMining.includes(contact.id.user)) {
+                await removeUserToBeNotified(contact.id.user, 'D');
+            } else if (networking.includes(contact.id.user)) {
+                await removeUserToBeNotified(contact.id.user, 'N');
+            } else if (softModelling.includes(contact.id.user)) {
+                await removeUserToBeNotified(contact.id.user, 'S');
+            }
+            msg.reply("I won't remind you to go to class anymore✅");
             stopOngoingNotifications();
             await startNotificationCalculation(client);
         } else {

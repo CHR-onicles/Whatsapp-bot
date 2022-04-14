@@ -136,7 +136,6 @@ exports.getUsersToNotifyForClass = async () => {
     return resUsers;
 }
 
-//! redo all code below this point
 exports.addUserToElectiveDataMining = async (newUser) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveDataMining: newUser } });
@@ -164,12 +163,18 @@ exports.addUserToElectiveSoftModelling = async (newUser) => {
     }
 }
 
-// exports.removeUserToBeNotified = async (user) => {
-//     try {
-//         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, {$pull: {notifyForClass: user}});
-//         // console.log(res);
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
+exports.removeUserFromElective = async (user, elective) => {
+    try {
+        if (elective === 'D') {
+            const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveDataMining: user } });
+        } else if (elective === 'N') {
+            const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveNetworking: user } });
+        } else if (elective === 'S') {
+            const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveSoftModelling: user } });
+        }
+        console.log(res);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
