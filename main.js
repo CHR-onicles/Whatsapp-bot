@@ -247,6 +247,7 @@ client.on('message', async (msg) => {
     }
 
     if (msg.type === 'list_response') {
+        if (parseInt(msg.selectedRowId) < 11 || parseInt(msg.selectedRowId) > 13) return;
         let text = "";
         // console.log(msg.selectedRowId);
         if (msg.selectedRowId === '11') {
@@ -261,62 +262,126 @@ client.on('message', async (msg) => {
     }
 })
 
+
 // Check class for today
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!class' && await getMutedStatus() === false) {
-        const today_day = new Date().toString().split(' ')[0]; // to get day
+        const contact = await msg.getContact();
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        let text = "";
 
-        if (today_day === 'Sat' || today_day === 'Sun') {
-            await msg.reply('Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.');
+        if (dataMining.includes(contact.id.user)) {
+            text += await todayClassReply(text, 'Data Mining')
+            await msg.reply(text);
+            return;
+        } else if (networking.includes(contact.id.user)) {
+            text += await todayClassReply(text, 'Networking')
+            await msg.reply(text);
+            return;
+        } else if (softModelling.includes(contact.id.user)) {
+            text += await todayClassReply(text, 'Software Modelling')
+            await msg.reply(text);
             return;
         }
-
-        const { courses } = CLASSES.find(class_obj => {
-            if (class_obj.day.slice(0, 3) === today_day) {
-                return class_obj;
+        const list = new List(
+            '\nMake a choice from the list of electives',
+            'See options',
+            [{
+                title: 'Commands available to everyone', rows: [
+                    { id: '21', title: 'Data Mining', description: 'For those offering Data Mining' },
+                    { id: '22', title: 'Networking', description: "For those offering Networking" },
+                    { id: '23', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                ]
             }
-        });
+            ],
+            'What elective do you offer?',
+            'Powered by Ethereal bot'
+        );
+        await msg.reply(list);
 
-        const cur_time = new Date();
-        const done_array = [];
-        const in_session_array = [];
-        const upcoming_array = [];
-        let text = "*Today's classes* ☀\n\n";
+    }
 
-        courses.forEach(course => {
-            const class_time = extractTime(course.name);
-            const class_time_hrs = +class_time.split(':')[0]
-            const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+    if (msg.type === 'list_response') {
+        if (parseInt(msg.selectedRowId) < 21 || parseInt(msg.selectedRowId) > 23) return;
+        let text = "";
+        if (msg.selectedRowId === '21') {
+            text += await todayClassReply(text, 'Data Mining');
+        } else if (msg.selectedRowId === '22') {
+            text += await todayClassReply(text, 'Networking');
+        } else if (msg.selectedRowId === '23') {
+            text += await todayClassReply(text, 'Software Modelling');
+        }
 
-            if ((cur_time.getHours() < class_time_hrs) || (cur_time.getHours() === class_time_hrs && cur_time.getMinutes() < class_time_mins)) {
-                // console.log('Not time yet')
-                upcoming_array.push(course);
-            }
-            else if ((cur_time.getHours() === class_time_hrs) || (cur_time.getHours() < class_time_hrs + course.duration) || ((cur_time.getHours() <= class_time_hrs + course.duration) && cur_time.getMinutes() < class_time_mins)) {
-                // console.log('In session')
-                in_session_array.push(course);
-            }
-            else if ((cur_time.getHours() > (class_time_hrs + course.duration)) || (cur_time.getHours() >= (class_time_hrs + course.duration) && (cur_time.getMinutes() > class_time_mins))) {
-                // console.log('Past time')
-                done_array.push(course);
-            }
-        })
-
-        text += "✅ *Done*:\n" +
-            function () {
-                return !done_array.length ? '🚫 None\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
-            }()
-            + "\n" + "⏳ *In session*:\n" +
-            function () {
-                return !in_session_array.length ? '🚫 None\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
-            }()
-            + "\n" + "💡 *Upcoming*:\n" +
-            function () {
-                return !upcoming_array.length ? '🚫 None\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
-            }();
         await msg.reply(text);
     }
 })
+
+const todayClassReply = async (text, elective) => {
+    const today_day = new Date().toString().split(' ')[0]; // to get day
+
+    if (today_day === 'Sat' || today_day === 'Sun') {
+        await msg.reply('Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.');
+        return;
+    }
+
+    let { courses } = ALL_CLASSES.find(class_obj => {
+        if (class_obj.day.slice(0, 3) === today_day) {
+            return class_obj;
+        }
+    });
+
+
+    const cur_time = new Date();
+    const done_array = [];
+    const in_session_array = [];
+    const upcoming_array = [];
+    // let text = "*Today's classes* ☀\n\n";
+
+
+    if (elective === 'Data Mining') {
+        text += "Today's classes ( *Data Mining*): ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
+    } else if (elective === 'Networking') {
+        text += "Today's classes ( *Networking*): ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"));
+    } else if (elective === 'Software Modelling') {
+        text += "Today's classes ( *Soft. Modelling*): ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"));
+    }
+
+    courses.forEach(course => {
+        const class_time = extractTime(course.name);
+        const class_time_hrs = +class_time.split(':')[0]
+        const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+
+        if ((cur_time.getHours() < class_time_hrs) || (cur_time.getHours() === class_time_hrs && cur_time.getMinutes() < class_time_mins)) {
+            // console.log('Not time yet')
+            upcoming_array.push(course);
+        }
+        else if ((cur_time.getHours() === class_time_hrs) || (cur_time.getHours() < class_time_hrs + course.duration) || ((cur_time.getHours() <= class_time_hrs + course.duration) && cur_time.getMinutes() < class_time_mins)) {
+            // console.log('In session')
+            in_session_array.push(course);
+        }
+        else if ((cur_time.getHours() > (class_time_hrs + course.duration)) || (cur_time.getHours() >= (class_time_hrs + course.duration) && (cur_time.getMinutes() > class_time_mins))) {
+            // console.log('Past time')
+            done_array.push(course);
+        }
+    })
+
+    text += "✅ *Done*:\n" +
+        function () {
+            return !done_array.length ? '🚫 None\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
+        }()
+        + "\n" + "⏳ *In session*:\n" +
+        function () {
+            return !in_session_array.length ? '🚫 None\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
+        }()
+        + "\n" + "💡 *Upcoming*:\n" +
+        function () {
+            return !upcoming_array.length ? '🚫 None\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
+        }();
+    return text;
+}
 
 
 // Forward messages with links/announcements (in other groups) to EPiC Devs

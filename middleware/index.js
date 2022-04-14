@@ -42,7 +42,7 @@ exports.addAnnouncement = async (ann) => {
 
 exports.getUsersToNotifyForClass = async () => {
     const { electiveDataMining: dataMining, electiveNetworking: networking, electiveSoftModelling: softModelling } = await getUsersToNotifyForClass();
-    console.log(dataMining, networking, softModelling);
+    // console.log(dataMining, networking, softModelling);
     return { dataMining, networking, softModelling };
 }
 

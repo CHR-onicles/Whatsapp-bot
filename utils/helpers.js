@@ -168,21 +168,21 @@ const stopOngoingNotifications = () => {
 }
 
 
-const allClassesReply = (all_classes, course, text) => {
+const allClassesReply = (all_classes, elective, text) => {
     let filtered_courses = null;
-    if (course === "Data Mining") {
+    if (elective === "Data Mining") {
         text += "Timetable for *Data Mining* as elective:\n\n"
         all_classes.forEach(class_obj => {
             filtered_courses = class_obj.courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
             text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
         })
-    } else if (course === "Networking") {
+    } else if (elective === "Networking") {
         text += "Timetable for *Networking* as elective:\n\n"
         all_classes.forEach(class_obj => {
             filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"))
             text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
         })
-    } else if (course === "Software Modelling") {
+    } else if (elective === "Software Modelling") {
         text += "Timetable for *Software Modelling* as elective:\n\n"
         all_classes.forEach(class_obj => {
             filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"))
