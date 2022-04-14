@@ -10,7 +10,6 @@ const MiscellaneousSchema = new Schema({
     allLinks: [String],
     allAnnouncements: [String],
     superAdmins: [String],
-    notifyForClass: [String], // no longer necessary as you can get this by concatenating all the electives
     electiveDataMining: [String],
     electiveSoftModelling: [String],
     electiveNetworking: [String],
@@ -132,20 +131,38 @@ exports.removeSuperAdmin = async (admin) => {
     }
 }
 
-//! redo all code below this point
 exports.getUsersToNotifyForClass = async () => {
     const resUsers = await MiscellaneousModel.findOne(DEFAULT_ID, { electiveDataMining: 1, electiveNetworking: 1, electiveSoftModelling: 1 });
     return resUsers;
 }
 
-// exports.addUserToBeNotified = async (newUser) => {
-//     try {
-//         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { notifyForClass: newUser } });
-//         // console.log(res);
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
+//! redo all code below this point
+exports.addUserToElectiveDataMining = async (newUser) => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveDataMining: newUser } });
+        // console.log(res);
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+exports.addUserToElectiveNetworking = async (newUser) => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveNetworking: newUser } });
+        // console.log(res);
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+exports.addUserToElectiveSoftModelling = async (newUser) => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveSoftModelling: newUser } });
+        // console.log(res);
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 // exports.removeUserToBeNotified = async (user) => {
 //     try {

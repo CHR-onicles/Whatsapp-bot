@@ -1,6 +1,6 @@
 // MAIN MIDDLEWARE TO HANDLE INTERACTIONS WITH DATABASE
 
-const { isMuted, mute, unmute, getAllLinks, getAllAnnouncements, addSuperAdmin, addAnnouncement, addLink, removeSuperAdmin, getUsersToNotifyForClass, addUserToBeNotified, removeUserToBeNotified } = require('../models/misc');
+const { isMuted, mute, unmute, getAllLinks, getAllAnnouncements, addSuperAdmin, addAnnouncement, addLink, removeSuperAdmin, getUsersToNotifyForClass, removeUserToBeNotified, addUserToElectiveDataMining, addUserToElectiveNetworking, addUserToElectiveSoftModelling } = require('../models/misc');
 
 
 exports.muteBot = async () => {
@@ -46,12 +46,15 @@ exports.getUsersToNotifyForClass = async () => {
     return { dataMining, networking, softModelling };
 }
 
-exports.addUserToBeNotified = async (user) => {
-    await addUserToBeNotified(user);
-    console.log("User: " + user + " subscribed to be notified for class");
+//todo: redo both functions below
+exports.addUserToBeNotified = async (user, rowId) => {
+    if (rowId === '31') await addUserToElectiveDataMining(user);
+    else if (rowId === '32') await addUserToElectiveNetworking(user);
+    else if (rowId === '33') await addUserToElectiveSoftModelling(user);
+    console.log("User: " + user + " subscribed to be notified for class with " + rowId === '31' ? 'Data Mining' : (rowId === '32' ? 'Networking' : 'Software Modelling') + ' as elective');
 }
 
 exports.removeUserToBeNotified = async (user) => {
-    await removeUserToBeNotified(user);
-    console.log("User: " + user + " unsubscribed from being notified for class");
+    // await removeUserToBeNotified(user);
+    // console.log("User: " + user + " unsubscribed from being notified for class");
 }
