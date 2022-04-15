@@ -1,6 +1,12 @@
+// --------------------------------------------------
+// assignment.js contains the schema and behaviour of
+// assignments
+// --------------------------------------------------
+
 const { Schema, model } = require('mongoose');
 
 
+//! WORK IN PROGRESS
 // Schema
 const AssignmentSchema = new Schema({
     _id: Number,

@@ -1,3 +1,6 @@
+// --------------------------------------------------
+// main.js contains the primary bot logic
+// --------------------------------------------------
 const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
@@ -5,10 +8,9 @@ require('dotenv').config();
 // const fs = require('fs');
 
 require('./utils/db');
-const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply } = require('./utils/helpers');
+const { pickRandomReply, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
-
 
 
 // --------------------------------------------------
@@ -25,21 +27,8 @@ let BOT_START_TIME = 0;
 // --------------------------------------------------
 // Configurations
 // --------------------------------------------------
-
-// const authStrategy = new LocalAuth(
-//     // dataPath: storage.sessionPath,
-//     // don't use dataPath to keep it default to ./wwwjs_auth
-// )
-
-// const worker = `${authStrategy.dataPath}/session/Default/Service Worker`
-// if (fs.existsSync(worker)) {
-//     fs.rmdirSync(worker, { recursive: true })
-// }
-
 const client = new Client({
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
-    // takeoverOnConflict: true,
-    // takeoverTimeoutMs: 10,
     authStrategy: new LocalAuth(),
 });
 
@@ -63,10 +52,10 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 
 
 // --------------------------------------------------
-// BOT LOGIC FROM HERE DOWN
+// ACTUAL BOT LOGIC FROM HERE DOWN
 // --------------------------------------------------
 
-// Bot inits
+// Bot initialization
 client.on('ready', async () => {
     console.log('Client is ready!\n');
     BOT_START_TIME = new Date();
@@ -216,15 +205,15 @@ client.on('message', async (msg) => {
         let text = "";
 
         if (dataMining.includes(contact.id.user)) {
-            text += allClassesReply(ALL_CLASSES, 'Data Mining', text)
+            text += allClassesReply(ALL_CLASSES, 'D', text)
             await msg.reply(text);
             return;
         } else if (networking.includes(contact.id.user)) {
-            text += allClassesReply(ALL_CLASSES, 'Networking', text)
+            text += allClassesReply(ALL_CLASSES, 'N', text)
             await msg.reply(text);
             return;
         } else if (softModelling.includes(contact.id.user)) {
-            text += allClassesReply(ALL_CLASSES, 'Software Modelling', text)
+            text += allClassesReply(ALL_CLASSES, 'S', text)
             await msg.reply(text);
             return;
         }
@@ -251,11 +240,11 @@ client.on('message', async (msg) => {
         let text = "";
         // console.log(msg.selectedRowId);
         if (msg.selectedRowId === '11') {
-            text += allClassesReply(ALL_CLASSES, 'Data Mining', text);
+            text += allClassesReply(ALL_CLASSES, 'D', text);
         } else if (msg.selectedRowId === '12') {
-            text += allClassesReply(ALL_CLASSES, 'Networking', text);
+            text += allClassesReply(ALL_CLASSES, 'N', text);
         } else if (msg.selectedRowId === '13') {
-            text += allClassesReply(ALL_CLASSES, 'Software Modelling', text);
+            text += allClassesReply(ALL_CLASSES, 'S', text);
         }
 
         await msg.reply(text);
@@ -271,15 +260,15 @@ client.on('message', async (msg) => {
         let text = "";
 
         if (dataMining.includes(contact.id.user)) {
-            text += await todayClassReply(text, 'Data Mining')
+            text += await todayClassReply(text, 'D')
             await msg.reply(text);
             return;
         } else if (networking.includes(contact.id.user)) {
-            text += await todayClassReply(text, 'Networking')
+            text += await todayClassReply(text, 'N')
             await msg.reply(text);
             return;
         } else if (softModelling.includes(contact.id.user)) {
-            text += await todayClassReply(text, 'Software Modelling')
+            text += await todayClassReply(text, 'S')
             await msg.reply(text);
             return;
         }
@@ -306,80 +295,16 @@ client.on('message', async (msg) => {
         if (parseInt(msg.selectedRowId) < 21 || parseInt(msg.selectedRowId) > 23) return;
         let text = "";
         if (msg.selectedRowId === '21') {
-            text += await todayClassReply(text, 'Data Mining');
+            text += await todayClassReply(text, 'D');
         } else if (msg.selectedRowId === '22') {
-            text += await todayClassReply(text, 'Networking');
+            text += await todayClassReply(text, 'N');
         } else if (msg.selectedRowId === '23') {
-            text += await todayClassReply(text, 'Software Modelling');
+            text += await todayClassReply(text, 'S');
         }
 
         await msg.reply(text);
     }
 })
-
-const todayClassReply = async (text, elective) => {
-    const today_day = new Date().toString().split(' ')[0]; // to get day
-
-    if (today_day === 'Sat' || today_day === 'Sun') {
-        await msg.reply('Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.');
-        return;
-    }
-
-    let { courses } = ALL_CLASSES.find(class_obj => {
-        if (class_obj.day.slice(0, 3) === today_day) {
-            return class_obj;
-        }
-    });
-
-    const cur_time = new Date();
-    const done_array = [];
-    const in_session_array = [];
-    const upcoming_array = [];
-
-    if (elective === 'Data Mining') {
-        text += "Today's classes ( *Data Mining*): ☀\n\n"
-        courses = courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
-    } else if (elective === 'Networking') {
-        text += "Today's classes ( *Networking*): ☀\n\n"
-        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"));
-    } else if (elective === 'Software Modelling') {
-        text += "Today's classes ( *Soft. Modelling*): ☀\n\n"
-        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"));
-    }
-
-    courses.forEach(course => {
-        const class_time = extractTime(course.name);
-        const class_time_hrs = +class_time.split(':')[0]
-        const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
-
-        if ((cur_time.getHours() < class_time_hrs) || (cur_time.getHours() === class_time_hrs && cur_time.getMinutes() < class_time_mins)) {
-            // console.log('Not time yet')
-            upcoming_array.push(course);
-        }
-        else if ((cur_time.getHours() === class_time_hrs) || (cur_time.getHours() < class_time_hrs + course.duration) || ((cur_time.getHours() <= class_time_hrs + course.duration) && cur_time.getMinutes() < class_time_mins)) {
-            // console.log('In session')
-            in_session_array.push(course);
-        }
-        else if ((cur_time.getHours() > (class_time_hrs + course.duration)) || (cur_time.getHours() >= (class_time_hrs + course.duration) && (cur_time.getMinutes() > class_time_mins))) {
-            // console.log('Past time')
-            done_array.push(course);
-        }
-    })
-
-    text += "✅ *Done*:\n" +
-        function () {
-            return !done_array.length ? '🚫 None\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
-        }()
-        + "\n" + "⏳ *In session*:\n" +
-        function () {
-            return !in_session_array.length ? '🚫 None\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
-        }()
-        + "\n" + "💡 *Upcoming*:\n" +
-        function () {
-            return !upcoming_array.length ? '🚫 None\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
-        }();
-    return text;
-}
 
 
 // Forward messages with links/announcements (in other groups) to EPiC Devs
@@ -527,7 +452,6 @@ client.on('message', async (msg) => {
             'Powered by Ethereal bot'
         );
         await msg.reply(list);
-
     }
 
     if (msg.type === 'list_response') {
@@ -596,7 +520,7 @@ app.get('/reset-notif-calc', async (req, res) => {
 
 // All other pages should be returned as error pages
 app.all("*", (req, res) => {
-    res.status(404).send("<h1>Sorry, this page does not exist!</h1><a href='/'>Back to Home</a>")
+    res.status(404).send("<h1>Sorry, this page does not exist!</h1><br><a href='/'>Back to Home</a>")
 })
 
 

@@ -1,4 +1,7 @@
-// MAIN MIDDLEWARE TO HANDLE INTERACTIONS WITH DATABASE
+// --------------------------------------------------
+//  middleware/index.js contains the main middleware
+// functions to handle interactions with the database
+// --------------------------------------------------
 
 const { isMuted, mute, unmute, getAllLinks, getAllAnnouncements, addSuperAdmin, addAnnouncement, addLink, removeSuperAdmin, getUsersToNotifyForClass, removeUserFromElective, addUserToElective } = require('../models/misc');
 

@@ -1,4 +1,8 @@
-// Miscellaneous stuff relating to the bot or stuff which cannot go under any specific schema
+// --------------------------------------------------
+// misc.js contains the database schema and behaviour
+// for miscellaneous stuff relating to the bot which cannot
+// go under any other specific schema
+// --------------------------------------------------
 
 const { Schema, model } = require('mongoose');
 
@@ -138,7 +142,7 @@ exports.getUsersToNotifyForClass = async () => {
 
 exports.addUserToElective = async (newUser, rowId) => {
     try {
-        const res = null;
+        let res = null;
         if (rowId === '31') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveDataMining: newUser } });
         } else if (rowId === '32') {
@@ -154,7 +158,7 @@ exports.addUserToElective = async (newUser, rowId) => {
 
 exports.removeUserFromElective = async (user, elective) => {
     try {
-        const res = null;
+        let res = null;
         if (elective === 'D') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveDataMining: user } });
         } else if (elective === 'N') {

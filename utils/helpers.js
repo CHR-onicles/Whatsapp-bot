@@ -1,12 +1,20 @@
 // --------------------------------------------------
-// Helper functions
+// helper.js contains helper functions to supplement bot logic
 // --------------------------------------------------
-
 const { getUsersToNotifyForClass } = require("../middleware");
 const { ALL_CLASSES } = require("./data");
 
+// GLOBAL VARIABLES
+/**
+ * Counter to keep track of dynamically created variables  later used in eval statements.
+ */
 var VARIABLES_COUNTER = 0; // used in eval statement later
 
+/**
+ * Get a random reply from an array of replies
+ * @param {Array} replies An array of replies
+ * @returns {String} A randomly chosen reply from the array of replies provided
+ */
 const pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
 }
@@ -51,6 +59,7 @@ const msToHMS = (duration) => {
         hours = Math.floor((duration / (1000 * 60 * 60)) % 24),
         days = Math.floor((duration / (1000 * 60 * 60)) / 24);
 
+    // To add padding of '0' for single digits
     // days = (days < 10) ? "0" + days : days;
     // hours = (hours < 10) ? "0" + hours : hours;
     // minutes = (minutes < 10) ? "0" + minutes : minutes;
@@ -196,19 +205,19 @@ const stopOngoingNotifications = () => {
 
 const allClassesReply = (all_classes, elective, text) => {
     let filtered_courses = null;
-    if (elective === "Data Mining") {
+    if (elective === "D") {
         text += "Timetable for *Data Mining* as elective:\n\n"
         all_classes.forEach(class_obj => {
             filtered_courses = class_obj.courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
             text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
         })
-    } else if (elective === "Networking") {
+    } else if (elective === "N") {
         text += "Timetable for *Networking* as elective:\n\n"
         all_classes.forEach(class_obj => {
             filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"))
             text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
         })
-    } else if (elective === "Software Modelling") {
+    } else if (elective === "S") {
         text += "Timetable for *Software Modelling* as elective:\n\n"
         all_classes.forEach(class_obj => {
             filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"))
@@ -219,4 +228,69 @@ const allClassesReply = (all_classes, elective, text) => {
 }
 
 
-module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply }
+const todayClassReply = async (text, elective) => {
+    const today_day = new Date().toString().split(' ')[0]; // to get day
+
+    if (today_day === 'Sat' || today_day === 'Sun') {
+        await msg.reply('Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.');
+        return;
+    }
+
+    let { courses } = ALL_CLASSES.find(class_obj => {
+        if (class_obj.day.slice(0, 3) === today_day) {
+            return class_obj;
+        }
+    });
+
+    const cur_time = new Date();
+    const done_array = [];
+    const in_session_array = [];
+    const upcoming_array = [];
+
+    if (elective === 'D') {
+        text += "Today's classes ( *Data Mining*): ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
+    } else if (elective === 'N') {
+        text += "Today's classes ( *Networking*): ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"));
+    } else if (elective === 'S') {
+        text += "Today's classes ( *Soft. Modelling*): ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"));
+    }
+
+    courses.forEach(course => {
+        const class_time = extractTime(course.name);
+        const class_time_hrs = +class_time.split(':')[0]
+        const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+
+        if ((cur_time.getHours() < class_time_hrs) || (cur_time.getHours() === class_time_hrs && cur_time.getMinutes() < class_time_mins)) {
+            // console.log('Not time yet')
+            upcoming_array.push(course);
+        }
+        else if ((cur_time.getHours() === class_time_hrs) || (cur_time.getHours() < class_time_hrs + course.duration) || ((cur_time.getHours() <= class_time_hrs + course.duration) && cur_time.getMinutes() < class_time_mins)) {
+            // console.log('In session')
+            in_session_array.push(course);
+        }
+        else if ((cur_time.getHours() > (class_time_hrs + course.duration)) || (cur_time.getHours() >= (class_time_hrs + course.duration) && (cur_time.getMinutes() > class_time_mins))) {
+            // console.log('Past time')
+            done_array.push(course);
+        }
+    })
+
+    text += "✅ *Done*:\n" +
+        function () {
+            return !done_array.length ? '🚫 None\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
+        }()
+        + "\n" + "⏳ *In session*:\n" +
+        function () {
+            return !in_session_array.length ? '🚫 None\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
+        }()
+        + "\n" + "💡 *Upcoming*:\n" +
+        function () {
+            return !upcoming_array.length ? '🚫 None\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
+        }();
+    return text;
+}
+
+
+module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply }

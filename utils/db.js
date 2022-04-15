@@ -1,4 +1,7 @@
-// Connecting to the database
+// --------------------------------------------------
+// db.js contains the logic to connect to both local and 
+// deployed databases
+// --------------------------------------------------
 const { connect } = require('mongoose');
 
 

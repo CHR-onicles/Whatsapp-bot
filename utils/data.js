@@ -1,5 +1,6 @@
 // --------------------------------------------------
-// Data
+// data.js contains all relevant static data needed for the 
+// bot to function correctly
 // --------------------------------------------------
 
 exports.ALL_CLASSES = [
