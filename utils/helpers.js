@@ -2,11 +2,10 @@
 // Helper functions
 // --------------------------------------------------
 
-var VARIABLES_COUNTER = 0; // used in eval statement later
-
 const { getUsersToNotifyForClass } = require("../middleware");
-const { CLASSES } = require("./data");
+const { ALL_CLASSES } = require("./data");
 
+var VARIABLES_COUNTER = 0; // used in eval statement later
 
 const pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
@@ -62,12 +61,12 @@ const msToHMS = (duration) => {
 
 
 const notificationTimeCalc = (course) => {
-    // Constants for notification times
+    // Constants for notification intervals
     const two_hrs_ms = 120 * 60 * 1000;
     const one_hr_ms = 60 * 60 * 1000;
     const thirty_mins_ms = 30 * 60 * 1000;
 
-    // Timeouts for the 3 reminder times
+    // Timeouts for the 3 reminder intervals
     let timeout_two_hrs = 0;
     let timeout_one_hr = 0;
     let timeout_thirty_mins = 0;
@@ -79,7 +78,6 @@ const notificationTimeCalc = (course) => {
     const cur_time = new Date();
     const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
     const time_left_in_ms = new_class_time - cur_time;
-    // if (time_left_in_ms < 0) return;
 
     if (two_hrs_ms > time_left_in_ms) {
         console.log("Less than 2hrs left to remind for", course.name.split('|')[0]);
@@ -99,17 +97,19 @@ const notificationTimeCalc = (course) => {
         timeout_thirty_mins = time_left_in_ms - thirty_mins_ms;
     }
 
-    // console.log(timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+    console.log(timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
     return { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins };
 }
 
 
 const startNotificationCalculation = async (client) => {
     const today_day = new Date().toString().split(' ')[0];
-    const subscribed_users = await getUsersToNotifyForClass();
+    const { dataMining, softModelling, networking } = await getUsersToNotifyForClass();
+
+    const total_users = [...dataMining, ...softModelling, ...networking];
     const chats = await client.getChats();
 
-    if (!subscribed_users.length) {
+    if (!total_users.length) {
         return; // stop rather than calling the restart function again which might lead to an infinite loop
     }
 
@@ -118,43 +118,69 @@ const startNotificationCalculation = async (client) => {
         return;
     }
 
-    const { courses } = CLASSES.find(class_obj => {
+    const { courses } = ALL_CLASSES.find(class_obj => {
         if (class_obj.day.slice(0, 3) === today_day) {
             return class_obj;
         }
     });
+    // console.log(courses);
 
-    courses.forEach(course => {
-        const class_time = extractTime(course.name);
+    for (let i = 0; i < courses.length; ++i) {
+
+        const class_time = extractTime(courses[i].name);
         const class_time_hrs = +class_time.split(':')[0];
         const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
-        const { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins } = notificationTimeCalc(course);
+        const { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins } = notificationTimeCalc(courses[i]);
 
         const cur_time = new Date();
         const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
         const time_left_in_ms = new_class_time - cur_time;
-        if (time_left_in_ms < 0) return;
+        if (time_left_in_ms < 0) continue;
 
-        subscribed_users.forEach(user => {
-            const chat_from_user = chats.find(chat => chat.id.user === user);
+        if (courses[i].name.includes('Data Mining')) {
+            if (dataMining.length) {
+                dataMining.forEach(student => {
+                    generateTimeoutIntervals(student, courses[i], chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                })
+            }
+        } else if (courses[i].name.includes('Networking')) {
+            if (networking.length) {
+                networking.forEach(student => {
+                    generateTimeoutIntervals(student, courses[i], chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                })
+            }
+        } else if (courses[i].name.includes('Soft. Modelling')) {
+            if (softModelling.length) {
+                softModelling.forEach(student => {
+                    generateTimeoutIntervals(student, courses[i], chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                })
+            }
+        } else {
+            total_users.forEach(student => {
+                generateTimeoutIntervals(student, courses[i], chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+            })
+        }
+    }
+}
 
-            if (timeout_two_hrs > 0) {
-                ++VARIABLES_COUNTER;
-                eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours')}, timeout_two_hrs)")
-                console.log('Sending 2hr notif for', course.name.split('|')[0], ' to', user)
-            }
-            if (timeout_one_hr > 0) {
-                ++VARIABLES_COUNTER;
-                eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour')}, timeout_one_hr)")
-                console.log('Sending 1hr notif for', course.name.split('|')[0], ' to', user)
-            }
-            if (timeout_thirty_mins > 0) {
-                ++VARIABLES_COUNTER;
-                eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!')}, timeout_thirty_mins)")
-                console.log('Sending 30min notif for', course.name.split('|')[0], ' to', user)
-            }
-        })
-    })
+const generateTimeoutIntervals = (user, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins) => {
+    const chat_from_user = chats.find(chat => chat.id.user === user); // used in the eval statement
+
+    if (timeout_two_hrs > 0) {
+        ++VARIABLES_COUNTER;
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours')}, timeout_two_hrs)")
+        console.log('Sending 2hr notif for', course.name.split('|')[0], ' to', user)
+    }
+    if (timeout_one_hr > 0) {
+        ++VARIABLES_COUNTER;
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour')}, timeout_one_hr)")
+        console.log('Sending 1hr notif for', course.name.split('|')[0], ' to', user)
+    }
+    if (timeout_thirty_mins > 0) {
+        ++VARIABLES_COUNTER;
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!')}, timeout_thirty_mins)")
+        console.log('Sending 30min notif for', course.name.split('|')[0], ' to', user)
+    }
 }
 
 
@@ -168,4 +194,29 @@ const stopOngoingNotifications = () => {
 }
 
 
-module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications }
+const allClassesReply = (all_classes, elective, text) => {
+    let filtered_courses = null;
+    if (elective === "Data Mining") {
+        text += "Timetable for *Data Mining* as elective:\n\n"
+        all_classes.forEach(class_obj => {
+            filtered_courses = class_obj.courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
+            text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+        })
+    } else if (elective === "Networking") {
+        text += "Timetable for *Networking* as elective:\n\n"
+        all_classes.forEach(class_obj => {
+            filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"))
+            text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+        })
+    } else if (elective === "Software Modelling") {
+        text += "Timetable for *Software Modelling* as elective:\n\n"
+        all_classes.forEach(class_obj => {
+            filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"))
+            text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+        })
+    }
+    return text;
+}
+
+
+module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply }

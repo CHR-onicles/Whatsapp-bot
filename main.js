@@ -2,11 +2,11 @@ const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 require('dotenv').config();
-const fs = require('fs');
+// const fs = require('fs');
 
 require('./utils/db');
-const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications } = require('./utils/helpers');
-const { CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
+const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply } = require('./utils/helpers');
+const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
 
 
@@ -118,7 +118,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) {
         const first_word = msg.body.toLowerCase().split(' ')[0];
-        const contact = await msg.getContact(); // will be used by the replies array later
+        const contact = await msg.getContact();
 
         const PING_REPLIES = [
             `${contact.id.user !== GRANDMASTER ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
@@ -150,7 +150,7 @@ client.on('message', async (msg) => {
                 ]
             },
                 // {
-                //     title: 'Commands available to EPiC Devs only', rows: [
+                //     title: 'Commands available to admins only', rows: [
                 //         { id: '100', title: '!everyone', description: 'Ping everyone in the group' },
                 //         { id: '101', title: '!mute', description: 'Shut the bot up' },
                 //         { id: '102', title: '!unmute', description: 'Allow the bot to talk' },
@@ -195,7 +195,7 @@ client.on('message', async (msg) => {
 })
 
 
-// Help
+// Help //todo: edit to show only commands available to specific users
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!help' && await getMutedStatus() === false) {
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
@@ -211,11 +211,53 @@ client.on('message', async (msg) => {
 // Check classes for the week
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
-        let text = "If *Software Modelling* is your elective:\n\n";
-        CLASSES.forEach(class_obj => {
-            text += "*" + class_obj.day + "*:\n" + class_obj.courses.map(course => '→ ' + course.name + "\n").join('') + "\n";
-            // added join('') to map() to remove the default comma after each value in array
-        })
+        const contact = await msg.getContact();
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        let text = "";
+
+        if (dataMining.includes(contact.id.user)) {
+            text += allClassesReply(ALL_CLASSES, 'Data Mining', text)
+            await msg.reply(text);
+            return;
+        } else if (networking.includes(contact.id.user)) {
+            text += allClassesReply(ALL_CLASSES, 'Networking', text)
+            await msg.reply(text);
+            return;
+        } else if (softModelling.includes(contact.id.user)) {
+            text += allClassesReply(ALL_CLASSES, 'Software Modelling', text)
+            await msg.reply(text);
+            return;
+        }
+
+        const list = new List(
+            '\nMake a choice from the list of electives',
+            'See options',
+            [{
+                title: 'Commands available to everyone', rows: [
+                    { id: '11', title: 'Data Mining', description: 'For those offering Data Mining' },
+                    { id: '12', title: 'Networking', description: "For those offering Networking" },
+                    { id: '13', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                ]
+            }
+            ],
+            'What elective do you offer?',
+            'Powered by Ethereal bot'
+        );
+        await msg.reply(list);
+    }
+
+    if (msg.type === 'list_response') {
+        if (parseInt(msg.selectedRowId) < 11 || parseInt(msg.selectedRowId) > 13) return;
+        let text = "";
+        // console.log(msg.selectedRowId);
+        if (msg.selectedRowId === '11') {
+            text += allClassesReply(ALL_CLASSES, 'Data Mining', text);
+        } else if (msg.selectedRowId === '12') {
+            text += allClassesReply(ALL_CLASSES, 'Networking', text);
+        } else if (msg.selectedRowId === '13') {
+            text += allClassesReply(ALL_CLASSES, 'Software Modelling', text);
+        }
+
         await msg.reply(text);
     }
 })
@@ -224,59 +266,120 @@ client.on('message', async (msg) => {
 // Check class for today
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!class' && await getMutedStatus() === false) {
-        const today_day = new Date().toString().split(' ')[0]; // to get day
+        const contact = await msg.getContact();
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        let text = "";
 
-        if (today_day === 'Sat' || today_day === 'Sun') {
-            await msg.reply('Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.');
+        if (dataMining.includes(contact.id.user)) {
+            text += await todayClassReply(text, 'Data Mining')
+            await msg.reply(text);
+            return;
+        } else if (networking.includes(contact.id.user)) {
+            text += await todayClassReply(text, 'Networking')
+            await msg.reply(text);
+            return;
+        } else if (softModelling.includes(contact.id.user)) {
+            text += await todayClassReply(text, 'Software Modelling')
+            await msg.reply(text);
             return;
         }
 
-        const { courses } = CLASSES.find(class_obj => {
-            if (class_obj.day.slice(0, 3) === today_day) {
-                return class_obj;
+        const list = new List(
+            '\nMake a choice from the list of electives',
+            'See options',
+            [{
+                title: 'Commands available to everyone', rows: [
+                    { id: '21', title: 'Data Mining', description: 'For those offering Data Mining' },
+                    { id: '22', title: 'Networking', description: "For those offering Networking" },
+                    { id: '23', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                ]
             }
-        });
+            ],
+            'What elective do you offer?',
+            'Powered by Ethereal bot'
+        );
+        await msg.reply(list);
 
-        const cur_time = new Date();
-        const done_array = [];
-        const in_session_array = [];
-        const upcoming_array = [];
-        let text = "*Today's classes* ☀\n\n";
+    }
 
-        courses.forEach(course => {
-            const class_time = extractTime(course.name);
-            const class_time_hrs = +class_time.split(':')[0]
-            const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+    if (msg.type === 'list_response') {
+        if (parseInt(msg.selectedRowId) < 21 || parseInt(msg.selectedRowId) > 23) return;
+        let text = "";
+        if (msg.selectedRowId === '21') {
+            text += await todayClassReply(text, 'Data Mining');
+        } else if (msg.selectedRowId === '22') {
+            text += await todayClassReply(text, 'Networking');
+        } else if (msg.selectedRowId === '23') {
+            text += await todayClassReply(text, 'Software Modelling');
+        }
 
-            if ((cur_time.getHours() < class_time_hrs) || (cur_time.getHours() === class_time_hrs && cur_time.getMinutes() < class_time_mins)) {
-                // console.log('Not time yet')
-                upcoming_array.push(course);
-            }
-            else if ((cur_time.getHours() === class_time_hrs) || (cur_time.getHours() < class_time_hrs + course.duration) || ((cur_time.getHours() <= class_time_hrs + course.duration) && cur_time.getMinutes() < class_time_mins)) {
-                // console.log('In session')
-                in_session_array.push(course);
-            }
-            else if ((cur_time.getHours() > (class_time_hrs + course.duration)) || (cur_time.getHours() >= (class_time_hrs + course.duration) && (cur_time.getMinutes() > class_time_mins))) {
-                // console.log('Past time')
-                done_array.push(course);
-            }
-        })
-
-        text += "✅ *Done*:\n" +
-            function () {
-                return !done_array.length ? '🚫 None\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
-            }()
-            + "\n" + "⏳ *In session*:\n" +
-            function () {
-                return !in_session_array.length ? '🚫 None\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
-            }()
-            + "\n" + "💡 *Upcoming*:\n" +
-            function () {
-                return !upcoming_array.length ? '🚫 None\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
-            }();
         await msg.reply(text);
     }
 })
+
+const todayClassReply = async (text, elective) => {
+    const today_day = new Date().toString().split(' ')[0]; // to get day
+
+    if (today_day === 'Sat' || today_day === 'Sun') {
+        await msg.reply('Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.');
+        return;
+    }
+
+    let { courses } = ALL_CLASSES.find(class_obj => {
+        if (class_obj.day.slice(0, 3) === today_day) {
+            return class_obj;
+        }
+    });
+
+    const cur_time = new Date();
+    const done_array = [];
+    const in_session_array = [];
+    const upcoming_array = [];
+
+    if (elective === 'Data Mining') {
+        text += "Today's classes ( *Data Mining*): ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
+    } else if (elective === 'Networking') {
+        text += "Today's classes ( *Networking*): ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"));
+    } else if (elective === 'Software Modelling') {
+        text += "Today's classes ( *Soft. Modelling*): ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"));
+    }
+
+    courses.forEach(course => {
+        const class_time = extractTime(course.name);
+        const class_time_hrs = +class_time.split(':')[0]
+        const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+
+        if ((cur_time.getHours() < class_time_hrs) || (cur_time.getHours() === class_time_hrs && cur_time.getMinutes() < class_time_mins)) {
+            // console.log('Not time yet')
+            upcoming_array.push(course);
+        }
+        else if ((cur_time.getHours() === class_time_hrs) || (cur_time.getHours() < class_time_hrs + course.duration) || ((cur_time.getHours() <= class_time_hrs + course.duration) && cur_time.getMinutes() < class_time_mins)) {
+            // console.log('In session')
+            in_session_array.push(course);
+        }
+        else if ((cur_time.getHours() > (class_time_hrs + course.duration)) || (cur_time.getHours() >= (class_time_hrs + course.duration) && (cur_time.getMinutes() > class_time_mins))) {
+            // console.log('Past time')
+            done_array.push(course);
+        }
+    })
+
+    text += "✅ *Done*:\n" +
+        function () {
+            return !done_array.length ? '🚫 None\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
+        }()
+        + "\n" + "⏳ *In session*:\n" +
+        function () {
+            return !in_session_array.length ? '🚫 None\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
+        }()
+        + "\n" + "💡 *Upcoming*:\n" +
+        function () {
+            return !upcoming_array.length ? '🚫 None\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
+        }();
+    return text;
+}
 
 
 // Forward messages with links/announcements (in other groups) to EPiC Devs
@@ -314,7 +417,7 @@ client.on('message', async (msg) => {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
-        const link_pattern = /(https?:\/\/[^\s]+)/; // Pattern to recognize a link
+        const link_pattern = /(https?:\/\/[^\s]+)|(www.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
         const extracted_link = link_pattern.exec(msg.body)[0];
         const current_forwarded_links = await getAllLinks();
         // console.log(current_forwarded_links)
@@ -394,41 +497,73 @@ client.on('message', async (msg) => {
 })
 
 
-// Add user to notification list for class
+//Add user to notification list for class
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!notify' &&
-        msg.body.toLowerCase().split(' ')[1] !== 'stop' &&
+        extractCommandArgs(msg) !== 'stop' &&
         await getMutedStatus() === false) {
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        const total_users = [...dataMining, ...networking, ...softModelling];
+        const contact = await msg.getContact();
+
+        if (total_users.includes(contact.id.user)) {
+            await msg.reply("You are already being notified for class🐦");
+            console.log('Already subscribed')
+            return;
+        }
+
+        const list = new List(
+            '\nMake a choice from the list of electives',
+            'See electives',
+            [{
+                title: 'Commands available to everyone', rows: [
+                    { id: '31', title: 'Data Mining', description: 'For those offering Data Mining' },
+                    { id: '32', title: 'Networking', description: 'For those offering Networking' },
+                    { id: '33', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                ]
+            }
+            ],
+            'Which elective do you offer?',
+            'Powered by Ethereal bot'
+        );
+        await msg.reply(list);
+
+    }
+
+    if (msg.type === 'list_response') {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
+        if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
 
-        const current_subscribed = await getUsersToNotifyForClass();
-        if (!current_subscribed.includes(contact.id.user)) {
-            if (cur_chat.isGroup) {
-                msg.reply(pickRandomReply(NOTIFY_REPLIES));
-            }
-            chat_from_contact.sendMessage("🔔 You will now be notified periodically for class.\n\nExpect me🐦");
-            await addUserToBeNotified(contact.id.user);
-            stopOngoingNotifications();
-            await startNotificationCalculation(client);
-        } else {
-            await msg.reply("You are already being notified for class🐦");
-            console.log('Already subscribed')
+        if (cur_chat.isGroup) {
+            msg.reply(pickRandomReply(NOTIFY_REPLIES));
         }
+
+        chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${msg.selectedRowId === '31' ? 'Data Mining' : (msg.selectedRowId === '32' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
+        await addUserToBeNotified(contact.id.user, msg.selectedRowId);
+        stopOngoingNotifications();
+        await startNotificationCalculation(client);
     }
 })
 
 
-// Stop user from being notified for class
+//Stop notifying user for class
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!notify' && extractCommandArgs(msg) === 'stop') {
         const contact = await msg.getContact();
-        const current_subscribed = await getUsersToNotifyForClass();
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        const total_users = [...dataMining, ...networking, ...softModelling]
 
-        if (current_subscribed.includes(contact.id.user)) {
-            await removeUserToBeNotified(contact.id.user);
-            msg.reply("I won't remind you to go to class ✅");
+        if (total_users.includes(contact.id.user)) {
+            if (dataMining.includes(contact.id.user)) {
+                await removeUserToBeNotified(contact.id.user, 'D');
+            } else if (networking.includes(contact.id.user)) {
+                await removeUserToBeNotified(contact.id.user, 'N');
+            } else if (softModelling.includes(contact.id.user)) {
+                await removeUserToBeNotified(contact.id.user, 'S');
+            }
+            msg.reply("I won't remind you to go to class anymore✅");
             stopOngoingNotifications();
             await startNotificationCalculation(client);
         } else {
@@ -442,26 +577,28 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user !== GRANDMASTER) {
-            await msg.reply("Sorry, this command is not available to you.")
-        }
-        const users = await getUsersToNotifyForClass();
+        if (contact.id.user !== GRANDMASTER) await msg.reply("Sorry, this command is not available to you.")
 
-        await msg.reply('The following users have agreed to be notified for class:\n\n' + users.map(user => '→ ' + user + '\n').join(''));
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+
+        await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
+            + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
     }
 })
 
-// Endpoint to hit in order to restart calculations for class notifications
+
+// Endpoint to hit in order to restart calculations for class notifications (will be done by a cron-job)
 app.get('/reset-notif-calc', async (req, res) => {
     stopOngoingNotifications();
     await startNotificationCalculation(client);
     res.send('<h1>Restarting the class notification calculation function.</h1>');
 })
 
-
+// All other pages should be returned as error pages
 app.all("*", (req, res) => {
     res.status(404).send("<h1>Sorry, this page does not exist!</h1><a href='/'>Back to Home</a>")
 })
 
 
+// Start bot
 client.initialize();
