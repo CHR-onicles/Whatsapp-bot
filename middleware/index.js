@@ -1,6 +1,6 @@
 // MAIN MIDDLEWARE TO HANDLE INTERACTIONS WITH DATABASE
 
-const { isMuted, mute, unmute, getAllLinks, getAllAnnouncements, addSuperAdmin, addAnnouncement, addLink, removeSuperAdmin, getUsersToNotifyForClass, addUserToElectiveDataMining, addUserToElectiveNetworking, addUserToElectiveSoftModelling, removeUserFromElective } = require('../models/misc');
+const { isMuted, mute, unmute, getAllLinks, getAllAnnouncements, addSuperAdmin, addAnnouncement, addLink, removeSuperAdmin, getUsersToNotifyForClass, removeUserFromElective, addUserToElective } = require('../models/misc');
 
 
 exports.muteBot = async () => {
@@ -45,12 +45,8 @@ exports.getUsersToNotifyForClass = async () => {
     // console.log(dataMining, networking, softModelling);
     return { dataMining, networking, softModelling };
 }
-
-//todo: redo both functions below
 exports.addUserToBeNotified = async (user, rowId) => {
-    if (rowId === '31') await addUserToElectiveDataMining(user);
-    else if (rowId === '32') await addUserToElectiveNetworking(user);
-    else if (rowId === '33') await addUserToElectiveSoftModelling(user);
+    await addUserToElective(user, rowId);
     console.log("User: " + user + " subscribed to be notified for class with " + rowId === '31' ? 'Data Mining' : (rowId === '32' ? 'Networking' : 'Software Modelling') + ' as elective');
 }
 

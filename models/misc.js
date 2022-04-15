@@ -13,7 +13,7 @@ const MiscellaneousSchema = new Schema({
     electiveDataMining: [String],
     electiveSoftModelling: [String],
     electiveNetworking: [String],
-    numOfCommands: Number, // to be used later
+    // numOfCommands: Number, // to be used later
 });
 
 const MiscellaneousModel = model("Miscellaneous", MiscellaneousSchema);
@@ -136,27 +136,16 @@ exports.getUsersToNotifyForClass = async () => {
     return resUsers;
 }
 
-exports.addUserToElectiveDataMining = async (newUser) => {
+exports.addUserToElective = async (newUser, rowId) => {
     try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveDataMining: newUser } });
-        // console.log(res);
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-exports.addUserToElectiveNetworking = async (newUser) => {
-    try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveNetworking: newUser } });
-        // console.log(res);
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-exports.addUserToElectiveSoftModelling = async (newUser) => {
-    try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveSoftModelling: newUser } });
+        const res = null;
+        if (rowId === '31') {
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveDataMining: newUser } });
+        } else if (rowId === '32') {
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveNetworking: newUser } });
+        } else if (rowId === '33') {
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveSoftModelling: newUser } });
+        }
         // console.log(res);
     } catch (error) {
         console.log(error)
@@ -165,12 +154,13 @@ exports.addUserToElectiveSoftModelling = async (newUser) => {
 
 exports.removeUserFromElective = async (user, elective) => {
     try {
+        const res = null;
         if (elective === 'D') {
-            const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveDataMining: user } });
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveDataMining: user } });
         } else if (elective === 'N') {
-            const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveNetworking: user } });
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveNetworking: user } });
         } else if (elective === 'S') {
-            const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveSoftModelling: user } });
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveSoftModelling: user } });
         }
         console.log(res);
     } catch (error) {

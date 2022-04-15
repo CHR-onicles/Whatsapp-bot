@@ -2,11 +2,10 @@
 // Helper functions
 // --------------------------------------------------
 
-var VARIABLES_COUNTER = 0; // used in eval statement later
-
 const { getUsersToNotifyForClass } = require("../middleware");
 const { ALL_CLASSES } = require("./data");
 
+var VARIABLES_COUNTER = 0; // used in eval statement later
 
 const pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
@@ -62,12 +61,12 @@ const msToHMS = (duration) => {
 
 
 const notificationTimeCalc = (course) => {
-    // Constants for notification times
+    // Constants for notification intervals
     const two_hrs_ms = 120 * 60 * 1000;
     const one_hr_ms = 60 * 60 * 1000;
     const thirty_mins_ms = 30 * 60 * 1000;
 
-    // Timeouts for the 3 reminder times
+    // Timeouts for the 3 reminder intervals
     let timeout_two_hrs = 0;
     let timeout_one_hr = 0;
     let timeout_thirty_mins = 0;
@@ -79,7 +78,6 @@ const notificationTimeCalc = (course) => {
     const cur_time = new Date();
     const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
     const time_left_in_ms = new_class_time - cur_time;
-    // if (time_left_in_ms < 0) return;
 
     if (two_hrs_ms > time_left_in_ms) {
         console.log("Less than 2hrs left to remind for", course.name.split('|')[0]);
@@ -166,7 +164,7 @@ const startNotificationCalculation = async (client) => {
 }
 
 const generateTimeoutIntervals = (user, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins) => {
-    const chat_from_user = chats.find(chat => chat.id.user === user);
+    const chat_from_user = chats.find(chat => chat.id.user === user); // used in the eval statement
 
     if (timeout_two_hrs > 0) {
         ++VARIABLES_COUNTER;

@@ -2,7 +2,7 @@ const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 require('dotenv').config();
-const fs = require('fs');
+// const fs = require('fs');
 
 require('./utils/db');
 const { pickRandomReply, extractTime, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply } = require('./utils/helpers');
@@ -118,7 +118,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) {
         const first_word = msg.body.toLowerCase().split(' ')[0];
-        const contact = await msg.getContact(); // will be used by the replies array later
+        const contact = await msg.getContact();
 
         const PING_REPLIES = [
             `${contact.id.user !== GRANDMASTER ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
@@ -283,6 +283,7 @@ client.on('message', async (msg) => {
             await msg.reply(text);
             return;
         }
+
         const list = new List(
             '\nMake a choice from the list of electives',
             'See options',
@@ -416,7 +417,7 @@ client.on('message', async (msg) => {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
-        const link_pattern = /(https?:\/\/[^\s]+)|(www.[^\s]+)/; // Pattern to recognize a link with http, https or www
+        const link_pattern = /(https?:\/\/[^\s]+)|(www.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
         const extracted_link = link_pattern.exec(msg.body)[0];
         const current_forwarded_links = await getAllLinks();
         // console.log(current_forwarded_links)
@@ -547,7 +548,7 @@ client.on('message', async (msg) => {
 })
 
 
-//todo: Stop user from being notified for class *REWRITE*
+//Stop notifying user for class
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!notify' && extractCommandArgs(msg) === 'stop') {
         const contact = await msg.getContact();
@@ -586,14 +587,14 @@ client.on('message', async (msg) => {
 })
 
 
-// Endpoint to hit in order to restart calculations for class notifications
+// Endpoint to hit in order to restart calculations for class notifications (will be done by a cron-job)
 app.get('/reset-notif-calc', async (req, res) => {
     stopOngoingNotifications();
     await startNotificationCalculation(client);
     res.send('<h1>Restarting the class notification calculation function.</h1>');
 })
 
-// All other pages should be returned as 404
+// All other pages should be returned as error pages
 app.all("*", (req, res) => {
     res.status(404).send("<h1>Sorry, this page does not exist!</h1><a href='/'>Back to Home</a>")
 })
