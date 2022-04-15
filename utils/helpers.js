@@ -10,6 +10,7 @@ const { ALL_CLASSES } = require("./data");
  */
 var VARIABLES_COUNTER = 0; // used in eval statement later
 
+// FUNCTIONS
 /**
  * Get a random reply from an array of replies
  * @param {Array} replies An array of replies
@@ -45,8 +46,13 @@ const extractCommand = (msg) => {
 
 
 const extractCommandArgs = (msg, index = 1) => {
-    const args = msg.body.toLowerCase().split(' '); // enforce arguments being separated from commands strictly by space(s)
-    return args[index];
+    // If there's a newline ignore everything after the new line
+    const args = msg.body.toLowerCase().split('\n')[0]; // enforce arguments being separated from commands strictly by space(s)
+
+    // Now split's the group of words by a space... these should be the valid args
+    const valid_args = args.split(' ');
+    // console.log(valid_args);
+    return valid_args[index] || '';
 }
 
 

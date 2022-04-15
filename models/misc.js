@@ -166,7 +166,7 @@ exports.removeUserFromElective = async (user, elective) => {
         } else if (elective === 'S') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveSoftModelling: user } });
         }
-        console.log(res);
+        // console.log(res);
     } catch (error) {
         console.log(error);
     }

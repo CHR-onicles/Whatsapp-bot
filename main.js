@@ -127,7 +127,7 @@ client.on('message', async (msg) => {
 
         const list = new List(
             '\nThis is a list of commands the bot can perform',
-            'See options',
+            'See commands',
             [{
                 title: 'Commands available to everyone', rows: [
                     { id: '1', title: '!help', description: 'Help commands' },
@@ -220,7 +220,7 @@ client.on('message', async (msg) => {
 
         const list = new List(
             '\nMake a choice from the list of electives',
-            'See options',
+            'See electives',
             [{
                 title: 'Commands available to everyone', rows: [
                     { id: '11', title: 'Data Mining', description: 'For those offering Data Mining' },
@@ -275,7 +275,7 @@ client.on('message', async (msg) => {
 
         const list = new List(
             '\nMake a choice from the list of electives',
-            'See options',
+            'See electives',
             [{
                 title: 'Commands available to everyone', rows: [
                     { id: '21', title: 'Data Mining', description: 'For those offering Data Mining' },
@@ -288,7 +288,6 @@ client.on('message', async (msg) => {
             'Powered by Ethereal bot'
         );
         await msg.reply(list);
-
     }
 
     if (msg.type === 'list_response') {
@@ -474,7 +473,9 @@ client.on('message', async (msg) => {
 
 //Stop notifying user for class
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!notify' && extractCommandArgs(msg) === 'stop') {
+    if (extractCommand(msg) === '!notify' &&
+        extractCommandArgs(msg) === 'stop' &&
+        await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         const total_users = [...dataMining, ...networking, ...softModelling]
