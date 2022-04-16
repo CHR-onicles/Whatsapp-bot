@@ -296,8 +296,8 @@ const todayClassReply = async (text, elective) => {
     const today_day = new Date().toString().split(' ')[0]; // to get day
 
     if (today_day === 'Sat' || today_day === 'Sun') {
-        await msg.reply('Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.');
-        return;
+        text += 'Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.';
+        return text;
     }
 
     let { courses } = ALL_CLASSES.find(class_obj => {
