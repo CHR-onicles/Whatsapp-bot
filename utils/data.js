@@ -3,6 +3,9 @@
 // bot to function correctly
 // --------------------------------------------------
 
+/**
+ * Array containing full timetable for Level 400 Computer Science students.
+ */
 exports.ALL_CLASSES = [
     {
         day: 'Monday',
@@ -46,6 +49,9 @@ exports.ALL_CLASSES = [
     }
 ]
 
+/**
+ * Array containing all commands, roles they are available to, and their descriptions.
+ */
 exports.HELP_COMMANDS = [
     {
         availableTo: 'everyone',
@@ -104,6 +110,9 @@ exports.HELP_COMMANDS = [
     }
 ]
 
+/**
+ * Array containing replies to the `!mute` command.
+ */
 exports.MUTE_REPLIES = [
     'Yes sir',
     'Roger that🐦',
@@ -114,6 +123,9 @@ exports.MUTE_REPLIES = [
     '✅'
 ]
 
+/**
+ * Array containing replies to the `!unmute` command.
+ */
 exports.UNMUTE_REPLIES = [
     'Thanks sir',
     'Finally🐦',
@@ -124,6 +136,9 @@ exports.UNMUTE_REPLIES = [
     '✅',
 ]
 
+/**
+ * Array containing replies to the `!notify` command.
+ */
 exports.NOTIFY_REPLIES = [
     'Check dm 🐦',
     '✅',
@@ -131,6 +146,9 @@ exports.NOTIFY_REPLIES = [
     'Check your Pms 🐦',
 ]
 
+/**
+ * Array containing links that should not be forwarded from other groups.
+ */
 exports.LINKS_BLACKLIST = [
     'instagram',
     'facebook',
@@ -148,6 +166,9 @@ exports.LINKS_BLACKLIST = [
     'modernghana',
 ]
 
+/**
+ * Array containing keywords in links that should not be forwarded from other groups.
+ */
 exports.WORDS_IN_LINKS_BLACKLIST = [
     'music',
     'bet',
