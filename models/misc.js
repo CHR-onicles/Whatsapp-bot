@@ -39,25 +39,27 @@ const DEFAULT_ID = { _id: 1 };
 
 // EXPORTS
 
-exports.isMuted = async () => {
+exports.getMutedStatus = async () => {
     const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isMuted: 1 });
     // console.log(status);
     return status.isMuted;
 }
 
-exports.mute = async () => {
+exports.muteBot = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isMuted: true } });
         // console.log(res);
+        console.log("Bot muted");
     } catch (error) {
         console.log(error)
     }
 }
 
-exports.unmute = async () => {
+exports.unmuteBot = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isMuted: false } });
         // console.log(res);
+        console.log("Bot unmuted");
     } catch (error) {
         console.log(error);
     }
@@ -73,6 +75,7 @@ exports.addLink = async (newLink) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { allLinks: newLink } });
         // console.log(res);
+        console.log('New Link added');
     } catch (error) {
         console.log(error);
     }
@@ -97,6 +100,8 @@ exports.addAnnouncement = async (newAnnouncement) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { allAnnouncements: newAnnouncement } });
         // console.log(res);
+        console.log('New announcement added');
+
     } catch (error) {
         console.log(error)
     }
@@ -137,10 +142,11 @@ exports.removeSuperAdmin = async (admin) => {
 
 exports.getUsersToNotifyForClass = async () => {
     const resUsers = await MiscellaneousModel.findOne(DEFAULT_ID, { electiveDataMining: 1, electiveNetworking: 1, electiveSoftModelling: 1 });
-    return resUsers;
+    const { electiveDataMining: dataMining, electiveNetworking: networking, electiveSoftModelling: softModelling } = resUsers;
+    return { dataMining, networking, softModelling };
 }
 
-exports.addUserToElective = async (newUser, rowId) => {
+exports.addUserToBeNotified = async (newUser, rowId) => {
     try {
         let res = null;
         if (rowId === '31') {
@@ -151,12 +157,14 @@ exports.addUserToElective = async (newUser, rowId) => {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveSoftModelling: newUser } });
         }
         // console.log(res);
+        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '31' ? 'Data Mining' : (rowId === '32' ? 'Networking' : 'Software Modelling') + ' as elective');
+
     } catch (error) {
         console.log(error)
     }
 }
 
-exports.removeUserFromElective = async (user, elective) => {
+exports.removeUserToBeNotified = async (user, elective) => {
     try {
         let res = null;
         if (elective === 'D') {
@@ -167,6 +175,7 @@ exports.removeUserFromElective = async (user, elective) => {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveSoftModelling: user } });
         }
         // console.log(res);
+        console.log("User: " + user + " unsubscribed from being notified for class");
     } catch (error) {
         console.log(error);
     }

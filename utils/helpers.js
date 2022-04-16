@@ -2,7 +2,7 @@
 // helper.js contains helper functions to supplement bot logic
 // --------------------------------------------------
 const WAWebJS = require("whatsapp-web.js");
-const { getUsersToNotifyForClass } = require("../middleware");
+const { getUsersToNotifyForClass } = require("../models/misc");
 const { ALL_CLASSES } = require("./data");
 
 // GLOBAL VARIABLES
