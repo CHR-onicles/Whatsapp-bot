@@ -115,12 +115,14 @@ client.on('message', async (msg) => {
             `${contact.id.user !== GRANDMASTER ? "Shoo🐦" : "Sir 🐦"}`,
             `${contact.id.user !== GRANDMASTER ? "🙄" : "Boss 🐦"}`,
             `Up and running 🐦`,
+            `Listening in 🐦`,
             `🙋🏽‍♂️`,
             `👋🏽`,
             `🐦`,
             `👀`,
             `Adey 🐦`,
             `Yo 🐦`,
+            `👁👃🏽👁`,
         ]
 
         const list = new List(
