@@ -107,6 +107,7 @@ client.on('message', async (msg) => {
         const first_word = msg.body.toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
 
+        // Have to keep this array here because I'm using local variables from this file.
         const PING_REPLIES = [
             `${contact.id.user !== GRANDMASTER ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
             `I'm here ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
@@ -242,7 +243,6 @@ client.on('message', async (msg) => {
         } else if (msg.selectedRowId === '13') {
             text += allClassesReply(ALL_CLASSES, 'S', text);
         }
-
         await msg.reply(text);
     }
 })
@@ -296,7 +296,6 @@ client.on('message', async (msg) => {
         } else if (msg.selectedRowId === '23') {
             text += await todayClassReply(text, 'S');
         }
-
         await msg.reply(text);
     }
 })
@@ -350,7 +349,6 @@ client.on('message', async (msg) => {
                 return;
             }
         }
-
 
         // console.log('recognized a link');
         // console.log('extracted link:', extracted_link);
