@@ -3,6 +3,9 @@
 // bot to function correctly
 // --------------------------------------------------
 
+/**
+ * Array containing full timetable for Level 400 Computer Science students.
+ */
 exports.ALL_CLASSES = [
     {
         day: 'Monday',
@@ -46,64 +49,70 @@ exports.ALL_CLASSES = [
     }
 ]
 
+/**
+ * Array containing all commands, roles they are available to, and their descriptions.
+ */
 exports.HELP_COMMANDS = [
     {
         availableTo: 'everyone',
         command: "*!ping*",
-        desc: "check if I'm available 🙋🏽‍♂️"
+        desc: "Check if I'm available 🙋🏽‍♂️"
     },
     {
         availableTo: 'everyone',
         command: "*!uptime*",
-        desc: "see how long I've been awake🟢"
+        desc: "See how long I've been awake🟢"
     },
     {
         availableTo: 'everyone',
         command: "*!help*",
-        desc: "get commands that can be used with me 💡"
+        desc: "Get commands that can be used with me 💡"
     },
     {
         availableTo: 'admin',
         command: "*!mute*",
-        desc: "get me to be quiet 😅"
+        desc: "Get me to be quiet 😅"
     },
     {
         availableTo: 'admin',
         command: "*!unmute*",
-        desc: "allow me to talk 🙂"
+        desc: "Allow me to talk 🙂"
     },
     {
         availableTo: 'admin',
         command: "*!everyone*",
-        desc: "ping everyone in the group 😮"
+        desc: "Ping everyone in the group 😮"
     },
     {
         availableTo: 'everyone',
         command: "*!classes*",
-        desc: "get all the classes you have this week 📚"
+        desc: "Get all the classes you have this week 📚"
     },
     {
         availableTo: 'everyone',
         command: "*!class*",
-        desc: "get today's classes 📕"
+        desc: "Get today's classes 📕"
     },
     {
         availableTo: 'everyone',
         command: "*!notify*",
-        desc: "get notified for class 🔔"
+        desc: "Get notified for class 🔔"
     },
     {
         availableTo: 'everyone',
         command: "*!notify stop*",
-        desc: "stop getting notified for class 🔕"
+        desc: "Stop getting notified for class 🔕"
     },
     {
         availableTo: 'admin',
         command: "*!subs*",
-        desc: "get users who want to be notified for class 👯‍♂️"
+        desc: "Get users who want to be notified for class 👯‍♂️"
     }
 ]
 
+/**
+ * Array containing replies to the `!mute` command.
+ */
 exports.MUTE_REPLIES = [
     'Yes sir',
     'Roger that🐦',
@@ -114,6 +123,9 @@ exports.MUTE_REPLIES = [
     '✅'
 ]
 
+/**
+ * Array containing replies to the `!unmute` command.
+ */
 exports.UNMUTE_REPLIES = [
     'Thanks sir',
     'Finally🐦',
@@ -124,6 +136,9 @@ exports.UNMUTE_REPLIES = [
     '✅',
 ]
 
+/**
+ * Array containing replies to the `!notify` command.
+ */
 exports.NOTIFY_REPLIES = [
     'Check dm 🐦',
     '✅',
@@ -131,6 +146,9 @@ exports.NOTIFY_REPLIES = [
     'Check your Pms 🐦',
 ]
 
+/**
+ * Array containing links that should not be forwarded from other groups.
+ */
 exports.LINKS_BLACKLIST = [
     'instagram',
     'facebook',
@@ -148,6 +166,9 @@ exports.LINKS_BLACKLIST = [
     'modernghana',
 ]
 
+/**
+ * Array containing keywords in links that should not be forwarded from other groups.
+ */
 exports.WORDS_IN_LINKS_BLACKLIST = [
     'music',
     'bet',

@@ -5,20 +5,19 @@ const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 require('dotenv').config();
-// const fs = require('fs');
 
 require('./utils/db');
-const { pickRandomReply, msToHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
+const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./middleware');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./models/misc');
 
 
 // --------------------------------------------------
 // Global variables
 // --------------------------------------------------
-const GRANDMASTER = process.env.GRANDMASTER;
-const BOT_NUMBER = process.env.BOT_NUMBER;
-const BOT_PUSHNAME = 'Ethereal';
+const GRANDMASTER = process.env.GRANDMASTER; // Owner of the bot
+const BOT_NUMBER = process.env.BOT_NUMBER; // The bot's whatsapp number
+const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // chat.id.user is better than chat.name as it is immutable
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
@@ -44,7 +43,7 @@ client.on("disconnected", () => {
 
 app.get("/", (req, res) => {
     res.send(
-        '<h1>This server is powered by Ethereal Bot</h1>'
+        '<h1>This server is powered by ' + BOT_PUSHNAME + ' bot</h1>'
     );
 });
 
@@ -65,7 +64,7 @@ client.on('ready', async () => {
 });
 
 
-// Ping
+// Ping bot
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!ping' && await getMutedStatus() === false) {
         msg.reply('pong 🏓');
@@ -81,8 +80,8 @@ client.on('message', async (msg) => {
             await msg.reply("Only admins can use this, so that it is not abused 🐦");
             return;
         }
-        const chat = await msg.getChat();
 
+        const chat = await msg.getChat();
         let text = "";
         let mentions = [];
 
@@ -93,7 +92,6 @@ client.on('message', async (msg) => {
                 mentions.push(contact);
                 text += `@${participant.id.user} `;
             }
-
             await msg.reply(text, "", { mentions });
         } else {
             await msg.reply("Can't do this - This is not a  group chat 😗");
@@ -109,6 +107,7 @@ client.on('message', async (msg) => {
         const first_word = msg.body.toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
 
+        // Have to keep this array here because I'm using local variables from this file.
         const PING_REPLIES = [
             `${contact.id.user !== GRANDMASTER ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
             `I'm here ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
@@ -117,19 +116,22 @@ client.on('message', async (msg) => {
             `${contact.id.user !== GRANDMASTER ? "Shoo🐦" : "Sir 🐦"}`,
             `${contact.id.user !== GRANDMASTER ? "🙄" : "Boss 🐦"}`,
             `Up and running 🐦`,
+            `Listening in 🐦`,
             `🙋🏽‍♂️`,
             `👋🏽`,
             `🐦`,
             `👀`,
             `Adey 🐦`,
             `Yo 🐦`,
+            `👁👃🏽👁`,
         ]
 
         const list = new List(
             '\nThis is a list of commands the bot can perform',
             'See commands',
             [{
-                title: 'Commands available to everyone', rows: [
+                title: 'Commands available to everyone',
+                rows: [
                     { id: '1', title: '!help', description: 'Help commands' },
                     { id: '2', title: '!class', description: "Today's class" },
                     { id: '3', title: '!classes', description: 'Classes for the week' },
@@ -138,17 +140,12 @@ client.on('message', async (msg) => {
                     { id: '6', title: '!notify stop', description: 'Stop getting notified for class' },
                 ]
             },
-                // {
-                //     title: 'Commands available to admins only', rows: [
-                //         { id: '100', title: '!everyone', description: 'Ping everyone in the group' },
-                //         { id: '101', title: '!mute', description: 'Shut the bot up' },
-                //         { id: '102', title: '!unmute', description: 'Allow the bot to talk' },
-                //     ]
-                // }
             ],
             pickRandomReply(PING_REPLIES),
             'Powered by Ethereal bot'
         );
+        //todo: Loop through HELP_COMMANDS and dynamically get commands from there to be processed here
+        //todo: Create a new list with reserved commands that will be sent as a reply to an admin when he pings the bot
 
 
         if (first_word.slice(1, first_word.length) === BOT_NUMBER) {
@@ -158,7 +155,7 @@ client.on('message', async (msg) => {
 });
 
 
-// Mute
+// Mute the bot
 client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && await getMutedStatus() === false) {
         const contact = await msg.getContact();
@@ -170,7 +167,7 @@ client.on('message', async (msg) => {
 })
 
 
-// Unmute
+// Unmute the bot
 client.on('message', async (msg) => {
     const contact = await msg.getContact();
     if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
@@ -184,7 +181,7 @@ client.on('message', async (msg) => {
 })
 
 
-// Help //todo: edit to show only commands available to specific users
+// Help users with commands //todo: edit to show only commands available to specific users
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!help' && await getMutedStatus() === false) {
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
@@ -246,7 +243,6 @@ client.on('message', async (msg) => {
         } else if (msg.selectedRowId === '13') {
             text += allClassesReply(ALL_CLASSES, 'S', text);
         }
-
         await msg.reply(text);
     }
 })
@@ -300,7 +296,6 @@ client.on('message', async (msg) => {
         } else if (msg.selectedRowId === '23') {
             text += await todayClassReply(text, 'S');
         }
-
         await msg.reply(text);
     }
 })
@@ -354,7 +349,6 @@ client.on('message', async (msg) => {
                 return;
             }
         }
-
 
         // console.log('recognized a link');
         // console.log('extracted link:', extracted_link);
@@ -415,7 +409,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!uptime' && await getMutedStatus() === false) {
         const current_time = new Date();
-        const { days, hours, minutes, seconds } = msToHMS(current_time - BOT_START_TIME);
+        const { days, hours, minutes, seconds } = msToDHMS(current_time - BOT_START_TIME);
         await msg.reply(`🟢 *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : 0}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`);
     }
 })

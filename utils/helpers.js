@@ -1,40 +1,52 @@
 // --------------------------------------------------
 // helper.js contains helper functions to supplement bot logic
 // --------------------------------------------------
-const { getUsersToNotifyForClass } = require("../middleware");
+const WAWebJS = require("whatsapp-web.js");
+const { getUsersToNotifyForClass } = require("../models/misc");
 const { ALL_CLASSES } = require("./data");
+
 
 // GLOBAL VARIABLES
 /**
- * Counter to keep track of dynamically created variables  later used in eval statements.
+ * Counter to keep track of dynamically created variables  later used in `eval` statements.
  */
 var VARIABLES_COUNTER = 0; // used in eval statement later
 
 // FUNCTIONS
 /**
- * Get a random reply from an array of replies
- * @param {Array} replies An array of replies
- * @returns {String} A randomly chosen reply from the array of replies provided
+ * Get a random reply from an array of replies.
+ * @param {Array<string>} replies An array of replies.
+ * @returns {string} A randomly chosen reply from the array of `replies` provided.
  */
 const pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
 }
 
 
-const extractTime = (course) => {
-    const time_portion = course.split('|')[1].trim();
+/**
+ * Extract time for a course from the `ALL_CLASSES` array.
+ * @param {string} course_name A string containing name, time and venue of class.
+ * @returns {string} A string containing the time for a course in the format HH:MM.
+ */
+const extractTime = (course_name) => {
+    const time_portion = course_name.split('|')[1].trim();
     const raw_time = time_portion.slice(1, time_portion.length);
     let new_raw_time = null;
 
     if (raw_time.includes('p') && !raw_time.includes('12')) {
         const hour_24_format = +raw_time.split(':')[0] + 12;
-        new_raw_time = String(hour_24_format) + ':' + raw_time.split(':')[1];
+        new_raw_time = string(hour_24_format) + ':' + raw_time.split(':')[1];
     }
-
+    console.log(new_raw_time, raw_time);
     return new_raw_time || raw_time;
 }
 
 
+/**
+ * Extracts the command (which is usually the first word) from the message `body`.
+ * @param {WAWebJS.Message} msg Message object from whatsapp.
+ * @returns {string} The first word in the message `body`.
+ */
 const extractCommand = (msg) => {
     const split = msg?.body.toLowerCase().split(/(\s+|\n+)/);
     const first_word = split[0];
@@ -44,7 +56,12 @@ const extractCommand = (msg) => {
     }
 }
 
-
+/**
+ * Extracts the arguments/flags to supplement a command.
+ * @param {WAWebJS.Message} msg Message object from whatsapp .
+ * @param {number} index Index of specific extra arguments to supplement a command. Default is 1 because 0 is the actual command.
+ * @returns {string} Empty string if no arguments are attached to command or the argument at the provided index if arguments are present.
+ */
 const extractCommandArgs = (msg, index = 1) => {
     // If there's a newline ignore everything after the new line
     const args = msg.body.toLowerCase().split('\n')[0]; // enforce arguments being separated from commands strictly by space(s)
@@ -56,7 +73,12 @@ const extractCommandArgs = (msg, index = 1) => {
 }
 
 
-const msToHMS = (duration) => {
+/**
+ * Converts milliseconds to days, hours, minutes and seconds.
+ * @param {number} duration A duration in milliseconds.
+ * @returns Object containing days, hours, minutes and seconds
+ */
+const msToDHMS = (duration) => {
     if (duration < 0) {
         throw new Error('The duration cannot be negative!');
     }
@@ -75,6 +97,11 @@ const msToHMS = (duration) => {
 }
 
 
+/**
+ * Calculates the time left in milliseconds for a reminder in 2 hours, 1 hour, and 30 minutes respectively.
+ * @param {{name: string, duration: number}} course Object containing course name and duration.
+ * @returns Object containing milliseconds left for a reminder in 2 hours, 1 hour, and 30 minutes respectively.
+ */
 const notificationTimeCalc = (course) => {
     // Constants for notification intervals
     const two_hrs_ms = 120 * 60 * 1000;
@@ -117,6 +144,10 @@ const notificationTimeCalc = (course) => {
 }
 
 
+/**
+ * Starts the notification intervals calculation.
+ * @param {WAWebJS.Client} client Client object from wweb.js library.
+ */
 const startNotificationCalculation = async (client) => {
     const today_day = new Date().toString().split(' ')[0];
     const { dataMining, softModelling, networking } = await getUsersToNotifyForClass();
@@ -125,7 +156,7 @@ const startNotificationCalculation = async (client) => {
     const chats = await client.getChats();
 
     if (!total_users.length) {
-        return; // stop rather than calling the restart function again which might lead to an infinite loop
+        return; // if there are no subscribed users, stop
     }
 
     if (today_day === 'Sat' || today_day === 'Sun') {
@@ -150,7 +181,7 @@ const startNotificationCalculation = async (client) => {
         const cur_time = new Date();
         const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
         const time_left_in_ms = new_class_time - cur_time;
-        if (time_left_in_ms < 0) continue;
+        if (time_left_in_ms < 0) continue; // if the time for a course if past, skip to next course
 
         if (courses[i].name.includes('Data Mining')) {
             if (dataMining.length) {
@@ -178,9 +209,21 @@ const startNotificationCalculation = async (client) => {
     }
 }
 
+
+/**
+ * Generates the dynamic timeouts after which the notification callbacks will send a message to all subscribed users.
+ * @param {string} user A string that represents a user, usually by a phone number.
+ * @param {{name: string, duration: number}} course Object containing course `name` and `duration`.
+ * @param {WAWebJS.Chat} chats All chats the bot is participating in.
+ * @param {number} timeout_two_hrs Value in milliseconds left to send the 2 hour notification.
+ * @param {number} timeout_one_hr Value in milliseconds left to send the 1 hour notification.
+ * @param {number} timeout_thirty_mins Value in milliseconds left to send the 30 minutes notification.
+ */
 const generateTimeoutIntervals = (user, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins) => {
     const chat_from_user = chats.find(chat => chat.id.user === user); // used in the eval statement
 
+    // Create dynamic variables to assign the timeouts to. The dynamic variables are needed in order to clear the timeouts
+    // in case the user opts out or there's a recalculation of notification intervals.
     if (timeout_two_hrs > 0) {
         ++VARIABLES_COUNTER;
         eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours')}, timeout_two_hrs)")
@@ -199,6 +242,9 @@ const generateTimeoutIntervals = (user, course, chats, timeout_two_hrs, timeout_
 }
 
 
+/**
+ * Stops notification callbacks from executing by clearing the dynamically created timeouts and resetting the global `VARIABLES_COUNTER` to 0.
+ */
 const stopOngoingNotifications = () => {
     for (let i = 1; i < VARIABLES_COUNTER; ++i) {
         eval("clearTimeout(t" + i + ")");
@@ -209,6 +255,13 @@ const stopOngoingNotifications = () => {
 }
 
 
+/**
+ * Generates reply to `!classes` command based on elective being offered.
+ * @param {Array<{day: string, courses: Array<{name: string, duration: number}>}>} all_classes An array containing the full timetable for Level 400 Computer Science students.
+ * @param {string} elective Character identifying the elective being offered.
+ * @param {string} text Reply that would be sent by the bot.
+ * @returns Modified `text` as bot's response.
+ */
 const allClassesReply = (all_classes, elective, text) => {
     let filtered_courses = null;
     if (elective === "D") {
@@ -234,12 +287,18 @@ const allClassesReply = (all_classes, elective, text) => {
 }
 
 
+/**
+ * 
+ * @param {string} text Reply that would be sent by the bot.
+ * @param {string} elective Character identifying the elective being offered.
+ * @returns Modified `text` as bot's response.
+ */
 const todayClassReply = async (text, elective) => {
     const today_day = new Date().toString().split(' ')[0]; // to get day
 
     if (today_day === 'Sat' || today_day === 'Sun') {
-        await msg.reply('Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.');
-        return;
+        text += 'Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.';
+        return text;
     }
 
     let { courses } = ALL_CLASSES.find(class_obj => {
@@ -299,4 +358,4 @@ const todayClassReply = async (text, elective) => {
 }
 
 
-module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply }
+module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply }
