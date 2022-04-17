@@ -127,7 +127,8 @@ client.on('message', async (msg) => {
             '\nThis is a list of commands the bot can perform',
             'See commands',
             [{
-                title: 'Commands available to everyone', rows: [
+                title: 'Commands available to everyone',
+                rows: [
                     { id: '1', title: '!help', description: 'Help commands' },
                     { id: '2', title: '!class', description: "Today's class" },
                     { id: '3', title: '!classes', description: 'Classes for the week' },
@@ -136,17 +137,12 @@ client.on('message', async (msg) => {
                     { id: '6', title: '!notify stop', description: 'Stop getting notified for class' },
                 ]
             },
-                // {
-                //     title: 'Commands available to admins only', rows: [
-                //         { id: '100', title: '!everyone', description: 'Ping everyone in the group' },
-                //         { id: '101', title: '!mute', description: 'Shut the bot up' },
-                //         { id: '102', title: '!unmute', description: 'Allow the bot to talk' },
-                //     ]
-                // }
             ],
             pickRandomReply(PING_REPLIES),
             'Powered by Ethereal bot'
         );
+        //todo: Loop through HELP_COMMANDS and dynamically get commands from there to be processed here
+        //todo: Create a new list with reserved commands that will be sent as a reply to an admin when he pings the bot
 
 
         if (first_word.slice(1, first_word.length) === BOT_NUMBER) {
