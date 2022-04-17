@@ -149,7 +149,7 @@ const notificationTimeCalc = (course) => {
  * @param {WAWebJS.Client} client Client object from wweb.js library.
  */
 const startNotificationCalculation = async (client) => {
-    const today_day = new Date().tostring().split(' ')[0];
+    const today_day = new Date().toString().split(' ')[0];
     const { dataMining, softModelling, networking } = await getUsersToNotifyForClass();
 
     const total_users = [...dataMining, ...softModelling, ...networking];
@@ -294,7 +294,7 @@ const allClassesReply = (all_classes, elective, text) => {
  * @returns Modified `text` as bot's response.
  */
 const todayClassReply = async (text, elective) => {
-    const today_day = new Date().tostring().split(' ')[0]; // to get day
+    const today_day = new Date().toString().split(' ')[0]; // to get day
 
     if (today_day === 'Sat' || today_day === 'Sun') {
         text += 'Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.';

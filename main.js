@@ -5,7 +5,6 @@ const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 require('dotenv').config();
-// const fs = require('fs');
 
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
@@ -16,9 +15,9 @@ const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, ad
 // --------------------------------------------------
 // Global variables
 // --------------------------------------------------
-const GRANDMASTER = process.env.GRANDMASTER;
-const BOT_NUMBER = process.env.BOT_NUMBER;
-const BOT_PUSHNAME = 'Ethereal';
+const GRANDMASTER = process.env.GRANDMASTER; // Owner of the bot
+const BOT_NUMBER = process.env.BOT_NUMBER; // The bot's whatsapp number
+const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // chat.id.user is better than chat.name as it is immutable
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
@@ -44,7 +43,7 @@ client.on("disconnected", () => {
 
 app.get("/", (req, res) => {
     res.send(
-        '<h1>This server is powered by Ethereal Bot</h1>'
+        '<h1>This server is powered by ' + BOT_PUSHNAME + ' bot</h1>'
     );
 });
 
@@ -65,7 +64,7 @@ client.on('ready', async () => {
 });
 
 
-// Ping
+// Ping bot
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!ping' && await getMutedStatus() === false) {
         msg.reply('pong 🏓');
@@ -81,8 +80,8 @@ client.on('message', async (msg) => {
             await msg.reply("Only admins can use this, so that it is not abused 🐦");
             return;
         }
-        const chat = await msg.getChat();
 
+        const chat = await msg.getChat();
         let text = "";
         let mentions = [];
 
@@ -93,7 +92,6 @@ client.on('message', async (msg) => {
                 mentions.push(contact);
                 text += `@${participant.id.user} `;
             }
-
             await msg.reply(text, "", { mentions });
         } else {
             await msg.reply("Can't do this - This is not a  group chat 😗");
@@ -158,7 +156,7 @@ client.on('message', async (msg) => {
 });
 
 
-// Mute
+// Mute the bot
 client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && await getMutedStatus() === false) {
         const contact = await msg.getContact();
@@ -170,7 +168,7 @@ client.on('message', async (msg) => {
 })
 
 
-// Unmute
+// Unmute the bot
 client.on('message', async (msg) => {
     const contact = await msg.getContact();
     if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
@@ -184,7 +182,7 @@ client.on('message', async (msg) => {
 })
 
 
-// Help //todo: edit to show only commands available to specific users
+// Help users with commands //todo: edit to show only commands available to specific users
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!help' && await getMutedStatus() === false) {
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;

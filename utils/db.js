@@ -5,6 +5,10 @@
 const { connect } = require('mongoose');
 
 
+/**
+ * Connect to local or deployed database.
+ * @async
+ */
 const connectToDB = async () => {
     try {
         if (process.env.NODE_ENV === 'production') {
