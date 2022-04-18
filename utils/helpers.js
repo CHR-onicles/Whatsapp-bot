@@ -35,9 +35,9 @@ const extractTime = (course_name) => {
 
     if (raw_time.includes('p') && !raw_time.includes('12')) {
         const hour_24_format = +raw_time.split(':')[0] + 12;
-        new_raw_time = string(hour_24_format) + ':' + raw_time.split(':')[1];
+        new_raw_time = String(hour_24_format) + ':' + raw_time.split(':')[1];
     }
-    console.log(new_raw_time, raw_time);
+    // console.log(new_raw_time, raw_time);
     return new_raw_time || raw_time;
 }
 
@@ -265,19 +265,19 @@ const stopOngoingNotifications = () => {
 const allClassesReply = (all_classes, elective, text) => {
     let filtered_courses = null;
     if (elective === "D") {
-        text += "Timetable for *Data Mining* as elective:\n\n"
+        text += "Timetable for students offering *Data Mining* as elective: 📅\n\n"
         all_classes.forEach(class_obj => {
             filtered_courses = class_obj.courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
             text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
         })
     } else if (elective === "N") {
-        text += "Timetable for *Networking* as elective:\n\n"
+        text += "Timetable for students offering *Networking* as elective: 📅\n\n"
         all_classes.forEach(class_obj => {
             filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"))
             text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
         })
     } else if (elective === "S") {
-        text += "Timetable for *Software Modelling* as elective:\n\n"
+        text += "Timetable for students offering *Software Modelling* as elective: 📅\n\n"
         all_classes.forEach(class_obj => {
             filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"))
             text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
@@ -313,13 +313,13 @@ const todayClassReply = async (text, elective) => {
     const upcoming_array = [];
 
     if (elective === 'D') {
-        text += "Today's classes ( *Data Mining*): ☀\n\n"
+        text += "Today's classes for students offering *Data Mining*: ☀\n\n"
         courses = courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
     } else if (elective === 'N') {
-        text += "Today's classes ( *Networking*): ☀\n\n"
+        text += "Today's classes for students offering *Networking*: ☀\n\n"
         courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"));
     } else if (elective === 'S') {
-        text += "Today's classes ( *Soft. Modelling*): ☀\n\n"
+        text += "Today's classes for students offering *Soft. Modelling*: ☀\n\n"
         courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"));
     }
 
