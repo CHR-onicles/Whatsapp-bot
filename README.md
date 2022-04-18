@@ -32,6 +32,8 @@ Ladies and gentlemen, I present to you.... **Ethereal**, a whatsapp personal ass
 <br><br>
 <img src="./assets/standing ovation.gif">
 
+<br>
+
 ### My solution
 
 **Ethereal** seeks to make life easier for [EPiC Devs](#epic-devs) by:
@@ -42,9 +44,13 @@ Ladies and gentlemen, I present to you.... **Ethereal**, a whatsapp personal ass
 - Sending the resources we need for each course. _(not yet implemented)_
 - Reminding and giving us detailed descriptions of assignments we have for each course. _(not yet implemented)_
 
+<br>
+
 ### Demo
 
 <img src="" width=375 alt="Bot demo">
+
+<br>
 
 ### Built with
 
@@ -53,9 +59,11 @@ Ladies and gentlemen, I present to you.... **Ethereal**, a whatsapp personal ass
 - MongoDB with Mongoose
 - [Whatsapp-web.js library](https://github.com/pedroslopez/whatsapp-web.js)
 
+<br>
+
 ### EPiC Devs
 
-<img src="./assets/EPiC Devs README intro.png" alt="EPiC Devs introduction" width=400>
+<img src="./assets/EPiC Devs README intro.png" alt="EPiC Devs introduction">
 <br>
 <sub>This was <i>painfully</i> done in a README last year when we coined the name for our project :)</sub><br>
 <sub>I definitely didn't take too much time on this :)))</sub>
@@ -64,9 +72,12 @@ We are a group of exquisitely talented, focused and diligent individuals who exc
 
 Check us out!:
 
-- [Andrews (UI/UX designer)](https://www.linkedin.com/in/andrewsantwiaddo/)
-- [Papafio (Frontend developer/Graphic designer)](https://www.linkedin.com/in/nii-laryea-quartey-papafio-229440176/)
+- [Andrews (UI/UX designer)](https://www.linkedin.com/in/andrewsantwiaddo)
+- [Papafio (Frontend developer/Graphic designer)](https://www.linkedin.com/in/nii-laryea-quartey-papafio-229440176)
 - [Divine (Frontend developer)](https://www.linkedin.com/in/divineanum)
+
+
+<br>
 
 ### Tips:
 
