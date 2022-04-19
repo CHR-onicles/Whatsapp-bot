@@ -35,7 +35,7 @@ What if someone always forwards important messages and links from class groups a
 What if someone always keeps track of your assignments and reminds you when it's close to the deadline?🥺
 
 .<br>.<br>.<br>
-Ladies and gentlemen, I present to you.... <span style="font-size: 20px">"Ethereal"</span>, a whatsapp personal assistant or bot.
+Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethereal"</span>, a whatsapp personal assistant or bot.
 <br><br>
 <img src="./assets/standing ovation.gif" width=400 alt="Standing ovation">
 
