@@ -2,22 +2,29 @@
 
 This is a whatsapp bot I created for EPiC Devs ([wait who?](#epic-devs)).
 
+<br>
+
 ## Table of contents
 
 - [Overview](#overview)
   - [The problem](#the-problem)
   - [My solution](#my-solution)
   - [Demo](#Demo)
+- [Who are EPiC Devs?](#who-are-epic-devs)
 - [Built with](#built-with)
 - [Extra tips](#tips)
+
+<br>
 
 ## Overview
 
 ### The problem
 
-Timetables are always a pain to memorize, going through hundreds of messages from class group chats to filter out important information is equally painful. But worst of them all is trooping all the way to class just to find out it was cancelled a few minutes/hours prior. I'm sure we've all been through that moment where almost everyone forgets what exactly the assignment given was about or the exact deadline.
+Timetables are always a pain to memorize, going through hundreds of messages from class group chats to filter out important information is equally painful. But worst of them all is trooping all the way to class just to find out it was cancelled a few minutes/hours prior. I'm also sure we've all been through that moment where almost everyone forgets what exactly the assignment given was about or the exact deadline.
 
-But...
+<p style="font-size: 25px">But...</p>
+<img src="./assets/wait-for-it-barney-stinson.gif" width=400 alt="Wait for it">
+<br><br>
 
 What if someone could always remind us when it's time for class on your favorite messaging platform? 😮
 
@@ -25,18 +32,18 @@ What if you don't have to ever memorize any timetable? 😪
 
 What if someone always forwards important messages and links from class groups automatically to your dm? 🤯
 
-What if someone always keeps track of our assignments and reminds us when it's close to the deadline?🥺
+What if someone always keeps track of your assignments and reminds you when it's close to the deadline?🥺
 
 .<br>.<br>.<br>
-Ladies and gentlemen, I present to you.... **Ethereal**, a whatsapp personal assistant or bot.
+Ladies and gentlemen, I present to you.... <span style="font-size: 20px">"Ethereal"</span>, a whatsapp personal assistant or bot.
 <br><br>
-<img src="./assets/standing ovation.gif">
+<img src="./assets/standing ovation.gif" width=400 alt="Standing ovation">
 
 <br>
 
 ### My solution
 
-**Ethereal** seeks to make life easier for [EPiC Devs](#epic-devs) by:
+<span style="font-size: 18px">Ethereal</span> seeks to make life easier for [EPiC Devs](#epic-devs) by:
 
 - Forwarding important **announcements** and **links** from class groups to our private whatsapp group.
 - Reminding us individually about the times we have class.
@@ -46,13 +53,13 @@ Ladies and gentlemen, I present to you.... **Ethereal**, a whatsapp personal ass
 
 <br>
 
-### Demo
+## Demo
 
 <img src="" width=375 alt="Bot demo">
 
 <br>
 
-### Built with
+## Built with
 
 - NodeJS
 - Express
@@ -61,14 +68,14 @@ Ladies and gentlemen, I present to you.... **Ethereal**, a whatsapp personal ass
 
 <br>
 
-### EPiC Devs
+## Who are EPiC Devs
 
 <img src="./assets/EPiC Devs README intro.png" alt="EPiC Devs introduction">
 <br>
 <sub>This was <i>painfully</i> done in a README last year when we coined the name for our project :)</sub><br>
 <sub>I definitely didn't take too much time on this :)))</sub>
 <br><br>
-We are a group of exquisitely talented, focused and diligent individuals who excel in our various fields.
+We are a group of exquisitely talented, focused and diligent individuals who consistently exceed expectations.
 
 Check us out!:
 
@@ -76,12 +83,11 @@ Check us out!:
 - [Papafio (Frontend developer/Graphic designer)](https://www.linkedin.com/in/nii-laryea-quartey-papafio-229440176)
 - [Divine (Frontend developer)](https://www.linkedin.com/in/divineanum)
 
-
 <br>
 
-### Tips:
+## Tips:
 
-I recommend the following extensions in VS Code in order to have more insight to the codebase:
+I recommend the following extensions in VS Code in order to have more insight into the codebase:
 
 - [Better Comments](https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments) to see comments with keywords highlighted differently.
 
