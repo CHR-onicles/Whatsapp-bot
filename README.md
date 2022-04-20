@@ -55,7 +55,6 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 
 ## Demo
 
-<img src="" width=375 alt="Bot demo">
 
 <br>
 
