@@ -55,7 +55,10 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 
 ## Demo
 
-https://raw.githubusercontent.com/CHR-onicles/Whatsapp-bot/blob/main/assets/Bot_demo.wmv
+ 
+![demo](https://raw.githubusercontent.com/CHR-onicles/Whatsapp-bot/blob/main/assets/Bot_demo.wmv)
+
+![demo](./assets//Bot_demo.wmv)
 
 <br>
 
