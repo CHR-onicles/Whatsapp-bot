@@ -30,7 +30,7 @@ Project Description
 - [ ] ⭐Add admin utility commands - one of which should be to stop all class notifications for everyone....like for holidays => !notify allow all || !notify stop all  
 - [ ] ⭐Style output for different roles calling the help command  
 - [ ] ⭐Add command for last link/announcement sent => !last link || !last ann  
-- [ ] Checkout other symbols as replacements for emojis  
+- [ ] 👍Checkout other symbols as replacements for emojis  
 - [ ] ⭐Add command for bot to delete the last thing it sent => !del last  
 
 ### Done ✓

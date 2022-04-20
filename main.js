@@ -18,7 +18,7 @@ const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, ad
 const GRANDMASTER = process.env.GRANDMASTER; // Owner of the bot
 const BOT_NUMBER = process.env.BOT_NUMBER; // The bot's whatsapp number
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
-const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // chat.id.user is better than chat.name as it is immutable
+const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // this is the group where links and announcements are forwarded to by default
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
 
@@ -201,6 +201,7 @@ client.on('message', async (msg) => {
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
 
+        // if the user has already subscribed to be notified, find his elective and send the timetable based on that.
         if (dataMining.includes(contact.id.user)) {
             text += allClassesReply(ALL_CLASSES, 'D', text)
             await msg.reply(text);
@@ -255,6 +256,8 @@ client.on('message', async (msg) => {
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
 
+        // if user has already subscribed to be notified for class, get his elective and send the current day's
+        // timetable based on the elective.
         if (dataMining.includes(contact.id.user)) {
             text += await todayClassReply(text, 'D')
             await msg.reply(text);
