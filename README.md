@@ -1,6 +1,6 @@
 # Whatsapp-bot
 
-This is a whatsapp bot I created for EPiC Devs ([wait who?](#epic-devs)).
+This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs)).
 
 <br>
 
@@ -9,7 +9,7 @@ This is a whatsapp bot I created for EPiC Devs ([wait who?](#epic-devs)).
 - [Overview](#overview)
   - [The problem](#the-problem)
   - [My solution](#my-solution)
-  - [Demo](#Demo)
+  - [Demo](#demo)
 - [Who are EPiC Devs?](#who-are-epic-devs)
 - [Built with](#built-with)
 - [Extra tips](#tips)
@@ -55,7 +55,12 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 
 ## Demo
 
-<video src="./assets/Bot_demo.mp4">
+https://user-images.githubusercontent.com/44934037/164345371-b4ed39ed-a7cb-4486-87ee-d6a5c5fdd7bc.mp4
+
+Forgive the quality 🙏🏽, Github requires videos to be <10mb which is a pain for a long one like this.
+
+Made up for the low quality with good background music though! 🤍
+
 
 <br>
 
