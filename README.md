@@ -12,7 +12,7 @@ This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs))
   - [Demo](#demo)
 - [Who are EPiC Devs?](#who-are-epic-devs)
 - [Built with](#built-with)
-- [Extra tips](#tips)
+- [Tips](#tips)
 
 <br>
 
@@ -47,7 +47,7 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 
 - Forwarding important **announcements** and **links** from class groups to our private whatsapp group.
 - Reminding us individually about the times we have class.
-- Getting our timetable for the week, and for the current day depending on the elective each of us offers in as little as 4 quick interactions (< 30secs) or by typing 1 command (< 10secs); As opposed to annoyingly asking someone else who may or may not be available at that moment.
+- Getting our timetable for the week, and for the current day depending on the elective each of us offers in as little as 4 quick interactions (*< 20secs*) or by typing 1 command (*< 10secs*); As opposed to annoyingly asking someone else who may or may not be available at that moment.
 - Sending the resources we need for each course. _(not yet implemented)_
 - Reminding and giving us detailed descriptions of assignments we have for each course. _(not yet implemented)_
 
@@ -60,6 +60,8 @@ https://user-images.githubusercontent.com/44934037/164345371-b4ed39ed-a7cb-4486-
 Forgive the quality 🙏🏽, Github requires videos to be <10mb which is a pain for a long one like this.
 
 Made up for the low quality with good background music though! 🤍
+
+Oh and I couldn't add all the functionalities of the bot in the demo as it was getting way too long 😪
 
 
 <br>
@@ -92,8 +94,14 @@ Check us out!:
 
 ## Tips:
 
-I recommend the following extensions in VS Code in order to have more insight into the codebase:
+This project would be an interesting one to clone and run as it's heavily personalized but if you are up to the task, I recommend the following extensions in VS Code in order to have more insight into the codebase:
 
 - [Better Comments](https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments) to see comments with keywords highlighted differently.
 
 - [TODO.md Kanban Taskboard](https://marketplace.visualstudio.com/items?itemName=coddx.coddx-alpha) to see my TODO list in a more elegant form.
+
+Feel free to hit me up if you do have interest in it 👋🏽
+
+
+PS:
+As much this project was fun to build and has proven veryyy useful, I don't think it can stand the test of time for variousss technical reasons and to that extent, I would stop maintaining it pretty soon. I'm also quite busy with my final year project and freelancing :(
