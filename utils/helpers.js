@@ -172,7 +172,6 @@ const startNotificationCalculation = async (client) => {
     // console.log(courses);
 
     for (let i = 0; i < courses.length; ++i) {
-
         const class_time = extractTime(courses[i].name);
         const class_time_hrs = +class_time.split(':')[0];
         const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
@@ -181,7 +180,7 @@ const startNotificationCalculation = async (client) => {
         const cur_time = new Date();
         const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
         const time_left_in_ms = new_class_time - cur_time;
-        if (time_left_in_ms < 0) continue; // if the time for a course if past, skip to next course
+        if (time_left_in_ms < 0) continue; // if the time for a course is past, skip to next course
 
         if (courses[i].name.includes('Data Mining')) {
             if (dataMining.length) {

@@ -485,7 +485,7 @@ client.on('message', async (msg) => {
             } else if (softModelling.includes(contact.id.user)) {
                 await removeUserToBeNotified(contact.id.user, 'S');
             }
-            msg.reply("I won't remind you to go to class anymore✅");
+            msg.reply("I won't remind you to go to class anymore ✅");
             stopOngoingNotifications();
             await startNotificationCalculation(client);
         } else {
