@@ -146,6 +146,17 @@ exports.NOTIFY_REPLIES = [
     'Check your Pms 🐦',
 ]
 
+exports.NOT_ADMIN_REPLIES = [
+    'Lel🐦',
+    'No can do🐦',
+    'You are not an admin',
+    'Task successfully failed ❎',
+    'Nope🐦',
+    'Only admins can do this 🙂',
+    'Only admins can use this, so that it is not abused.',
+    'Sorry, this command is not available to you.'
+]
+
 /**
  * Array containing links that should not be forwarded from other groups.
  */

@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] List replies should check whether bot is muted or not  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  
 - [ ] ⚠️ Add command for ignoring specific users (blacklist)  
 - [ ] ⭐❔Add feature where bot sends logs to my dm....basically all important console logs in the codebase  

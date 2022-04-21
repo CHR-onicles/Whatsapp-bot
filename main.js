@@ -8,7 +8,7 @@ require('dotenv').config();
 
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
-const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
+const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./models/misc');
 
 
@@ -79,6 +79,8 @@ client.on('message', async (msg) => {
         if (contact.id.user !== GRANDMASTER) {
             await msg.reply("Only admins can use this, so that it is not abused 🐦");
             return;
+        } else {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
         }
 
         const chat = await msg.getChat();
@@ -162,6 +164,8 @@ client.on('message', async (msg) => {
         if (contact.id.user === GRANDMASTER) {
             msg.reply(pickRandomReply(MUTE_REPLIES));
             await muteBot();
+        } else {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
         }
     }
 })
@@ -499,12 +503,14 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user !== GRANDMASTER) await msg.reply("Sorry, this command is not available to you.")
-
-        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-
-        await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
-            + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
+        if (contact.id.user === GRANDMASTER) {
+            const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+            await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
+                + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
+        } else {
+            pickRandomReply(NOT_ADMIN_REPLIES);
+            return;
+        }
     }
 })
 
