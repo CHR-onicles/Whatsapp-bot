@@ -6,9 +6,7 @@ Project Description
 
 ### Todo
 
-- [ ] ⚠️Bot's long responses cluttering group chats...send almost everything to dm  
 - [ ] ⭐❔Tell peeps something when they text "Hi" to the bot in dms???  
-- [ ] 🐞List replies should check whether bot is muted or not  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  
 - [ ] ⚠️ Add command for ignoring specific users (blacklist)  
 - [ ] ⭐❔Add feature where bot sends logs to my dm....basically all important console logs in the codebase  
@@ -31,12 +29,14 @@ Project Description
 
 ### In Progress
 
-- [ ] ⭐Add admin utility commands - one of which should be to stop all class notifications for everyone....like for holidays => !notify allow all || !notify stop all  
 - [ ] ⭐Style output for different roles calling the help command  
+- [ ] ⭐Add admin utility commands - one of which should be to stop all class notifications for everyone....like for holidays => !notify allow all || !notify stop all  
 - [ ] ⭐Add command for last link/announcement sent => !last link || !last ann  
 - [ ] 👍Checkout other symbols as replacements for emojis  
 - [ ] ⭐Add command for bot to delete the last thing it sent => !del last  
 
 ### Done ✓
 
+- [x] ⚠️Bot's long responses cluttering group chats...send almost everything to dm  
+- [x] 🐞List replies should check whether bot is muted or not  
 

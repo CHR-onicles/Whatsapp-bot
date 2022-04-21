@@ -8,7 +8,7 @@ const { Schema, model } = require('mongoose');
 
 
 /**
- * Schema for bot's Miscellaneous stuff.
+ * Schema for bot's Miscellaneous stuff. It basically acts like local storage.
  */
 const MiscellaneousSchema = new Schema({
     _id: { type: Number, default: 1 },

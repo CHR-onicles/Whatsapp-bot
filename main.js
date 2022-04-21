@@ -8,7 +8,7 @@ require('dotenv').config();
 
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
-const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES } = require('./utils/data');
+const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./models/misc');
 
 
@@ -58,7 +58,9 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 client.on('ready', async () => {
     console.log('Client is ready!\n');
     BOT_START_TIME = new Date();
-    await startNotificationCalculation(client);
+    if (process.env.NODE_ENV === 'production') {
+        await startNotificationCalculation(client);
+    }
     //     const chats = await client.getChats();
     //     console.log(chats[0]);
 });
@@ -77,27 +79,25 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         if (contact.id.user !== GRANDMASTER) {
-            await msg.reply("Only admins can use this, so that it is not abused 🐦");
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         } else {
-            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
-        }
+            const chat = await msg.getChat();
+            let text = "";
+            let mentions = [];
 
-        const chat = await msg.getChat();
-        let text = "";
-        let mentions = [];
+            if (chat.participants) {
+                for (let participant of chat.participants) {
+                    const contact = await client.getContactById(participant.id._serialized);
 
-        if (chat.participants) {
-            for (let participant of chat.participants) {
-                const contact = await client.getContactById(participant.id._serialized);
-
-                mentions.push(contact);
-                text += `@${participant.id.user} `;
+                    mentions.push(contact);
+                    text += `@${participant.id.user} `;
+                }
+                await msg.reply(text, "", { mentions });
+            } else {
+                await msg.reply("Can't do this - This is not a  group chat 😗");
+                console.log("Called !everyone in a chat that is not a group chat");
             }
-            await msg.reply(text, "", { mentions });
-        } else {
-            await msg.reply("Can't do this - This is not a  group chat 😗");
-            console.log("Called !everyone in a chat that is not a group chat");
         }
     }
 });
@@ -105,9 +105,11 @@ client.on('message', async (msg) => {
 
 // Reply if pinged
 client.on('message', async (msg) => {
-    if (msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) {
+    if ((msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) ||
+        (extractCommand(msg) === '!commands' && await getMutedStatus() === false)) {
         const first_word = msg.body.toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
 
         // Have to keep this array here because I'm using local variables from this file.
         const PING_REPLIES = [
@@ -125,6 +127,8 @@ client.on('message', async (msg) => {
             `👀`,
             `Adey 🐦`,
             `Yo 🐦`,
+            `Sup 🐦`,
+            `Hola 🙋🏽‍♂️`,
             `👁👃🏽👁`,
         ]
 
@@ -152,6 +156,8 @@ client.on('message', async (msg) => {
 
         if (first_word.slice(1, first_word.length) === BOT_NUMBER) {
             await msg.reply(list);
+        } else if (extractCommand(msg) === '!commands') {
+            chat_from_contact.sendMessage(list);
         }
     }
 });
@@ -185,15 +191,23 @@ client.on('message', async (msg) => {
 })
 
 
-// Help users with commands //todo: edit to show only commands available to specific users
+// Help users with commands 
+//todo: edit to show only commands available to specific users
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!help' && await getMutedStatus() === false) {
+        const cur_chat = await msg.getChat();
+        const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
+
+        if (cur_chat.isGroup) {
+            await msg.reply(pickRandomReply(DM_REPLIES));
+        }
 
         HELP_COMMANDS.forEach(obj => {
             text += obj.command + ': ' + obj.desc + '\n';
         })
-        await msg.reply(text);
+        await chat_from_contact.sendMessage(text);
     }
 })
 
@@ -202,21 +216,27 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+        const cur_chat = await msg.getChat();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
+
+        if (cur_chat.isGroup) {
+            await msg.reply(pickRandomReply(DM_REPLIES));
+        }
 
         // if the user has already subscribed to be notified, find his elective and send the timetable based on that.
         if (dataMining.includes(contact.id.user)) {
             text += allClassesReply(ALL_CLASSES, 'D', text)
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         } else if (networking.includes(contact.id.user)) {
             text += allClassesReply(ALL_CLASSES, 'N', text)
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         } else if (softModelling.includes(contact.id.user)) {
             text += allClassesReply(ALL_CLASSES, 'S', text)
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         }
 
@@ -234,10 +254,10 @@ client.on('message', async (msg) => {
             'What elective do you offer?',
             'Powered by Ethereal bot'
         );
-        await msg.reply(list);
+        await chat_from_contact.sendMessage(list);
     }
 
-    if (msg.type === 'list_response') {
+    if (msg.type === 'list_response' && await getMutedStatus() === false) {
         if (parseInt(msg.selectedRowId) < 11 || parseInt(msg.selectedRowId) > 13) return;
         let text = "";
         // console.log(msg.selectedRowId);
@@ -257,22 +277,28 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!class' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+        const cur_chat = await msg.getChat();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
+
+        if (cur_chat.isGroup) {
+            await msg.reply(pickRandomReply(DM_REPLIES));
+        }
 
         // if user has already subscribed to be notified for class, get his elective and send the current day's
         // timetable based on the elective.
         if (dataMining.includes(contact.id.user)) {
             text += await todayClassReply(text, 'D')
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         } else if (networking.includes(contact.id.user)) {
             text += await todayClassReply(text, 'N')
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         } else if (softModelling.includes(contact.id.user)) {
             text += await todayClassReply(text, 'S')
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         }
 
@@ -290,10 +316,10 @@ client.on('message', async (msg) => {
             'What elective do you offer?',
             'Powered by Ethereal bot'
         );
-        await msg.reply(list);
+        await chat_from_contact.sendMessage(list);
     }
 
-    if (msg.type === 'list_response') {
+    if (msg.type === 'list_response' && await getMutedStatus() === false) {
         if (parseInt(msg.selectedRowId) < 21 || parseInt(msg.selectedRowId) > 23) return;
         let text = "";
         if (msg.selectedRowId === '21') {
@@ -317,13 +343,14 @@ client.on('message', async (msg) => {
 
     //* For Announcements
     if (msg.body.includes('❗') || msg.body.includes('‼')) {
+        //todo: add check to make sure the exclamation marks aren't the only characters in the message.
 
         if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Announcement from EPiC Devs, so do nothing")
             return;
         }
 
-        const current_forwarded_announcements = await getAllAnnouncements();
+        const current_forwarded_announcements = await getAllAnnouncements(); //? await has no effect here...test and remove later
 
         // console.log('Recognized an announcement');
 
@@ -343,9 +370,9 @@ client.on('message', async (msg) => {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
-        const link_pattern = /(https?:\/\/[^\s]+)|(www.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
+        const link_pattern = /(https?:\/\/[^\s]+)|(www\.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
         const extracted_link = link_pattern.exec(msg.body)[0];
-        const current_forwarded_links = await getAllLinks();
+        const current_forwarded_links = await getAllLinks(); //? Apparently the await here has no effect??
         // console.log(current_forwarded_links)
 
         const blacklisted_stuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
@@ -454,14 +481,14 @@ client.on('message', async (msg) => {
         await msg.reply(list);
     }
 
-    if (msg.type === 'list_response') {
+    if (msg.type === 'list_response' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
         if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
 
         if (cur_chat.isGroup) {
-            msg.reply(pickRandomReply(NOTIFY_REPLIES));
+            msg.reply(pickRandomReply(DM_REPLIES));
         }
 
         chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${msg.selectedRowId === '31' ? 'Data Mining' : (msg.selectedRowId === '32' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
