@@ -1,6 +1,6 @@
 # Whatsapp-bot
 
-This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs)).
+This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs)). It makes use of a Whatsapp web library and acts just like a regular user. It was built on top of a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. Since I'm using a free Heroku dyno, I use cron-jobs to keep the dyno from sleeping and also to perform some *interesting* calculations at specific times.
 
 <br>
 
@@ -26,7 +26,7 @@ Timetables are always a pain to memorize, going through hundreds of messages fro
 <img src="./assets/wait-for-it-barney-stinson.gif" width=400 alt="Wait for it">
 <br><br>
 
-What if someone could always remind us when it's time for class on your favorite messaging platform? 😮
+What if someone could always remind you when it's time for class on your favorite messaging platform? 😮
 
 What if you don't have to ever memorize any timetable? 😪
 
@@ -35,7 +35,7 @@ What if someone always forwards important messages and links from class groups a
 What if someone always keeps track of your assignments and reminds you when it's close to the deadline?🥺
 
 .<br>.<br>.<br>
-Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethereal"</span>, a whatsapp personal assistant or bot.
+Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethereal"</span>, a whatsapp personal assistant... or bot if you will.
 <br><br>
 <img src="./assets/standing ovation.gif" width=400 alt="Standing ovation">
 
@@ -104,4 +104,4 @@ Feel free to hit me up if you do have interest in it 👋🏽
 
 
 PS:
-As much this project was fun to build and has proven veryyy useful, I don't think it can stand the test of time for variousss technical reasons and to that extent, I would stop maintaining it pretty soon. I'm also quite busy with my final year project and freelancing :(
+As much this project was fun to build and has proven veryyy useful, I don't think it can stand the test of time for variousss technical reasons(eg: Heroku automatically restarting dynos every 24hours, meaning after 24 hours I would have to rescan my QR code...if I remember) and to that extent, I would stop maintaining it pretty soon. I'm also quite busy with my final year project and freelancing :(
