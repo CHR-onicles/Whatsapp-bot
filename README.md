@@ -1,6 +1,6 @@
 # Whatsapp-bot
 
-
+<br>
 This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs)) to make academic life a tiny bit easier. It makes use of a Whatsapp web library and acts just like a regular user. It was built alongside a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. Since I'm using a free Heroku dyno, I use cron-jobs to keep the dyno from sleeping and also to perform some *interesting* calculations at specific times. The bot often interacts with a MongoDB cloud database to supplement its functionalities.
 
 <br>
@@ -105,4 +105,4 @@ Feel free to hit me up if you do have interest in it 👋🏽
 
 
 PS:
-As much this project was fun to build and has proven veryyy useful, I don't think it can stand the test of time for variousss technical reasons(eg: *Heroku automatically restarting dynos every 24hours, meaning after 24 hours I would have to rescan my QR code...if I remember*, *checking up on cron-jobs to make sure they are still running* etc) and to that extent, I would stop maintaining it pretty soon. I'm also quite busy with my final year project and freelancing :(
+As much this project was fun to build and has proven veryyy useful, I don't think it can stand the test of time for variousss technical reasons(eg: *Heroku automatically restarting dynos every 24hours, meaning after 24 hours I would have to rescan my QR code if I don't forget*, *checking up on cron-jobs to make sure they are still running* etc) and to that extent, I would stop maintaining it pretty soon. I'm also quite busy with my final year project and freelancing :(
