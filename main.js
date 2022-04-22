@@ -489,10 +489,13 @@ client.on('message', async (msg) => {
     }
     
     if (msg.type === 'list_response' && await getMutedStatus() === false) {
-        const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
-        const total_users = [...dataMining, ...networking, ...softModelling];
         const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+        
+        if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        const total_users = [...dataMining, ...networking, ...softModelling];
 
         if (total_users.includes(contact.id.user)) {
             await msg.reply("You are already being notified for class🐦");
@@ -501,8 +504,6 @@ client.on('message', async (msg) => {
         }
         // can't refactor repeated code outside the if statement, because every command
         // will execute this piece of code.
-
-        if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
 
         if (cur_chat.isGroup) {
             msg.reply(pickRandomReply(DM_REPLIES));
