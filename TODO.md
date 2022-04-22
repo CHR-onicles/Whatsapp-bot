@@ -31,12 +31,9 @@ Project Description
 - [ ] ⭐Style output for different roles calling the help command  
 - [ ] ⭐Add admin utility commands - one of which should be to stop all class notifications for everyone....like for holidays => !notify allow all || !notify stop all  
 - [ ] ⭐Add command for last link/announcement sent => !last link || !last ann  
-- [ ] 👍Checkout other symbols as replacements for emojis  
 - [ ] ⭐Add command for bot to delete the last thing it sent => !del last  
+- [ ] 👍Checkout other symbols as replacements for emojis  
 
 ### Done ✓
 
-- [x] 🐞Bug where after you select your elective for the first time, if you try selecting from the list again... it allows you...add a check to make sure the same user cannot select it gain.  
-- [x] ⚠️Bot's long responses cluttering group chats...send almost everything to dm  
-- [x] 🐞List replies should check whether bot is muted or not  
 
