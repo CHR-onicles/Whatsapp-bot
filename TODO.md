@@ -9,7 +9,6 @@ Project Description
 - [ ] ⭐❔Tell peeps something when they text "Hi" to the bot in dms???  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  
 - [ ] ⭐❔Add feature where bot sends logs to my dm....basically all important console logs in the codebase  
-- [ ] 🐞Bug where after you select your elective for the first time, if you try selecting from the list again... it allows you...add a check to make sure the same user cannot select it gain.  
 - [ ] ⭐❔Implement state where in development environment, development bot responds to only you, and does not perform certain functionalities that production bot would perform... like sending notifications  
 - [ ] ⚠️❔ Add functionality to mute certain groups, meaning that it wont forward any messages or respond to commands from that particular group => !mute group...bonus if bot deletes that message after some time like in Discord  
 - [ ] ⭐Add command to tell bot to forward messages(announcements & links) to user => !forward and !forward stop to stop forwarding messages  
@@ -37,6 +36,7 @@ Project Description
 
 ### Done ✓
 
+- [x] 🐞Bug where after you select your elective for the first time, if you try selecting from the list again... it allows you...add a check to make sure the same user cannot select it gain.  
 - [x] ⚠️Bot's long responses cluttering group chats...send almost everything to dm  
 - [x] 🐞List replies should check whether bot is muted or not  
 

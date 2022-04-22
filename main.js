@@ -456,18 +456,20 @@ client.on('message', async (msg) => {
 
 //Add user to notification list for class
 client.on('message', async (msg) => {
+    const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+    const total_users = [...dataMining, ...networking, ...softModelling];
+    const contact = await msg.getContact();
+    
+    if (total_users.includes(contact.id.user)) {
+        await msg.reply("You are already being notified for class🐦");
+        console.log('Already subscribed')
+        return;
+    }
+    
     if (extractCommand(msg) === '!notify' &&
         extractCommandArgs(msg) !== 'stop' &&
         await getMutedStatus() === false) {
-        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-        const total_users = [...dataMining, ...networking, ...softModelling];
-        const contact = await msg.getContact();
 
-        if (total_users.includes(contact.id.user)) {
-            await msg.reply("You are already being notified for class🐦");
-            console.log('Already subscribed')
-            return;
-        }
 
         const list = new List(
             '\nMake a choice from the list of electives',
@@ -487,7 +489,6 @@ client.on('message', async (msg) => {
     }
 
     if (msg.type === 'list_response' && await getMutedStatus() === false) {
-        const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
         if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
