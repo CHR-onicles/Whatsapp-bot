@@ -107,7 +107,27 @@ exports.HELP_COMMANDS = [
         availableTo: 'admin',
         command: "*!subs*",
         desc: "Get users who want to be notified for class 👯‍♂️"
-    }
+    },
+    {
+        availableTo: 'everyone',
+        command: "*!commands*",
+        desc: "Get bot's commands in a list style in your DMs 🥂"
+    },
+    // {
+    //     availableTo: 'admin',
+    //     command: "*!ignore <user>",
+    //     desc: "Ignore a specific user 💀"
+    // },
+    // {
+    //     availableTo: 'admin',
+    //     command: "*!acknowledge <user>",
+    //     desc: "Respond to a specific user 😄"
+    // },
+    // {
+    //     availableTo: 'everyone',
+    //     command: "*!admins",
+    //     desc: "See all users who can perform administrative functions on the bot 👮🏽‍♂️"
+    // }
 ]
 
 /**
@@ -139,22 +159,27 @@ exports.UNMUTE_REPLIES = [
 /**
  * Array containing replies to the `!notify` command.
  */
-exports.NOTIFY_REPLIES = [
+exports.DM_REPLIES = [
     'Check dm 🐦',
     '✅',
     'Dm 🐦',
     'Check your Pms 🐦',
+    'Sliding in your dm 👍🏽'
 ]
 
+/**
+ * Array containing replies for users who try to perform administrative functions on the bot.
+ */
 exports.NOT_ADMIN_REPLIES = [
-    'Lel🐦',
-    'No can do🐦',
-    'You are not an admin',
-    'Task successfully failed ❎',
-    'Nope🐦',
-    'Only admins can do this 🙂',
-    'Only admins can use this, so that it is not abused.',
-    'Sorry, this command is not available to you.'
+    "Lel nope🐦, you are not an admin unfortunately.",
+    "No can do🐦, you don't sufficient privileges.",
+    "You are not an admin",
+    "Task successfully failed ❎, command reserved for admins.",
+    "Nope🐦, you don't have the required permissions.",
+    "Only admins can do this 🙂",
+    "Only admins can use this, so that it is not abused.",
+    "Sorry, this command is not available to you.",
+    "Not happening😗, you're not an admin.",
 ]
 
 /**

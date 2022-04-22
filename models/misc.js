@@ -8,7 +8,7 @@ const { Schema, model } = require('mongoose');
 
 
 /**
- * Schema for bot's Miscellaneous stuff.
+ * Schema for bot's Miscellaneous stuff. It basically acts like local storage.
  */
 const MiscellaneousSchema = new Schema({
     _id: { type: Number, default: 1 },
@@ -19,6 +19,7 @@ const MiscellaneousSchema = new Schema({
     electiveDataMining: [String],
     electiveSoftModelling: [String],
     electiveNetworking: [String],
+    blacklistedUsers: [String]
     // numOfCommands: Number, // to be used later
 });
 
@@ -166,7 +167,7 @@ exports.removeAllAnnouncements = async () => {
  */
 exports.getAllSuperAdmins = async () => {
     const superAdmins = await MiscellaneousModel.distinct("superAdmins");
-    console.log(superAdmins);
+    // console.log(superAdmins);
     return superAdmins;
 }
 

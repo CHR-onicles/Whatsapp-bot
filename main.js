@@ -8,8 +8,8 @@ require('dotenv').config();
 
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
-const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, NOTIFY_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./models/misc');
+const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES } = require('./utils/data');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins } = require('./models/misc');
 
 
 // --------------------------------------------------
@@ -58,7 +58,9 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 client.on('ready', async () => {
     console.log('Client is ready!\n');
     BOT_START_TIME = new Date();
-    await startNotificationCalculation(client);
+    if (process.env.NODE_ENV === 'production') {
+        await startNotificationCalculation(client);
+    }
     //     const chats = await client.getChats();
     //     console.log(chats[0]);
 });
@@ -76,28 +78,27 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user !== GRANDMASTER) {
-            await msg.reply("Only admins can use this, so that it is not abused 🐦");
+        const admins =  await getAllSuperAdmins();
+        if (!admins.includes(contact.id.user)) {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         } else {
-            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
-        }
+            const chat = await msg.getChat();
+            let text = "";
+            let mentions = [];
 
-        const chat = await msg.getChat();
-        let text = "";
-        let mentions = [];
+            if (chat.participants) {
+                for (let participant of chat.participants) {
+                    const contact = await client.getContactById(participant.id._serialized);
 
-        if (chat.participants) {
-            for (let participant of chat.participants) {
-                const contact = await client.getContactById(participant.id._serialized);
-
-                mentions.push(contact);
-                text += `@${participant.id.user} `;
+                    mentions.push(contact);
+                    text += `@${participant.id.user} `;
+                }
+                await msg.reply(text, "", { mentions });
+            } else {
+                await msg.reply("Can't do this - This is not a  group chat 😗");
+                console.log("Called !everyone in a chat that is not a group chat");
             }
-            await msg.reply(text, "", { mentions });
-        } else {
-            await msg.reply("Can't do this - This is not a  group chat 😗");
-            console.log("Called !everyone in a chat that is not a group chat");
         }
     }
 });
@@ -105,18 +106,22 @@ client.on('message', async (msg) => {
 
 // Reply if pinged
 client.on('message', async (msg) => {
-    if (msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) {
+    if ((msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) ||
+        (extractCommand(msg) === '!commands' && await getMutedStatus() === false)) {
         const first_word = msg.body.toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+        const admins = await getAllSuperAdmins();
 
-        // Have to keep this array here because I'm using local variables from this file.
+        // Have to keep this array here because I want the most updated list of super Admins
+        // every time this is needed.
         const PING_REPLIES = [
-            `${contact.id.user !== GRANDMASTER ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
-            `I'm here ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
-            `Alive and well ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
-            `Speak forth ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
-            `${contact.id.user !== GRANDMASTER ? "Shoo🐦" : "Sir 🐦"}`,
-            `${contact.id.user !== GRANDMASTER ? "🙄" : "Boss 🐦"}`,
+            `${admins.includes(contact.id.user) ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
+            `I'm here ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
+            `Alive and well ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
+            `Speak forth ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
+            `${admins.includes(contact.id.user) ? "Shoo🐦" : "Sir 🐦"}`,
+            `${admins.includes(contact.id.user) ? "🙄" : "Boss 🐦"}`,
             `Up and running 🐦`,
             `Listening in 🐦`,
             `🙋🏽‍♂️`,
@@ -125,6 +130,8 @@ client.on('message', async (msg) => {
             `👀`,
             `Adey 🐦`,
             `Yo 🐦`,
+            `Sup 🐦`,
+            `Hola 🙋🏽‍♂️`,
             `👁👃🏽👁`,
         ]
 
@@ -152,6 +159,8 @@ client.on('message', async (msg) => {
 
         if (first_word.slice(1, first_word.length) === BOT_NUMBER) {
             await msg.reply(list);
+        } else if (extractCommand(msg) === '!commands') {
+            chat_from_contact.sendMessage(list);
         }
     }
 });
@@ -161,7 +170,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user === GRANDMASTER) {
+        const admins = await getAllSuperAdmins();
+        if (admins.includes(contact.id.user)) {
             msg.reply(pickRandomReply(MUTE_REPLIES));
             await muteBot();
         } else {
@@ -173,27 +183,37 @@ client.on('message', async (msg) => {
 
 // Unmute the bot
 client.on('message', async (msg) => {
-    const contact = await msg.getContact();
     if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
-        if (contact.id.user === GRANDMASTER) {
+        const contact = await msg.getContact();
+        const admins = await getAllSuperAdmins();
+        if (admins.includes(contact.id.user )) {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
     } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && await getMutedStatus() === false) {
-        await msg.reply(`Haven't been muted ${contact.id.user !== GRANDMASTER ? "fam" : "sir "}🐦`);
+        const admins = await getAllSuperAdmins();
+        await msg.reply(`Haven't been muted ${admins.includes(contact.id.user) ? "fam" : "sir "}🐦`);
     }
 })
 
 
-// Help users with commands //todo: edit to show only commands available to specific users
+// Help users with commands 
+//todo: edit to show only commands available to specific users
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!help' && await getMutedStatus() === false) {
+        const cur_chat = await msg.getChat();
+        const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
+
+        if (cur_chat.isGroup) {
+            await msg.reply(pickRandomReply(DM_REPLIES));
+        }
 
         HELP_COMMANDS.forEach(obj => {
             text += obj.command + ': ' + obj.desc + '\n';
         })
-        await msg.reply(text);
+        await chat_from_contact.sendMessage(text);
     }
 })
 
@@ -202,21 +222,27 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+        const cur_chat = await msg.getChat();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
+
+        if (cur_chat.isGroup) {
+            await msg.reply(pickRandomReply(DM_REPLIES));
+        }
 
         // if the user has already subscribed to be notified, find his elective and send the timetable based on that.
         if (dataMining.includes(contact.id.user)) {
             text += allClassesReply(ALL_CLASSES, 'D', text)
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         } else if (networking.includes(contact.id.user)) {
             text += allClassesReply(ALL_CLASSES, 'N', text)
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         } else if (softModelling.includes(contact.id.user)) {
             text += allClassesReply(ALL_CLASSES, 'S', text)
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         }
 
@@ -234,10 +260,10 @@ client.on('message', async (msg) => {
             'What elective do you offer?',
             'Powered by Ethereal bot'
         );
-        await msg.reply(list);
+        await chat_from_contact.sendMessage(list);
     }
 
-    if (msg.type === 'list_response') {
+    if (msg.type === 'list_response' && await getMutedStatus() === false) {
         if (parseInt(msg.selectedRowId) < 11 || parseInt(msg.selectedRowId) > 13) return;
         let text = "";
         // console.log(msg.selectedRowId);
@@ -257,22 +283,28 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!class' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+        const cur_chat = await msg.getChat();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
+
+        if (cur_chat.isGroup) {
+            await msg.reply(pickRandomReply(DM_REPLIES));
+        }
 
         // if user has already subscribed to be notified for class, get his elective and send the current day's
         // timetable based on the elective.
         if (dataMining.includes(contact.id.user)) {
             text += await todayClassReply(text, 'D')
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         } else if (networking.includes(contact.id.user)) {
             text += await todayClassReply(text, 'N')
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         } else if (softModelling.includes(contact.id.user)) {
             text += await todayClassReply(text, 'S')
-            await msg.reply(text);
+            await chat_from_contact.sendMessage(text);
             return;
         }
 
@@ -290,10 +322,10 @@ client.on('message', async (msg) => {
             'What elective do you offer?',
             'Powered by Ethereal bot'
         );
-        await msg.reply(list);
+        await chat_from_contact.sendMessage(list);
     }
 
-    if (msg.type === 'list_response') {
+    if (msg.type === 'list_response' && await getMutedStatus() === false) {
         if (parseInt(msg.selectedRowId) < 21 || parseInt(msg.selectedRowId) > 23) return;
         let text = "";
         if (msg.selectedRowId === '21') {
@@ -317,6 +349,7 @@ client.on('message', async (msg) => {
 
     //* For Announcements
     if (msg.body.includes('❗') || msg.body.includes('‼')) {
+        //todo: add check to make sure the exclamation marks aren't the only characters in the message.
 
         if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Announcement from EPiC Devs, so do nothing")
@@ -343,7 +376,7 @@ client.on('message', async (msg) => {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
-        const link_pattern = /(https?:\/\/[^\s]+)|(www.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
+        const link_pattern = /(https?:\/\/[^\s]+)|(www\.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
         const extracted_link = link_pattern.exec(msg.body)[0];
         const current_forwarded_links = await getAllLinks();
         // console.log(current_forwarded_links)
@@ -424,13 +457,14 @@ client.on('message', async (msg) => {
 
 //Add user to notification list for class
 client.on('message', async (msg) => {
+    
     if (extractCommand(msg) === '!notify' &&
-        extractCommandArgs(msg) !== 'stop' &&
-        await getMutedStatus() === false) {
+    extractCommandArgs(msg) !== 'stop' &&
+    await getMutedStatus() === false) {
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         const total_users = [...dataMining, ...networking, ...softModelling];
         const contact = await msg.getContact();
-
+        
         if (total_users.includes(contact.id.user)) {
             await msg.reply("You are already being notified for class🐦");
             console.log('Already subscribed')
@@ -453,15 +487,26 @@ client.on('message', async (msg) => {
         );
         await msg.reply(list);
     }
-
-    if (msg.type === 'list_response') {
+    
+    if (msg.type === 'list_response' && await getMutedStatus() === false) {
+        const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
-        const cur_chat = await msg.getChat();
+        
         if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        const total_users = [...dataMining, ...networking, ...softModelling];
+
+        if (total_users.includes(contact.id.user)) {
+            await msg.reply("You are already being notified for class🐦");
+            console.log('Already subscribed')
+            return;
+        }
+        // can't refactor repeated code outside the if statement, because every command
+        // will execute this piece of code.
 
         if (cur_chat.isGroup) {
-            msg.reply(pickRandomReply(NOTIFY_REPLIES));
+            msg.reply(pickRandomReply(DM_REPLIES));
         }
 
         chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${msg.selectedRowId === '31' ? 'Data Mining' : (msg.selectedRowId === '32' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
@@ -503,7 +548,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user === GRANDMASTER) {
+        const admins = await getAllSuperAdmins();
+        if (admins.includes(contact.id.user)) {
             const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
             await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
                 + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
@@ -513,6 +559,11 @@ client.on('message', async (msg) => {
         }
     }
 })
+
+
+//! Blacklist a user *(WORK IN PROGRESS)*
+// client.on('message', async (msg) => {
+// })
 
 
 // Endpoint to hit in order to restart calculations for class notifications (will be done by a cron-job)
