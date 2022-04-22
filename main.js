@@ -9,7 +9,7 @@ require('dotenv').config();
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins } = require('./models/misc');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins, addSuperAdmin } = require('./models/misc');
 
 
 // --------------------------------------------------
@@ -78,14 +78,14 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const admins =  await getAllSuperAdmins();
+        const admins = await getAllSuperAdmins();
         if (!admins.includes(contact.id.user)) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         } else {
             const chat = await msg.getChat();
             let text = "";
-            let mentions = [];
+            const mentions = [];
 
             if (chat.participants) {
                 for (let participant of chat.participants) {
@@ -186,7 +186,7 @@ client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
         const contact = await msg.getContact();
         const admins = await getAllSuperAdmins();
-        if (admins.includes(contact.id.user )) {
+        if (admins.includes(contact.id.user)) {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
@@ -457,14 +457,14 @@ client.on('message', async (msg) => {
 
 //Add user to notification list for class
 client.on('message', async (msg) => {
-    
+
     if (extractCommand(msg) === '!notify' &&
-    extractCommandArgs(msg) !== 'stop' &&
-    await getMutedStatus() === false) {
+        extractCommandArgs(msg) !== 'stop' &&
+        await getMutedStatus() === false) {
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         const total_users = [...dataMining, ...networking, ...softModelling];
         const contact = await msg.getContact();
-        
+
         if (total_users.includes(contact.id.user)) {
             await msg.reply("You are already being notified for class🐦");
             console.log('Already subscribed')
@@ -487,12 +487,12 @@ client.on('message', async (msg) => {
         );
         await msg.reply(list);
     }
-    
+
     if (msg.type === 'list_response' && await getMutedStatus() === false) {
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
-        
+
         if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         const total_users = [...dataMining, ...networking, ...softModelling];
@@ -561,9 +561,61 @@ client.on('message', async (msg) => {
 })
 
 
-//! Blacklist a user *(WORK IN PROGRESS)*
-// client.on('message', async (msg) => {
-// })
+// Promote a user to be admin
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!promote' && await getMutedStatus() === false) {
+        const user_to_promote = extractCommandArgs(msg);
+        const cur_chat = await msg.getChat();
+        const contact = await msg.getContact();
+        const admins = await getAllSuperAdmins();
+
+        // Don't do anything if run by a user who is not an admin.
+        if (!admins.includes(contact.id.user)) {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+            return;
+        }
+
+        // Make sure the user is using this command in a group chat in order 
+        // to be able to ping another user.
+        if (!cur_chat.isGroup) {
+            await msg.reply("Sorry can't do this in a chat that is not a group.")
+            return;
+        }
+
+        // Make sure the user is pinging someone
+        if (user_to_promote[0] !== '@') {
+            await msg.reply("Please make sure to ping a valid user");
+            return;
+        }
+
+        const found_user = cur_chat.participants.find((user) => user.id.user === user_to_promote.substring(1, user_to_promote.length));
+
+        if (found_user) {
+            // The bot shouldn't be promoted lol.
+            if (found_user.id.user === BOT_NUMBER) {
+                await msg.reply("Sorry, I can't be promoted"); // todo: Add more fun replies for this later
+                return;
+            }
+            const admins = await getAllSuperAdmins();
+            if (admins.includes(found_user.id.user)) {
+                await msg.reply('This user is already an admin 😕'); // todo: Add more replies for this later
+                return;
+            } else {
+                await addSuperAdmin(found_user.id.user);
+                await msg.reply('Success! ✅'); //todo: Add more replies for this later
+            }
+        } else {
+            await msg.reply("Sorry, I couldn't find that user ☹")
+            return;
+        }
+    }
+})
+
+
+// Dismiss an admin
+client.on('message', async (msg) => {
+
+})
 
 
 // Endpoint to hit in order to restart calculations for class notifications (will be done by a cron-job)

@@ -31,11 +31,11 @@ exports.ALL_CLASSES = [
     {
         day: 'Thursday',
         courses: [
-            { name: '_Project_ | ⏰8:30am | 🏠Online', duration: 2 },
+            // { name: '_Project_ | ⏰8:30am | 🏠Online', duration: 2 }, // Not being used currently
             { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
             { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
             { name: '_Networking_ | ⏰5:30pm | 🏠E10', duration: 1 },
-            { name: '_Accounting_ | ⏰6:30pm | 🏠E10', duration: 1 }
+            { name: '_Accounting_ | ⏰6:35pm | 🏠E10', duration: 1 }
         ]
     },
     {
@@ -44,7 +44,8 @@ exports.ALL_CLASSES = [
             { name: '_Soft. Modelling_ | ⏰9:30am | 🏠N3', duration: 1 },
             { name: '_Theory & Survey_ | ⏰10:30am | 🏠N3', duration: 1 },
             { name: '_Data Mining_ | ⏰3:30pm | 🏠NNB2', duration: 1 },
-            { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 }
+            { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 },
+            { name: '_Test Course_ | ⏰7:24pm | 🏠NNB2', duration: 1 }
         ]
     }
 ]
@@ -113,6 +114,16 @@ exports.HELP_COMMANDS = [
         command: "*!commands*",
         desc: "Get bot's commands in a list style in your DMs 🥂"
     },
+    {
+        availableTo: 'admin',
+        command: "*!promote <user>",
+        desc: "Make a user an admin 👮🏽‍♂️"
+    },
+    {
+        availableTo: 'admin',
+        command: "*!demote <user>",
+        desc: "Dismiss an admin 💀👮🏽‍♂️"
+    },
     // {
     //     availableTo: 'admin',
     //     command: "*!ignore <user>",
@@ -127,7 +138,7 @@ exports.HELP_COMMANDS = [
     //     availableTo: 'everyone',
     //     command: "*!admins",
     //     desc: "See all users who can perform administrative functions on the bot 👮🏽‍♂️"
-    // }
+    // },
 ]
 
 /**
