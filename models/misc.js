@@ -19,6 +19,7 @@ const MiscellaneousSchema = new Schema({
     electiveDataMining: [String],
     electiveSoftModelling: [String],
     electiveNetworking: [String],
+    blacklistedUsers: [String]
     // numOfCommands: Number, // to be used later
 });
 
@@ -166,7 +167,7 @@ exports.removeAllAnnouncements = async () => {
  */
 exports.getAllSuperAdmins = async () => {
     const superAdmins = await MiscellaneousModel.distinct("superAdmins");
-    console.log(superAdmins);
+    // console.log(superAdmins);
     return superAdmins;
 }
 

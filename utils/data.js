@@ -122,6 +122,11 @@ exports.HELP_COMMANDS = [
     //     availableTo: 'admin',
     //     command: "*!acknowledge <user>",
     //     desc: "Respond to a specific user 😄"
+    // },
+    // {
+    //     availableTo: 'everyone',
+    //     command: "*!admins",
+    //     desc: "See all users who can perform administrative functions on the bot 👮🏽‍♂️"
     // }
 ]
 
@@ -162,6 +167,9 @@ exports.DM_REPLIES = [
     'Sliding in your dm 👍🏽'
 ]
 
+/**
+ * Array containing replies for users who try to perform administrative functions on the bot.
+ */
 exports.NOT_ADMIN_REPLIES = [
     "Lel nope🐦, you are not an admin unfortunately.",
     "No can do🐦, you don't sufficient privileges.",

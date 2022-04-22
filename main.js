@@ -9,7 +9,7 @@ require('dotenv').config();
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass } = require('./models/misc');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins } = require('./models/misc');
 
 
 // --------------------------------------------------
@@ -78,7 +78,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user !== GRANDMASTER) {
+        const admins =  await getAllSuperAdmins();
+        if (!admins.includes(contact.id.user)) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         } else {
@@ -110,15 +111,17 @@ client.on('message', async (msg) => {
         const first_word = msg.body.toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
+        const admins = await getAllSuperAdmins();
 
-        // Have to keep this array here because I'm using local variables from this file.
+        // Have to keep this array here because I want the most updated list of super Admins
+        // every time this is needed.
         const PING_REPLIES = [
-            `${contact.id.user !== GRANDMASTER ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
-            `I'm here ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
-            `Alive and well ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
-            `Speak forth ${contact.id.user === GRANDMASTER ? 'sir' : 'fam'}🐦`,
-            `${contact.id.user !== GRANDMASTER ? "Shoo🐦" : "Sir 🐦"}`,
-            `${contact.id.user !== GRANDMASTER ? "🙄" : "Boss 🐦"}`,
+            `${admins.includes(contact.id.user) ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
+            `I'm here ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
+            `Alive and well ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
+            `Speak forth ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
+            `${admins.includes(contact.id.user) ? "Shoo🐦" : "Sir 🐦"}`,
+            `${admins.includes(contact.id.user) ? "🙄" : "Boss 🐦"}`,
             `Up and running 🐦`,
             `Listening in 🐦`,
             `🙋🏽‍♂️`,
@@ -167,7 +170,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user === GRANDMASTER) {
+        const admins = await getAllSuperAdmins();
+        if (admins.includes(contact.id.user)) {
             msg.reply(pickRandomReply(MUTE_REPLIES));
             await muteBot();
         } else {
@@ -180,13 +184,14 @@ client.on('message', async (msg) => {
 // Unmute the bot
 client.on('message', async (msg) => {
     const contact = await msg.getContact();
+    const admins = await getAllSuperAdmins();
     if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
-        if (contact.id.user === GRANDMASTER) {
+        if (admins.includes(contact.id.user )) {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
     } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && await getMutedStatus() === false) {
-        await msg.reply(`Haven't been muted ${contact.id.user !== GRANDMASTER ? "fam" : "sir "}🐦`);
+        await msg.reply(`Haven't been muted ${admins.includes(contact.id.user) ? "fam" : "sir "}🐦`);
     }
 })
 
@@ -350,7 +355,7 @@ client.on('message', async (msg) => {
             return;
         }
 
-        const current_forwarded_announcements = await getAllAnnouncements(); //? await has no effect here...test and remove later
+        const current_forwarded_announcements = await getAllAnnouncements();
 
         // console.log('Recognized an announcement');
 
@@ -372,7 +377,7 @@ client.on('message', async (msg) => {
         }
         const link_pattern = /(https?:\/\/[^\s]+)|(www\.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
         const extracted_link = link_pattern.exec(msg.body)[0];
-        const current_forwarded_links = await getAllLinks(); //? Apparently the await here has no effect??
+        const current_forwarded_links = await getAllLinks();
         // console.log(current_forwarded_links)
 
         const blacklisted_stuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
@@ -530,7 +535,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        if (contact.id.user === GRANDMASTER) {
+        const admins = await getAllSuperAdmins();
+        if (admins.includes(contact.id.user)) {
             const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
             await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
                 + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
@@ -540,6 +546,11 @@ client.on('message', async (msg) => {
         }
     }
 })
+
+
+//! Blacklist a user *(WORK IN PROGRESS)*
+// client.on('message', async (msg) => {
+// })
 
 
 // Endpoint to hit in order to restart calculations for class notifications (will be done by a cron-job)

@@ -8,7 +8,6 @@ Project Description
 
 - [ ] ⭐❔Tell peeps something when they text "Hi" to the bot in dms???  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  
-- [ ] ⚠️ Add command for ignoring specific users (blacklist)  
 - [ ] ⭐❔Add feature where bot sends logs to my dm....basically all important console logs in the codebase  
 - [ ] 🐞Bug where after you select your elective for the first time, if you try selecting from the list again... it allows you...add a check to make sure the same user cannot select it gain.  
 - [ ] ⭐❔Implement state where in development environment, development bot responds to only you, and does not perform certain functionalities that production bot would perform... like sending notifications  
@@ -29,6 +28,7 @@ Project Description
 
 ### In Progress
 
+- [ ] ⚠️ Add command for ignoring specific users (blacklist)  
 - [ ] ⭐Style output for different roles calling the help command  
 - [ ] ⭐Add admin utility commands - one of which should be to stop all class notifications for everyone....like for holidays => !notify allow all || !notify stop all  
 - [ ] ⭐Add command for last link/announcement sent => !last link || !last ann  
