@@ -116,12 +116,12 @@ exports.HELP_COMMANDS = [
     },
     {
         availableTo: 'a',
-        command: "*!promote <user>",
+        command: "*!promote* <user>",
         desc: "Make user an admin 👮🏽‍♂️"
     },
     {
         availableTo: 'a',
-        command: "*!demote <user>",
+        command: "*!demote* <user>",
         desc: "Dismiss an admin 💀👮🏽‍♂️"
     },
     // {

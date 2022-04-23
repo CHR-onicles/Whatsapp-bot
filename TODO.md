@@ -31,7 +31,6 @@ Project Description
 
 ### In Progress
 
-- [ ] ⭐Style output for different roles calling the help command  
 - [ ] ⚠️Implement command to stop all notifications for a particular day or for a specific course. => !notify allow all || !notify stop all || !notify allow <course> || !notify stop <course>  
 - [ ] ⭐Add command for last link/announcement sent => !last link || !last ann  
 - [ ] ⭐Add command for bot to delete the last thing it sent => !del last  
@@ -39,4 +38,5 @@ Project Description
 
 ### Done ✓
 
+- [x] ⭐Style output for different roles calling the help command  
 

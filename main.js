@@ -201,12 +201,12 @@ client.on('message', async (msg) => {
 
 
 // Help users with commands 
-//todo: edit to show only commands available to specific users
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!help' && await getMutedStatus() === false) {
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
+        const admins = await getAllSuperAdmins();
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
 
         if (cur_chat.isGroup) {
@@ -214,8 +214,14 @@ client.on('message', async (msg) => {
         }
 
         HELP_COMMANDS.forEach(obj => {
-            text += obj.command + ': ' + obj.desc + '\n';
+            if (!admins.includes(contact.id.user)) {
+                if (obj.availableTo === 'e') text += obj.command + ": " + obj.desc + "\n";
+            } else text += obj.command + ": " + obj.desc + "\n";
         })
+
+        if (admins.includes(contact.id.user)) {
+            text += "\n\nPS:  You're an *admin*, so you have access to _special_ commands 🤫"
+        }
         await chat_from_contact.sendMessage(text);
     }
 })
