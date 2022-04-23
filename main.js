@@ -271,6 +271,7 @@ client.on('message', async (msg) => {
             await chat_from_contact.sendMessage(text);
             return;
         }
+        //todo: append a tip to help users find other commands here and for !class since they are the most used commands
 
         const list = new List(
             '\nMake a choice from the list of electives',
@@ -402,9 +403,13 @@ client.on('message', async (msg) => {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
-        const link_pattern = /(https?:\/\/[^\s]+)|(www\.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
-        const extracted_link = link_pattern.exec(msg.body)[0];
-        const current_forwarded_links = await getAllLinks();
+        const link_pattern = /((h|H)(t|T)(t|T)(p|P)(s|S)?:\/\/[^\s]+)|((w|W)(w|W)(w|W)\.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
+        let extracted_link = link_pattern.exec(msg.body);
+        if (extracted_link) {
+            extracted_link = extracted_link[0].toLowerCase();
+        } else return;
+        let current_forwarded_links = await getAllLinks();
+        current_forwarded_links = current_forwarded_links.map(link => link.toLowerCase());
         // console.log(current_forwarded_links)
 
         const blacklisted_stuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
@@ -418,7 +423,7 @@ client.on('message', async (msg) => {
 
         // console.log('recognized a link');
         // console.log('extracted link:', extracted_link);
-        if (!current_forwarded_links.includes(msg.body)) {
+        if (!current_forwarded_links.includes(msg.body.toLowerCase()) || !current_forwarded_links.includes(extracted_link)) {
             await addLink(msg.body);
             await msg.forward(target_chat);
         } else {
@@ -483,7 +488,6 @@ client.on('message', async (msg) => {
 
 //Add user to notification list for class
 client.on('message', async (msg) => {
-
     if (extractCommand(msg) === '!notify' &&
         extractCommandArgs(msg) !== 'stop' &&
         await getMutedStatus() === false) {
@@ -689,6 +693,21 @@ client.on('message', async (msg) => {
             }
         } else {
             await msg.reply("Sorry, I couldn't find that user ☹");
+            return;
+        }
+    }
+})
+
+
+// Check the environment the bot is running in
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!env' && await getMutedStatus() === false) {
+        const contact = await msg.getContact();
+        const admins = await getAllSuperAdmins();
+        if (admins.includes(contact.id.user)) {
+            await msg.reply(`Bot is currently running in *${process.env.NODE_ENV}* environment`)
+        } else {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         }
     }

@@ -124,6 +124,11 @@ exports.HELP_COMMANDS = [
         command: "*!demote* _<user>_",
         desc: "Dismiss an admin 💀"
     },
+    {
+        availableTo: 'a',
+        command: "*!env*",
+        desc: "Check the current environment of the bot 🤖"
+    }
     // {
     //     availableTo: 'everyone',
     //     command: "*!exams",
