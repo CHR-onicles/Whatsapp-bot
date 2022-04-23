@@ -8,7 +8,7 @@ require('dotenv').config();
 
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
-const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES } = require('./utils/data');
+const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins, addSuperAdmin, removeSuperAdmin } = require('./models/misc');
 
 
@@ -593,10 +593,10 @@ client.on('message', async (msg) => {
         if (found_user) {
             // The bot shouldn't be promoted lol.
             if (found_user.id.user === BOT_NUMBER) {
-                await msg.reply("Sorry, I can't be promoted"); // todo: Add more fun replies for this later
+                await msg.reply(pickRandomReply(PROMOTE_BOT_REPLIES));
                 return;
             } else if (found_user.id.user === GRANDMASTER) {
-                await msg.reply("The Grandmaster needs no promotion🐦"); // todo: Add more replies to this too
+                await msg.reply(pickRandomReply(PROMOTE_GRANDMASTER_REPLIES));
                 return;
             }
             const admins = await getAllSuperAdmins();
@@ -632,7 +632,7 @@ client.on('message', async (msg) => {
         // Make sure the user is using this command in a group chat in order 
         // to be able to ping another user.
         if (!cur_chat.isGroup) {
-            await msg.reply("Sorry can't do this in a chat that is not a group.")
+            await msg.reply("Sorry can't do this in a chat that is not a group.");
             return;
         }
 
@@ -647,10 +647,10 @@ client.on('message', async (msg) => {
         if (found_user) {
             // The bot shouldn't be demoted.
             if (found_user.id.user === BOT_NUMBER) {
-                await msg.reply("Sorry, I can't be demoted...I'm ethereal 🐦"); // todo: Add more fun replies for this later
+                await msg.reply(pickRandomReply(DEMOTE_BOT_REPLIES));
                 return;
             } else if (found_user.id.user === GRANDMASTER) {
-                await msg.reply("You are not worthy to demote the Grandmaster🐦"); // todo: Add moreee fun replies for this 
+                await msg.reply(pickRandomReply(DEMOTE_GRANDMASTER_REPLIES)); 
                 return;
             }
             const admins = await getAllSuperAdmins();
@@ -662,7 +662,7 @@ client.on('message', async (msg) => {
                 await msg.reply('This user is not an admin 🤦🏽‍♂️'); // todo: Add more replies for this later
             }
         } else {
-            await msg.reply("Sorry, I couldn't find that user ☹")
+            await msg.reply("Sorry, I couldn't find that user ☹");
             return;
         }
     }

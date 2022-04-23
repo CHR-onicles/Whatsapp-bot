@@ -117,13 +117,18 @@ exports.HELP_COMMANDS = [
     {
         availableTo: 'admin',
         command: "*!promote <user>",
-        desc: "Make a user an admin 👮🏽‍♂️"
+        desc: "Make user an admin 👮🏽‍♂️"
     },
     {
         availableTo: 'admin',
         command: "*!demote <user>",
         desc: "Dismiss an admin 💀👮🏽‍♂️"
     },
+    // {
+    //     availableTo: 'everyone',
+    //     command: "*!exams",
+    //     desc: "Get the exams timetable 📝"
+    // },
     // {
     //     availableTo: 'admin',
     //     command: "*!ignore <user>",
@@ -191,6 +196,84 @@ exports.NOT_ADMIN_REPLIES = [
     "Only admins can use this, so that it is not abused.",
     "Sorry, this command is not available to you.",
     "Not happening😗, you're not an admin.",
+]
+
+/**
+ * Array containing replies to admins attempting to promote the bot.
+ */
+exports.PROMOTE_BOT_REPLIES = [
+    "Thanks for the kind gesture, but I need no promotion🐦",
+    "Sorry, the bot can't be promoted",
+    "Sorry, I can't be promoted",
+    "I already have the highest privileges🐦",
+    "I am promoted by no one🐦",
+    "🙄",
+    "🤦🏽‍♂️",
+    "You don't promote me... I promote you🐦",
+    "Wow thanks!\n\nJust kidding, you can't promote me😂",
+    "Must've done something great to deserve this promotion huh🐦"
+]
+
+
+/**
+ * Array containing replies to admins attempting to demote the bot.
+ */
+exports.DEMOTE_BOT_REPLIES = [
+    "Imagine trying to demote me 🙄",
+    "Wow okay lol",
+    "Sorry, the bot can't be demoted",
+    "I cannot be demoted fam",
+    "I can't be demoted, Im *Ethereal* 🐦",
+    "I demote you first yes?🐦",
+    "🙄",
+    "First time?🐦",
+    "Oh no! 😭\n\nJust kidding, you can't demote me🐦",
+    "You're not worthy to demote me🐦",
+    "Only the Grandmaster can demote me🐦",
+    "🤣aye good luck",
+    "Got any other better thing doing?🐦",
+    "🤦🏽‍♂️",
+    "👎🏽",
+    "Why would you do that, I've literally been a good bot🐦",
+]
+
+/**
+ * Array containing replies to admins attempting to promote the bot owner(the Grandmaster).
+ */
+exports.PROMOTE_GRANDMASTER_REPLIES = [
+    "Interesting lel🐦",
+    "The Grandmaster needs no further promotion 👍🏽",
+    "You are not worthy to promote the Grandmaster🐦",
+    "Only the worthy can do this🐦",
+    "I'll think about it🐦",
+    "😮",
+    "❌",
+    "You can't promote the Grandmaster.",
+    "Lol okay",
+    "Okayyy?",
+]
+
+/**
+ * Array containing replies to admins attempting to demote the bot owner(the Grandmaster).
+ */
+exports.DEMOTE_GRANDMASTER_REPLIES = [
+    "Interesting🐦",
+    "👎🏽",
+    "❌",
+    "🙄",
+    "🤦🏽‍♂️",
+    "Think it through first 👍🏽",
+    "We don't do that here 🙄",
+    "I'll think about it🐦",
+    "You are unworthy mortal🐦",
+    "You'll be demoted first🐦",
+    "Not while I'm still around🐦",
+    "Not anytime soon fam🐦",
+    "The Grandmaster will be told of this treason.",
+    "You will be demoted soon 👍🏽",
+    "You can't demote the Grandmaster.",
+    "wHy, just WhY",
+    "This was foreseen, and you will be banned soon."
 ]
 
 /**
