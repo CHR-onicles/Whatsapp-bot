@@ -6,6 +6,10 @@ Project Description
 
 ### Todo
 
+- [ ] ⚠️ Add command for ignoring specific users (blacklist)  
+- [ ] ⭐❔Add poll feature to bot...for stuff like new features users would want, names of commands etc  
+- [ ] ⭐❔Add feature where bot performs currency conversions  
+- [ ] ⭐❔Add feature where bot performs basic operations like addition, subtraction, multiplication and division for now... chaining should come later  
 - [ ] ⭐❔Tell peeps something when they text "Hi" to the bot in dms???  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  
 - [ ] ⭐❔Add feature where bot sends logs to my dm....basically all important console logs in the codebase  
@@ -27,9 +31,8 @@ Project Description
 
 ### In Progress
 
-- [ ] ⚠️ Add command for ignoring specific users (blacklist)  
 - [ ] ⭐Style output for different roles calling the help command  
-- [ ] ⭐Add admin utility commands - one of which should be to stop all class notifications for everyone....like for holidays => !notify allow all || !notify stop all  
+- [ ] ⚠️Implement command to stop all notifications for a particular day or for a specific course. => !notify allow all || !notify stop all || !notify allow <course> || !notify stop <course>  
 - [ ] ⭐Add command for last link/announcement sent => !last link || !last ann  
 - [ ] ⭐Add command for bot to delete the last thing it sent => !del last  
 - [ ] 👍Checkout other symbols as replacements for emojis  

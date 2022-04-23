@@ -31,11 +31,11 @@ exports.ALL_CLASSES = [
     {
         day: 'Thursday',
         courses: [
-            { name: '_Project_ | ⏰8:30am | 🏠Online', duration: 2 },
+            // { name: '_Project_ | ⏰8:30am | 🏠Online', duration: 2 }, // Not being used currently
             { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
             { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
             { name: '_Networking_ | ⏰5:30pm | 🏠E10', duration: 1 },
-            { name: '_Accounting_ | ⏰6:30pm | 🏠E10', duration: 1 }
+            { name: '_Accounting_ | ⏰6:35pm | 🏠E10', duration: 1 }
         ]
     },
     {
@@ -44,7 +44,8 @@ exports.ALL_CLASSES = [
             { name: '_Soft. Modelling_ | ⏰9:30am | 🏠N3', duration: 1 },
             { name: '_Theory & Survey_ | ⏰10:30am | 🏠N3', duration: 1 },
             { name: '_Data Mining_ | ⏰3:30pm | 🏠NNB2', duration: 1 },
-            { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 }
+            { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 },
+            { name: '_Test Course_ | ⏰7:24pm | 🏠NNB2', duration: 1 }
         ]
     }
 ]
@@ -54,65 +55,80 @@ exports.ALL_CLASSES = [
  */
 exports.HELP_COMMANDS = [
     {
-        availableTo: 'everyone',
+        availableTo: 'e', // everyone
         command: "*!ping*",
         desc: "Check if I'm available 🙋🏽‍♂️"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!uptime*",
         desc: "See how long I've been awake🟢"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!help*",
         desc: "Get commands that can be used with me 💡"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a', // admins
         command: "*!mute*",
         desc: "Get me to be quiet 😅"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a',
         command: "*!unmute*",
         desc: "Allow me to talk 🙂"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a',
         command: "*!everyone*",
         desc: "Ping everyone in the group 😮"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!classes*",
         desc: "Get all the classes you have this week 📚"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!class*",
         desc: "Get today's classes 📕"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!notify*",
         desc: "Get notified for class 🔔"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!notify stop*",
         desc: "Stop getting notified for class 🔕"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a',
         command: "*!subs*",
         desc: "Get users who want to be notified for class 👯‍♂️"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!commands*",
         desc: "Get bot's commands in a list style in your DMs 🥂"
     },
+    {
+        availableTo: 'a',
+        command: "*!promote <user>",
+        desc: "Make user an admin 👮🏽‍♂️"
+    },
+    {
+        availableTo: 'a',
+        command: "*!demote <user>",
+        desc: "Dismiss an admin 💀👮🏽‍♂️"
+    },
+    // {
+    //     availableTo: 'everyone',
+    //     command: "*!exams",
+    //     desc: "Get the exams timetable 📝"
+    // },
     // {
     //     availableTo: 'admin',
     //     command: "*!ignore <user>",
@@ -127,7 +143,7 @@ exports.HELP_COMMANDS = [
     //     availableTo: 'everyone',
     //     command: "*!admins",
     //     desc: "See all users who can perform administrative functions on the bot 👮🏽‍♂️"
-    // }
+    // },
 ]
 
 /**
@@ -180,6 +196,88 @@ exports.NOT_ADMIN_REPLIES = [
     "Only admins can use this, so that it is not abused.",
     "Sorry, this command is not available to you.",
     "Not happening😗, you're not an admin.",
+]
+
+/**
+ * Array containing replies to admins attempting to promote the bot.
+ */
+exports.PROMOTE_BOT_REPLIES = [
+    "Thanks for the kind gesture, but I need no promotion🐦",
+    "Sorry, the bot can't be promoted",
+    "Sorry, I can't be promoted",
+    "I already have the highest privileges🐦",
+    "I am promoted by no one🐦",
+    "🙄",
+    "🤦🏽‍♂️",
+    "You don't promote me... I promote you🐦",
+    "Wow thanks!\n\nJust kidding, you can't promote me😂",
+    "Must've done something great to deserve this promotion huh🐦"
+]
+
+
+/**
+ * Array containing replies to admins attempting to demote the bot.
+ */
+exports.DEMOTE_BOT_REPLIES = [
+    "Imagine trying to demote me 🙄",
+    "Wow okay lol",
+    "Sorry, the bot can't be demoted",
+    "I cannot be demoted fam",
+    "I can't be demoted, Im *Ethereal* 🐦",
+    "I demote you first yes?🐦",
+    "🙄",
+    "First time?🐦",
+    "Oh no! 😭\n\nJust kidding, you can't demote me🐦",
+    "You're not worthy to demote me🐦",
+    "Only the Grandmaster can demote me🐦",
+    "🤣aye good luck",
+    "Got any other better thing doing?🐦",
+    "🤦🏽‍♂️",
+    "👎🏽",
+    "Why would you do that, I've literally been a good bot🐦",
+]
+
+/**
+ * Array containing replies to admins attempting to promote the bot owner(the Grandmaster).
+ */
+exports.PROMOTE_GRANDMASTER_REPLIES = [
+    "Interesting lel🐦",
+    "The Grandmaster needs no further promotion 👍🏽",
+    "You are not worthy to promote the Grandmaster🐦",
+    "Only the worthy can do this🐦",
+    "I'll think about it🐦",
+    "😮",
+    "❌",
+    "You can't promote the Grandmaster.",
+    "Lol okay",
+    "Okayyy?",
+    "How much more power do you want the Grandmaster to have?"
+]
+
+/**
+ * Array containing replies to admins attempting to demote the bot owner(the Grandmaster).
+ */
+exports.DEMOTE_GRANDMASTER_REPLIES = [
+    "Interesting🐦",
+    "👎🏽",
+    "❌",
+    "🙄",
+    "🤦🏽‍♂️",
+    "💔",
+    "Think it through first 👍🏽",
+    "We don't do that here 🙄",
+    "I'll think about it🐦",
+    "You are unworthy mortal🐦",
+    "You'll be demoted first🐦",
+    "Not while I'm still around🐦",
+    "Not anytime soon fam🐦",
+    "The Grandmaster will be told of this treason.",
+    "You will be demoted soon 👍🏽",
+    "You can't demote the Grandmaster.",
+    "wHy, just WhY",
+    "This was foreseen, and you will be banned soon.",
+    "Okay and have a great day 👍🏽",
+    "Ignored, have a great day 👍🏽"
 ]
 
 /**

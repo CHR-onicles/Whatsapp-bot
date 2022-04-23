@@ -131,3 +131,4 @@ dist
 
 # Personal stuff
 test.js
+logs.*
