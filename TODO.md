@@ -21,7 +21,6 @@ Project Description
 - [ ] ⭐❔ Add blacklisted link counter in the misc schema to keep track of blacklisted links sent in groups  
 - [ ] ⭐❔Add command for bot to send last deleted message in a group chat if only its text  
 - [ ] ⭐❔ When forwarding links, forward the next consecutive message from the same user quoting the link/announcement as its usually more information about the announcement/link...refer to screenshot  
-- [ ] ⭐Implement functionality to ignore certain users => logic + update schema  
 - [ ] ⚠️Refactor extracting course name into function  
 - [ ] ⚠️Refactor repeated variable setters to global variables  
 - [ ] ⚠️Refactor code which extracts time from the courses object  
@@ -31,10 +30,9 @@ Project Description
 
 ### In Progress
 
-- [ ] ⭐Style output for different roles calling the help command  
 - [ ] ⚠️Implement command to stop all notifications for a particular day or for a specific course. => !notify allow all || !notify stop all || !notify allow <course> || !notify stop <course>  
 - [ ] ⭐Add command for last link/announcement sent => !last link || !last ann  
-- [ ] ⭐Add command for bot to delete the last thing it sent => !del last  
+- [ ] ⭐Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
 - [ ] 👍Checkout other symbols as replacements for emojis  
 
 ### Done ✓
