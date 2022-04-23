@@ -251,6 +251,7 @@ exports.PROMOTE_GRANDMASTER_REPLIES = [
     "You can't promote the Grandmaster.",
     "Lol okay",
     "Okayyy?",
+    "How much more power do you want the Grandmaster to have?"
 ]
 
 /**
@@ -262,6 +263,7 @@ exports.DEMOTE_GRANDMASTER_REPLIES = [
     "❌",
     "🙄",
     "🤦🏽‍♂️",
+    "💔",
     "Think it through first 👍🏽",
     "We don't do that here 🙄",
     "I'll think about it🐦",
@@ -273,7 +275,9 @@ exports.DEMOTE_GRANDMASTER_REPLIES = [
     "You will be demoted soon 👍🏽",
     "You can't demote the Grandmaster.",
     "wHy, just WhY",
-    "This was foreseen, and you will be banned soon."
+    "This was foreseen, and you will be banned soon.",
+    "Okay and have a great day 👍🏽",
+    "Ignored, have a great day 👍🏽"
 ]
 
 /**

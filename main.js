@@ -70,6 +70,10 @@ client.on('ready', async () => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!ping' && await getMutedStatus() === false) {
         msg.reply('pong 🏓');
+        // Ping the user who type the command
+        // const c = await msg.getContact();
+        // const mentions = [c];
+        // msg.reply('@' + c.id.user, '', {mentions})
     }
 });
 
@@ -605,7 +609,7 @@ client.on('message', async (msg) => {
                 return;
             } else {
                 await addSuperAdmin(found_user.id.user);
-                await msg.reply('Success! ✅'); //todo: Add more replies for this later
+                await msg.reply('Admin successfully added! ✅'); //todo: Add more replies for this later
             }
         } else {
             await msg.reply("Sorry, I couldn't find that user ☹")
@@ -650,7 +654,7 @@ client.on('message', async (msg) => {
                 await msg.reply(pickRandomReply(DEMOTE_BOT_REPLIES));
                 return;
             } else if (found_user.id.user === GRANDMASTER) {
-                await msg.reply(pickRandomReply(DEMOTE_GRANDMASTER_REPLIES)); 
+                await msg.reply(pickRandomReply(DEMOTE_GRANDMASTER_REPLIES));
                 return;
             }
             const admins = await getAllSuperAdmins();
