@@ -55,72 +55,72 @@ exports.ALL_CLASSES = [
  */
 exports.HELP_COMMANDS = [
     {
-        availableTo: 'everyone',
+        availableTo: 'e', // everyone
         command: "*!ping*",
         desc: "Check if I'm available 🙋🏽‍♂️"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!uptime*",
         desc: "See how long I've been awake🟢"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!help*",
         desc: "Get commands that can be used with me 💡"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a', // admins
         command: "*!mute*",
         desc: "Get me to be quiet 😅"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a',
         command: "*!unmute*",
         desc: "Allow me to talk 🙂"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a',
         command: "*!everyone*",
         desc: "Ping everyone in the group 😮"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!classes*",
         desc: "Get all the classes you have this week 📚"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!class*",
         desc: "Get today's classes 📕"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!notify*",
         desc: "Get notified for class 🔔"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!notify stop*",
         desc: "Stop getting notified for class 🔕"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a',
         command: "*!subs*",
         desc: "Get users who want to be notified for class 👯‍♂️"
     },
     {
-        availableTo: 'everyone',
+        availableTo: 'e',
         command: "*!commands*",
         desc: "Get bot's commands in a list style in your DMs 🥂"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a',
         command: "*!promote <user>",
         desc: "Make user an admin 👮🏽‍♂️"
     },
     {
-        availableTo: 'admin',
+        availableTo: 'a',
         command: "*!demote <user>",
         desc: "Dismiss an admin 💀👮🏽‍♂️"
     },
