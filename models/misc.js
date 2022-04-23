@@ -23,7 +23,7 @@ const MiscellaneousSchema = new Schema({
     // numOfCommands: Number, // to be used later
 });
 
-const MiscellaneousModel = model("miscellaneous-dev", MiscellaneousSchema);
+const MiscellaneousModel = model(process.env.NODE_ENV === "production" ? "miscellaneous" : "miscellaneous-dev", MiscellaneousSchema);
 const DEFAULT_ID = { _id: process.env.NODE_ENV === 'production' ? 1 : 2 };  // to always update one specific document
 
 
