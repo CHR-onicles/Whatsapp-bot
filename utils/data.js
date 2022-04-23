@@ -116,13 +116,13 @@ exports.HELP_COMMANDS = [
     },
     {
         availableTo: 'a',
-        command: "*!promote* <user>",
+        command: "*!promote* _<user>_",
         desc: "Make user an admin 👮🏽‍♂️"
     },
     {
         availableTo: 'a',
-        command: "*!demote* <user>",
-        desc: "Dismiss an admin 💀👮🏽‍♂️"
+        command: "*!demote* _<user>_",
+        desc: "Dismiss an admin 💀"
     },
     // {
     //     availableTo: 'everyone',
@@ -178,9 +178,12 @@ exports.UNMUTE_REPLIES = [
 exports.DM_REPLIES = [
     'Check dm 🐦',
     '✅',
+    '✅✅',
     'Dm 🐦',
+    'Pm 🐦',
     'Check your Pms 🐦',
-    'Sliding in your dm 👍🏽'
+    'Sliding in your dm 👍🏽',
+    'Taking it to your dm 🐦 '
 ]
 
 /**
@@ -188,7 +191,7 @@ exports.DM_REPLIES = [
  */
 exports.NOT_ADMIN_REPLIES = [
     "Lel nope🐦, you are not an admin unfortunately.",
-    "No can do🐦, you don't sufficient privileges.",
+    "No can do🐦, you don't have sufficient privileges.",
     "You are not an admin",
     "Task successfully failed ❎, command reserved for admins.",
     "Nope🐦, you don't have the required permissions.",

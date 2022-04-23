@@ -114,23 +114,32 @@ client.on('message', async (msg) => {
         const first_word = msg.body.toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
+        const cur_chat = await msg.getChat();
         const admins = await getAllSuperAdmins();
+
+        if (extractCommand(msg) === '!commands' && cur_chat.isGroup) {
+            await msg.reply(pickRandomReply(DM_REPLIES));
+        }
 
         // Have to keep this array here because I want the most updated list of super Admins
         // every time this is needed.
         const PING_REPLIES = [
-            `${admins.includes(contact.id.user) ? "I'm not your bot shoo🐦" : "Need me sir?"}`,
+            `${admins.includes(contact.id.user) ? "Need me sir?" : "Hello there🐦"}`,
             `I'm here ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
             `Alive and well ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
             `Speak forth ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
-            `${admins.includes(contact.id.user) ? "Shoo🐦" : "Sir 🐦"}`,
-            `${admins.includes(contact.id.user) ? "🙄" : "Boss 🐦"}`,
+            `${admins.includes(contact.id.user) ? "Sir🐦" : "Fam 🐦"}`,
+            `${admins.includes(contact.id.user) ? "Boss🐦" : "Uhuh? "}`,
             `Up and running 🐦`,
             `Listening in 🐦`,
+            `The bot is fine, thanks for not asking 🙄`,
+            `Great ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')} ${admins.includes(contact.id.user) ? 'boss' : 'fam'} 🥳`,
             `🙋🏽‍♂️`,
             `👋🏽`,
             `🐦`,
             `👀`,
+            `🤖`,
+            `👊🏽`,
             `Adey 🐦`,
             `Yo 🐦`,
             `Sup 🐦`,
@@ -138,32 +147,35 @@ client.on('message', async (msg) => {
             `👁👃🏽👁`,
         ]
 
+        let startID = 100;
+        const temp_rows = [];
+        for (let i = 0; i < HELP_COMMANDS.length; ++i) {
+            const { availableTo, command, desc } = HELP_COMMANDS[i];
+            ++startID;
+            if (!admins.includes(contact.id.user) && availableTo === 'e') {
+                temp_rows.push({ id: startID.toString(), title: command.substring(1, command.length - 1), description: desc });
+            } else if (admins.includes(contact.id.user)) {
+                if (!command.includes('<')) // avoiding commands that would involve extra user input for now
+                    temp_rows.push({ id: startID.toString(), title: command.substring(1, command.length - 1), description: desc });
+                else continue;
+            }
+        }
+        // console.log(temp_rows);
+
         const list = new List(
             '\nThis is a list of commands the bot can perform',
             'See commands',
-            [{
-                title: 'Commands available to everyone',
-                rows: [
-                    { id: '1', title: '!help', description: 'Help commands' },
-                    { id: '2', title: '!class', description: "Today's class" },
-                    { id: '3', title: '!classes', description: 'Classes for the week' },
-                    { id: '4', title: '!uptime', description: 'How long bot has been active' },
-                    { id: '5', title: '!notify', description: 'Get notified for class' },
-                    { id: '6', title: '!notify stop', description: 'Stop getting notified for class' },
-                ]
-            },
-            ],
+            [{ title: 'Commands available to everyone', rows: temp_rows }],
             pickRandomReply(PING_REPLIES),
             'Powered by Ethereal bot'
         );
-        //todo: Loop through HELP_COMMANDS and dynamically get commands from there to be processed here
-        //todo: Create a new list with reserved commands that will be sent as a reply to an admin when he pings the bot
-
 
         if (first_word.slice(1, first_word.length) === BOT_NUMBER) {
             await msg.reply(list);
-        } else if (extractCommand(msg) === '!commands') {
-            chat_from_contact.sendMessage(list);
+        } else if (extractCommand(msg) === '!commands' && cur_chat.isGroup) {
+            await chat_from_contact.sendMessage(list);
+        } else if (extractCommand(msg) === '!commands' && !cur_chat.isGroup) {
+            await msg.reply(list);
         }
     }
 });
@@ -193,9 +205,14 @@ client.on('message', async (msg) => {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
-    } else if ((msg.body.toLowerCase() === '!unmute' || msg.body.toLowerCase() === '!speak') && await getMutedStatus() === false) {
+    } else if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === false) {
         const admins = await getAllSuperAdmins();
-        await msg.reply(`Haven't been muted ${admins.includes(contact.id.user) ? "fam" : "sir "}🐦`);
+        const contact = await msg.getContact();
+        if (!admins.includes(contact.id.user)) {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+            return;
+        }
+        await msg.reply(`Haven't been muted yet ${admins.includes(contact.id.user) ? "boss" : "fam "}🐦`);
     }
 })
 
@@ -563,7 +580,7 @@ client.on('message', async (msg) => {
             await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
                 + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
         } else {
-            pickRandomReply(NOT_ADMIN_REPLIES);
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         }
     }
