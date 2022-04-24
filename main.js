@@ -794,16 +794,18 @@ client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!exams' || extractCommand(msg) === '!exam') &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
+        const cur_chat = await msg.getChat();
         const chat_from_contact = await contact.getChat();
         let text = "*L400 CS EXAMS TIMETABLE* 📄\n\n";
+
+        if (cur_chat.isGroup) msg.reply(pickRandomReply(DM_REPLIES));
 
         EXAM_TIMETABLE.forEach(({ date, time, courseCode, courseTitle, examMode }) => {
             text += "📝\n*Date:* " + date + "\n*Time:* " + time + "\n*Course code:* " + courseCode + "\n*Course title:* " + courseTitle + "\n*Exam mode:* " + examMode + "\n\n";
         });
 
-        text += "Please note that *Accounting* and *Data Mining* are not yet available on the School's timetable 😊"
+        text += "\nPS: Please note that *Accounting* and *Data Mining* are not yet available on the School's timetable 😊"
 
-        msg.reply(pickRandomReply(DM_REPLIES));
         await chat_from_contact.sendMessage(text);
     }
 })
