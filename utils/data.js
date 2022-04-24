@@ -4,7 +4,7 @@
 // --------------------------------------------------
 
 /**
- * Array containing full timetable for Level 400 Computer Science students.
+ * Array containing timetable for Level 400 Computer Science students, all electives included.
  */
 exports.ALL_CLASSES = [
     {
@@ -45,49 +45,49 @@ exports.ALL_CLASSES = [
             { name: '_Theory & Survey_ | ⏰10:30am | 🏠N3', duration: 1 },
             { name: '_Data Mining_ | ⏰3:30pm | 🏠NNB2', duration: 1 },
             { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 },
-            { name: '_Test Course_ | ⏰7:24pm | 🏠NNB2', duration: 1 }
+            // { name: '_Test Course_ | ⏰7:24pm | 🏠NNB2', duration: 1 }
         ]
     }
 ]
 
 /**
- * Array containing current L400 Computer Science exams timetable.
- * It's currently missing **Accounting**  and **Data Mining**.
+ * Array containing current L400 1st Semester Computer Science exams timetable.
+ * It's currently missing **Accounting**  and **Data Mining** because they aren't available yet.
  */
 exports.EXAM_TIMETABLE = [
     {
         date: "Sunday, May 15 2022",
         time: "3:30pm",
         courseCode: "CSCD 417",
-        courseName: "Theory & Survey",
+        courseTitle: "Theory & Survey",
         examMode: "Onsite/Physical"
     },
     {
         date: "Monday, May 16 2022",
         time: "7:30am",
         courseCode: "CSCD 419",
-        courseName: "Formal Methods",
+        courseTitle: "Formal Methods",
         examMode: "Onsite/Physical"
     },
     {
         date: "Friday, May 20 2022",
         time: "11:30am",
         courseCode: "CSCD 427",
-        courseName: "Networking",
+        courseTitle: "Networking",
         examMode: "Onsite/Physical"
     },
     {
         date: "Saturday, May 21 2022",
         time: "7:30am",
         courseCode: "CSCD 415",
-        courseName: "Compilers",
+        courseTitle: "Compilers",
         examMode: "Onsite/Physical"
     },
     {
         date: "Monday, May 23 2022",
         time: "3:30pm",
         courseCode: "CSCD 423",
-        courseName: "Software Modelling",
+        courseTitle: "Software Modelling",
         examMode: "Onsite/Physical"
     },
 ]
@@ -98,99 +98,99 @@ exports.EXAM_TIMETABLE = [
 exports.HELP_COMMANDS = [
     {
         availableTo: 'e', // everyone
-        command: "*!ping*",
+        command: "!ping",
         desc: "Check if I'm available 🙋🏽‍♂️"
     },
     {
         availableTo: 'e',
-        command: "*!uptime*",
+        command: "!uptime",
         desc: "See how long I've been awake 🟢"
     },
     {
         availableTo: 'e',
-        command: "*!help*",
+        command: "!help",
         desc: "Get commands that can be used with me 💡"
     },
     {
         availableTo: 'a', // admins
-        command: "*!mute*",
+        command: "!mute",
         desc: "Get me to be quiet 😅"
     },
     {
         availableTo: 'a',
-        command: "*!unmute*",
+        command: "!unmute",
         desc: "Allow me to talk 🙂"
     },
     {
         availableTo: 'a',
-        command: "*!everyone*",
+        command: "!everyone",
         desc: "Ping everyone in the group 😮"
     },
     {
         availableTo: 'e',
-        command: "*!classes*",
+        command: "!classes",
         desc: "Get all the classes you have this week 📚"
     },
     {
         availableTo: 'e',
-        command: "*!class*",
+        command: "!class",
         desc: "Get today's classes 📕"
     },
     {
         availableTo: 'e',
-        command: "*!notify*",
+        command: "!notify",
         desc: "Get notified for class 🔔"
     },
     {
         availableTo: 'e',
-        command: "*!notify stop*",
+        command: "!notify stop",
         desc: "Stop getting notified for class 🔕"
     },
     {
         availableTo: 'a',
-        command: "*!subs*",
+        command: "!subs",
         desc: "Get users who want to be notified for class 👯‍♂️"
     },
     {
         availableTo: 'e',
-        command: "*!commands*",
+        command: "!commands",
         desc: "Get bot's commands in a list style in your DMs 🥂"
     },
     {
         availableTo: 'a',
-        command: "*!promote* _<user>_",
+        command: "!promote _<user>_",
         desc: "Make user an admin 👮🏽‍♂️"
     },
     {
         availableTo: 'a',
-        command: "*!demote* _<user>_",
+        command: "!demote _<user>_",
         desc: "Dismiss an admin 💀"
     },
     {
         availableTo: 'a',
-        command: "*!env*",
+        command: "!env",
         desc: "Check the current environment of the bot 🤖"
     },
     {
         availableTo: 'a',
-        command: "*!notify status*",
+        command: "!notify status",
         desc: "Get class notifications status 📄"
     },
     {
         availableTo: 'a',
-        command: "*!notify enable all*",
+        command: "!notify enable all",
         desc: "Enable all class notifications for the day ✔"
     },
     {
         availableTo: 'a',
-        command: "*!notify disable all*",
+        command: "!notify disable all",
         desc: "Disable all class notifications for the day ❌"
     },
-    // {
-    //     availableTo: 'everyone',
-    //     command: "*!exams",
-    //     desc: "Get the exams timetable 📝"
-    // },
+    {
+        availableTo: 'e',
+        command: "!exams",
+        desc: "Get the current exams timetable 📝"
+    },
     // {
     //     availableTo: 'admin',
     //     command: "*!ignore <user>",
@@ -235,17 +235,24 @@ exports.UNMUTE_REPLIES = [
 ]
 
 /**
- * Array containing replies to the `!notify` command.
+ * Array containing replies which requires the user to check his PMs.
  */
 exports.DM_REPLIES = [
     'Check dm 🐦',
-    '✅',
-    '✅✅',
     'Dm 🐦',
     'Pm 🐦',
     'Check your Pms 🐦',
     'Sliding in your dm 👍🏽',
-    'Taking it to your dm 🐦 '
+    'Acknowledged 👍🏽 ',
+    'Gotcha 🐦',
+    'Got you👍🏽',
+    'Say no more...dm🐦',
+    'DM-ing you now 👍🏽',
+    'Checked your DMs yet?🐦',
+    '✅',
+    '🤖✅',
+    '👀✅',
+    '👍🏽',
 ]
 
 /**

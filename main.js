@@ -8,7 +8,7 @@ require('dotenv').config();
 
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
-const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES } = require('./utils/data');
+const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications } = require('./models/misc');
 
 
@@ -153,10 +153,10 @@ client.on('message', async (msg) => {
             const { availableTo, command, desc } = HELP_COMMANDS[i];
             ++startID;
             if (!admins.includes(contact.id.user) && availableTo === 'e') {
-                temp_rows.push({ id: startID.toString(), title: command.substring(1, command.length - 1), description: desc });
+                temp_rows.push({ id: startID.toString(), title: command, description: desc });
             } else if (admins.includes(contact.id.user)) {
                 if (!command.includes('<')) // avoiding commands that would involve extra user input for now
-                    temp_rows.push({ id: startID.toString(), title: command.substring(1, command.length - 1), description: desc });
+                    temp_rows.push({ id: startID.toString(), title: command, description: desc });
                 else continue;
             }
         }
@@ -230,10 +230,13 @@ client.on('message', async (msg) => {
             await msg.reply(pickRandomReply(DM_REPLIES));
         }
 
-        HELP_COMMANDS.forEach(obj => {
+        HELP_COMMANDS.forEach((obj, index) => {
             if (!admins.includes(contact.id.user)) {
                 if (obj.availableTo === 'e') text += obj.command + ": " + obj.desc + "\n";
-            } else text += obj.command + ": " + obj.desc + "\n";
+            } else {
+                if ((index > 0) && (index % 5 === 0)) text += "\n"
+                text += "*" + obj.command + ":* " + obj.desc + "\n";
+            }
         })
 
         if (admins.includes(contact.id.user)) {
@@ -785,6 +788,28 @@ client.on('message', async (msg) => {
     }
 })
 
+
+// Get L400 1st Sem Exams timetable
+client.on('message', async (msg) => {
+    if ((extractCommand(msg) === '!exams' || extractCommand(msg) === '!exam') &&
+        await getMutedStatus() === false) {
+        const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+        let text = "*L400 CS EXAMS TIMETABLE* 📄\n\n";
+
+        EXAM_TIMETABLE.forEach(({ date, time, courseCode, courseTitle, examMode }) => {
+            text += "📝\n*Date:* " + date + "\n*Time:* " + time + "\n*Course code:* " + courseCode + "\n*Course title:* " + courseTitle + "\n*Exam mode:* " + examMode + "\n\n";
+        });
+
+        msg.reply(pickRandomReply(DM_REPLIES));
+        await chat_from_contact.sendMessage(text);
+    }
+})
+
+
+
+// ---------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------
 // Endpoint to hit in order to restart calculations for class notifications (will be done by a cron-job)
 app.get('/reset-notif-calc', async (req, res) => {
     stopOngoingNotifications();
