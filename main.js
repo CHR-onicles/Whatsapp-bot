@@ -801,6 +801,8 @@ client.on('message', async (msg) => {
             text += "📝\n*Date:* " + date + "\n*Time:* " + time + "\n*Course code:* " + courseCode + "\n*Course title:* " + courseTitle + "\n*Exam mode:* " + examMode + "\n\n";
         });
 
+        text += "Please note that *Accounting* and *Data Mining* are not yet available on the School's timetable 😊"
+
         msg.reply(pickRandomReply(DM_REPLIES));
         await chat_from_contact.sendMessage(text);
     }
