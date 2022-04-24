@@ -13,6 +13,7 @@ const { Schema, model } = require('mongoose');
 const MiscellaneousSchema = new Schema({
     _id: { type: Number, default: 1 },
     isMuted: { type: Boolean, default: false },
+    isNotifsOn: { type: Boolean, default: true },
     allLinks: [String],
     allAnnouncements: [String],
     superAdmins: [String],
@@ -79,6 +80,45 @@ exports.unmuteBot = async () => {
         console.log("Bot unmuted");
     } catch (error) {
         console.log(error);
+    }
+}
+
+/**
+ * Gets status of notifications for class.
+ * @async
+ * @returns {Promise<boolean>} **True** if all notifications are on, **false** otherwise.
+ */
+exports.getNotificationStatus = async () => {
+    const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isNotifsOn: 1 });
+    // console.log(status);
+    return status.isNotifsOn;
+}
+
+/**
+ * Turns on all notifications for class.
+ * @async
+ */
+exports.enableAllNotifications = async () => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isNotifsOn: true } });
+        // console.log(res);
+        console.log("All notifications have been turned ON")
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+/**
+ * Turns off all notifications for class.
+ * @async
+ */
+exports.disableAllNotifications = async () => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isNotifsOn: false } });
+        // console.log(res)
+        console.log("All notifications have been turned OFF")
+    } catch (error) {
+        console.log(error)
     }
 }
 

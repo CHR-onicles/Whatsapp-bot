@@ -51,6 +51,48 @@ exports.ALL_CLASSES = [
 ]
 
 /**
+ * Array containing current L400 Computer Science exams timetable.
+ * It's currently missing **Accounting**  and **Data Mining**.
+ */
+exports.EXAM_TIMETABLE = [
+    {
+        date: "Sunday, May 15 2022",
+        time: "3:30pm",
+        courseCode: "CSCD 417",
+        courseName: "Theory & Survey",
+        examMode: "Onsite/Physical"
+    },
+    {
+        date: "Monday, May 16 2022",
+        time: "7:30am",
+        courseCode: "CSCD 419",
+        courseName: "Formal Methods",
+        examMode: "Onsite/Physical"
+    },
+    {
+        date: "Friday, May 20 2022",
+        time: "11:30am",
+        courseCode: "CSCD 427",
+        courseName: "Networking",
+        examMode: "Onsite/Physical"
+    },
+    {
+        date: "Saturday, May 21 2022",
+        time: "7:30am",
+        courseCode: "CSCD 415",
+        courseName: "Compilers",
+        examMode: "Onsite/Physical"
+    },
+    {
+        date: "Monday, May 23 2022",
+        time: "3:30pm",
+        courseCode: "CSCD 423",
+        courseName: "Software Modelling",
+        examMode: "Onsite/Physical"
+    },
+]
+
+/**
  * Array containing all commands, roles they are available to, and their descriptions.
  */
 exports.HELP_COMMANDS = [
@@ -62,7 +104,7 @@ exports.HELP_COMMANDS = [
     {
         availableTo: 'e',
         command: "*!uptime*",
-        desc: "See how long I've been awake🟢"
+        desc: "See how long I've been awake 🟢"
     },
     {
         availableTo: 'e',
@@ -128,7 +170,22 @@ exports.HELP_COMMANDS = [
         availableTo: 'a',
         command: "*!env*",
         desc: "Check the current environment of the bot 🤖"
-    }
+    },
+    {
+        availableTo: 'a',
+        command: "*!notify status*",
+        desc: "Get class notifications status 📄"
+    },
+    {
+        availableTo: 'a',
+        command: "*!notify enable all*",
+        desc: "Enable all class notifications for the day ✔"
+    },
+    {
+        availableTo: 'a',
+        command: "*!notify disable all*",
+        desc: "Disable all class notifications for the day ❌"
+    },
     // {
     //     availableTo: 'everyone',
     //     command: "*!exams",

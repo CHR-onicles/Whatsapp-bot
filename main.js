@@ -9,7 +9,7 @@ require('dotenv').config();
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins, addSuperAdmin, removeSuperAdmin } = require('./models/misc');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications } = require('./models/misc');
 
 
 // --------------------------------------------------
@@ -58,9 +58,9 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 client.on('ready', async () => {
     console.log('Client is ready!\n');
     BOT_START_TIME = new Date();
-    if (process.env.NODE_ENV === 'production') {
-        await startNotificationCalculation(client);
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    // }
+    await startNotificationCalculation(client);
     //     const chats = await client.getChats();
     //     console.log(chats[0]);
 });
@@ -490,6 +490,9 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!notify' &&
         extractCommandArgs(msg) !== 'stop' &&
+        extractCommandArgs(msg) !== 'disable' &&
+        extractCommandArgs(msg) !== 'enable' &&
+        extractCommandArgs(msg) !== 'status' &&
         await getMutedStatus() === false) {
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         const total_users = [...dataMining, ...networking, ...softModelling];
@@ -713,6 +716,74 @@ client.on('message', async (msg) => {
     }
 })
 
+
+// Check notifications status
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!notify' &&
+        extractCommandArgs(msg) === 'status' &&
+        await getMutedStatus() === false) {
+        const contact = await msg.getContact();
+        const admins = await getAllSuperAdmins();
+        if (admins.includes(contact.id.user)) {
+            const notifs_status = await getNotificationStatus();
+            await msg.reply(`All notifications for today's classes are *${notifs_status ? 'ON ✅' : 'OFF ❌'}*`);
+        } else {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+            return;
+        }
+    }
+})
+
+
+// Enable all notifications for the day
+// todo: Add alias: !notify -e -a
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!notify' &&
+        extractCommandArgs(msg, 1) === 'enable' &&
+        extractCommandArgs(msg, 2) === 'all' &&
+        await getMutedStatus() === false) {
+        const contact = await msg.getContact();
+        const admins = await getAllSuperAdmins();
+        const notifs_status = await getNotificationStatus();
+        if (admins.includes(contact.id.user)) {
+            if (notifs_status) {
+                await msg.reply("Notifications are already *ON* for today  👍🏽")
+                return;
+            }
+            await enableAllNotifications();
+            await msg.reply("All notifications have been turned *ON* for today.")
+        } else {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+            return;
+        }
+    }
+})
+
+
+// Disable all notifications for the day
+// todo: Add alias: !notify -d -a
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!notify' &&
+        extractCommandArgs(msg, 1) === 'disable' &&
+        extractCommandArgs(msg, 2) === 'all' &&
+        await getMutedStatus() === false) {
+        const contact = await msg.getContact();
+        const admins = await getAllSuperAdmins();
+        const notifs_status = await getNotificationStatus();
+
+        if (admins.includes(contact.id.user)) {
+            if (!notifs_status) {
+                await msg.reply("Notifications have already been turned *OFF* 👍🏽");
+                return;
+            }
+            await disableAllNotifications();
+            await msg.reply("All notifications have been turned *OFF* for today.")
+        } else {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+            return;
+        }
+    }
+})
 
 // Endpoint to hit in order to restart calculations for class notifications (will be done by a cron-job)
 app.get('/reset-notif-calc', async (req, res) => {

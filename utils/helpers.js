@@ -2,7 +2,7 @@
 // helper.js contains helper functions to supplement bot logic
 // --------------------------------------------------
 const WAWebJS = require("whatsapp-web.js");
-const { getUsersToNotifyForClass } = require("../models/misc");
+const { getUsersToNotifyForClass, getNotificationStatus } = require("../models/misc");
 const { ALL_CLASSES } = require("./data");
 
 
@@ -154,6 +154,9 @@ const startNotificationCalculation = async (client) => {
 
     const total_users = [...dataMining, ...softModelling, ...networking];
     const chats = await client.getChats();
+    const notifs_status = await getNotificationStatus();
+
+    if (!notifs_status) return;
 
     if (!total_users.length) {
         return; // if there are no subscribed users, stop
