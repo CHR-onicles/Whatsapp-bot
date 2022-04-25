@@ -780,6 +780,7 @@ client.on('message', async (msg) => {
                 return;
             }
             await disableAllNotifications();
+            stopOngoingNotifications();
             await msg.reply("All notifications have been turned *OFF* for today.")
         } else {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
