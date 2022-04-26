@@ -380,16 +380,21 @@ const todayClassReply = async (text, elective) => {
  */
 const sendSlides = async (msg, courseCode) => {
     let isDone = false;
+    console.log("Getting slides...")
     const materials = await getResource(courseCode);
+    if (materials.length) console.log("Got slides") 
+    else console.log("No slides received from DB");
     for (let i = 0; i < materials.length; ++i) { // using this for-loop style for  performance
         const cur_material = materials[i];
         const file_extension = cur_material.title.split(".")[cur_material.title.split(".").length - 1]; // always extract the last "." and what comes after
         const { mime_type } = MIME_TYPES.find(obj => obj.fileExtension === file_extension);
         const slide = new MessageMedia(mime_type, cur_material.binData, cur_material.title);
         await msg.reply(slide);
+        console.log("Sent a slide")
         if (i === materials.length - 1) isDone = true;
     }
     if (isDone) await msg.reply("Done 👍🏽");
+    console.log("Done sending slides")
 }
 
 

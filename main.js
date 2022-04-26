@@ -816,14 +816,14 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === '!slides' && await getMutedStatus() === false) {
         // if (process.env.NODE_ENV === 'production') {
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
+        // const admins = await getAllSuperAdmins();
         const cur_chat = await msg.getChat();
         const chat_from_contact = await contact.getChat();
 
-        if (!admins.includes(contact.id.user)) {
-            await msg.reply("This command is not yet available to you, the Grandmaster is trying to figure out how to prevent abusing this command first, as it very expensive.🐦\n\n Exercise patience 🐦")
-            return;
-        }
+        // if (!admins.includes(contact.id.user)) {
+        //     await msg.reply("This command is not yet available to you, the Grandmaster is trying to figure out how to prevent abusing this command first, as it very expensive.🐦\n\n Exercise patience 🐦")
+        //     return;
+        // }
 
         if (cur_chat.isGroup) await msg.reply(pickRandomReply(DM_REPLIES));
 
