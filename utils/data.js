@@ -357,6 +357,18 @@ exports.DEMOTE_GRANDMASTER_REPLIES = [
     "Ignored, have a great day 👍🏽"
 ]
 
+exports.WAIT_REPLIES = [
+    "Gimme a sec🐦",
+    "Just a second",
+    "One sec🐦",
+    "Loading, please wait ⏳",
+    "Hold on",
+    "Loading ⏳",
+    "Gimme a minute, or two 🐦",
+    "Please wait, I'll tell you when I'm done 👍🏽",
+    "Processing some binary data ⏳, please wait"
+]
+
 /**
  * Array containing links that should not be forwarded from other groups.
  */
@@ -393,6 +405,9 @@ exports.WORDS_IN_LINKS_BLACKLIST = [
     'blog',
 ]
 
+/**
+ * Array containing file extensions and their appropriate mime types.
+ */
 exports.MIME_TYPES = [
     {
         fileExtension: 'pdf',

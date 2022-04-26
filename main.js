@@ -8,7 +8,7 @@ require('dotenv').config();
 
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides } = require('./utils/helpers');
-const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE } = require('./utils/data');
+const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE, WAIT_REPLIES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications } = require('./models/misc');
 
 
@@ -58,8 +58,6 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 client.on('ready', async () => {
     console.log('Client is ready!\n');
     BOT_START_TIME = new Date();
-    // if (process.env.NODE_ENV === 'production') {
-    // }
     await startNotificationCalculation(client);
     //     const chats = await client.getChats();
     //     console.log(chats[0]);
@@ -852,13 +850,13 @@ client.on('message', async (msg) => {
         chat_from_contact.sendMessage(list);
         // msg.reply(list);
         // } else {
-        // await msg.reply("The bot is currently in *DEVELOPMENT* environment, so this operation cannot be performed.\n\nThe Grandmaster's data is at stake🐦")
+        // await msg.reply("The bot is currently hosted locally, so this operation cannot be performed.\n\nThe Grandmaster's data is at stake🐦")
         // }
     }
 
     if (msg.type === 'list_response' && await getMutedStatus() === false) {
         if (parseInt(msg.selectedRowId) < 409 || parseInt(msg.selectedRowId) > 427) return;
-        await msg.reply("Gimme a sec🐦");
+        await msg.reply(pickRandomReply(WAIT_REPLIES));
         if (msg.selectedRowId === '415') {
             sendSlides(msg, 'CSCD 415');
         } else if (msg.selectedRowId === '417') {

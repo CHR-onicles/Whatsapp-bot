@@ -23,7 +23,7 @@ const ResourceModel = model(currentModelName, ResourceSchema);
 
 const initCollection = async () => {
     const count = await ResourceModel.countDocuments({});
-    // console.log(count);
+    console.log('Doc count:', count);
     if (!count) {
         const dir = './course_resources';
         for (const folder of fs.readdirSync(dir)) {

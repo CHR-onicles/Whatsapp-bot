@@ -302,9 +302,10 @@ const allClassesReply = (all_classes, elective, text) => {
 
 
 /**
- * 
+ * Gets classes for the current day.
  * @param {string} text Reply that would be sent by the bot.
  * @param {string} elective Character identifying the elective being offered.
+ * @async
  * @returns Modified `text` as bot's response.
  */
 const todayClassReply = async (text, elective) => {
@@ -372,11 +373,13 @@ const todayClassReply = async (text, elective) => {
 }
 
 /**
- * 
- * @param {*} msg 
- * @param {*} courseCode 
+ * Helper function to retrieve slides from DB and send to user.
+ * @param {WAWebJS.Message} msg Message object from whatsapp.
+ * @param {string} courseCode String representing course code.
+ * @async
  */
 const sendSlides = async (msg, courseCode) => {
+    let isDone = false;
     const materials = await getResource(courseCode);
     for (let i = 0; i < materials.length; ++i) { // using this for-loop style for  performance
         const cur_material = materials[i];
@@ -384,8 +387,9 @@ const sendSlides = async (msg, courseCode) => {
         const { mime_type } = MIME_TYPES.find(obj => obj.fileExtension === file_extension);
         const slide = new MessageMedia(mime_type, cur_material.binData, cur_material.title);
         await msg.reply(slide);
+        if (i === materials.length - 1) isDone = true;
     }
-    await msg.reply("Done 👍🏽");
+    if (isDone) await msg.reply("Done 👍🏽");
 }
 
 
