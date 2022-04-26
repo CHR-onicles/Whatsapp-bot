@@ -2,8 +2,11 @@
 // helper.js contains helper functions to supplement bot logic
 // --------------------------------------------------
 const WAWebJS = require("whatsapp-web.js");
+const { MessageMedia } = require("whatsapp-web.js");
 const { getUsersToNotifyForClass, getNotificationStatus } = require("../models/misc");
-const { ALL_CLASSES } = require("./data");
+const { ALL_CLASSES, MIME_TYPES } = require("./data");
+const { getResource } = require('../models/resources');
+
 
 
 // GLOBAL VARIABLES
@@ -55,6 +58,7 @@ const extractCommand = (msg) => {
         return first_word;
     }
 }
+
 
 /**
  * Extracts the arguments/flags to supplement a command.
@@ -367,5 +371,22 @@ const todayClassReply = async (text, elective) => {
     return text;
 }
 
+/**
+ * 
+ * @param {*} msg 
+ * @param {*} courseCode 
+ */
+const sendSlides = async (msg, courseCode) => {
+    const materials = await getResource(courseCode);
+    for (let i = 0; i < materials.length; ++i) { // using this for-loop style for  performance
+        const cur_material = materials[i];
+        const file_extension = cur_material.title.split(".")[cur_material.title.split(".").length - 1]; // always extract the last "." and what comes after
+        const { mime_type } = MIME_TYPES.find(obj => obj.fileExtension === file_extension);
+        const slide = new MessageMedia(mime_type, cur_material.binData, cur_material.title);
+        await msg.reply(slide);
+    }
+    await msg.reply("Done 👍🏽");
+}
 
-module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply }
+
+module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides }

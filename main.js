@@ -7,7 +7,7 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply } = require('./utils/helpers');
+const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications } = require('./models/misc');
 
@@ -811,6 +811,67 @@ client.on('message', async (msg) => {
     }
 })
 
+
+// Gets slides
+//todo: Add check so people don't abuse this.
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!slides' && await getMutedStatus() === false) {
+        // if (process.env.NODE_ENV === 'production') {
+        const contact = await msg.getContact();
+        const admins = await getAllSuperAdmins();
+        const cur_chat = await msg.getChat();
+        const chat_from_contact = await contact.getChat();
+
+        if (!admins.includes(contact.id.user)) {
+            await msg.reply("This command is not yet available to you, the Grandmaster is trying to figure out how to prevent abusing this command first, as it very expensive.🐦\n\n Exercise patience 🐦")
+            return;
+        }
+
+        if (cur_chat.isGroup) await msg.reply(pickRandomReply(DM_REPLIES));
+
+        const list = new List(
+            '\nThis is a list of courses with available materials',
+            'See courses',
+            [{
+                title: '',
+                rows: [
+                    { id: '415', title: 'Compilers', description: 'CSCD 415' },
+                    { id: '417', title: 'Theory & Survey of Programming Languages', description: 'CSCD 417' },
+                    { id: '419', title: 'Formal Methods', description: 'CSCD 419' },
+                    { id: '421', title: 'Accounting', description: 'CSCD 421' },
+                    { id: '423', title: 'Software Modelling & Simulation', description: 'CSCD 423' },
+                    // {id: '409', title: 'Data Mining', description: 'CSCD 409' },
+                    // {id: '97', title: 'Networking', description: 'CSCD 427' },
+                    // {id: '98', title: 'All materials', description: 'Get materials from all courses' }, //not yet
+                ]
+            }],
+            'What course material can I help you with?🐦', //todo: change to something else
+            'Powered by Ethereal bot'
+        );
+
+        chat_from_contact.sendMessage(list);
+        // msg.reply(list);
+        // } else {
+        // await msg.reply("The bot is currently in *DEVELOPMENT* environment, so this operation cannot be performed.\n\nThe Grandmaster's data is at stake🐦")
+        // }
+    }
+
+    if (msg.type === 'list_response' && await getMutedStatus() === false) {
+        if (parseInt(msg.selectedRowId) < 409 || parseInt(msg.selectedRowId) > 427) return;
+        await msg.reply("Gimme a sec🐦");
+        if (msg.selectedRowId === '415') {
+            sendSlides(msg, 'CSCD 415');
+        } else if (msg.selectedRowId === '417') {
+            sendSlides(msg, 'CSCD 417');
+        } else if (msg.selectedRowId === '419') {
+            sendSlides(msg, 'CSCD 419');
+        } else if (msg.selectedRowId === '421') {
+            sendSlides(msg, 'CSCD 421');
+        } else if (msg.selectedRowId === '423') {
+            sendSlides(msg, 'CSCD 423');
+        }
+    }
+})
 
 
 // ---------------------------------------------------------------------------------------

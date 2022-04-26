@@ -24,25 +24,30 @@ const MiscellaneousSchema = new Schema({
     // numOfCommands: Number, // to be used later
 });
 
-const MiscellaneousModel = model(process.env.NODE_ENV === "production" ? "miscellaneous" : "miscellaneous-dev", MiscellaneousSchema);
+const devModelName = "miscellaneous-dev";
+const prodModelName = "miscellaneous";
+const currentModelName = process.env.NODE_ENV === "production" ? prodModelName : devModelName;
+const MiscellaneousModel = model(currentModelName, MiscellaneousSchema);
 const DEFAULT_ID = { _id: process.env.NODE_ENV === 'production' ? 1 : 2 };  // to always update one specific document
 
 
-//! Find better way of doing code below, if internet is slow, it executes query before connecting to DB which creates an error
-// (async () => {
-//     if (await MiscellaneousModel.findOne({ _id: 1 }) === null) {
-//         // const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: [process.env.GRANDMASTER], electiveSoftModelling: [process.env.GRANDMASTER] });
-//         const misc = new MiscellaneousModel();
-//         try {
-//             await misc.save();
-//         } catch (err) {
-//             console.log(err);
-//         }
-//     }
-// })();
-
+const initCollection = async () => {
+    const count = await MiscellaneousModel.countDocuments({});
+    // console.log(count);
+    if (!count) {
+        const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: [process.env.GRANDMASTER], electiveSoftModelling: [process.env.GRANDMASTER] });
+        // const misc = new MiscellaneousModel();
+        try {
+            await misc.save();
+        } catch (err) {
+            console.log(err);
+        }
+    } else console.log(currentModelName + " collection is not empty");
+}
+initCollection();
 
 // EXPORTS
+// ---------------------------------------------------------------------------------------
 
 /**
  * Gets muted status of bot.

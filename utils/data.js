@@ -191,6 +191,11 @@ exports.HELP_COMMANDS = [
         command: "!exams",
         desc: "Get the current exams timetable 📝"
     },
+    {
+        availableTo: 'e',
+        command: "!slides",
+        desc: "Get course materials for all courses 📚"
+    },
     // {
     //     availableTo: 'admin',
     //     command: "*!ignore <user>",
@@ -386,4 +391,19 @@ exports.WORDS_IN_LINKS_BLACKLIST = [
     'movie',
     'VGMA',
     'blog',
+]
+
+exports.MIME_TYPES = [
+    {
+        fileExtension: 'pdf',
+        mime_type: 'application/pdf'
+    },
+    {
+        fileExtension: 'ppt',
+        mime_type: 'application/vnd.ms-powerpoint'
+    },
+    {
+        fileExtension: 'pptx',
+        mime_type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    },
 ]
