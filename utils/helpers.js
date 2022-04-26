@@ -4,8 +4,8 @@
 const WAWebJS = require("whatsapp-web.js");
 const { MessageMedia } = require("whatsapp-web.js");
 const { getUsersToNotifyForClass, getNotificationStatus } = require("../models/misc");
-const { ALL_CLASSES } = require("./data");
-const { getResource } = require('./models/resources');
+const { ALL_CLASSES, MIME_TYPES } = require("./data");
+const { getResource } = require('../models/resources');
 
 
 
@@ -58,6 +58,7 @@ const extractCommand = (msg) => {
         return first_word;
     }
 }
+
 
 /**
  * Extracts the arguments/flags to supplement a command.
