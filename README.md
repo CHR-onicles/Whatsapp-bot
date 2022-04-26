@@ -52,9 +52,8 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 - Forwarding important **announcements** and **links** from class groups to our private whatsapp group.
 - Reminding us individually about the times we have class.
 - Getting our timetable for the week, and for the current day depending on the elective each of us offers in as little as 4 quick interactions (_< 20secs_) or by typing 1 command (_< 10secs_); As opposed to annoyingly asking someone else who may or may not be available at that moment.
-- Sending the resources we need for each course. _(not yet implemented)_
+- Sending all course materials (PDFs, powerpoints etc) for any course and all courses as and when requested.
 - Reminding and giving us detailed descriptions of assignments we have for each course. _(not yet implemented)_
-- Sending all course materials (PDFs, powerpoints etc) for any course and all courses as and when requested. _(not yet implemented)_
 
 <br>
 
