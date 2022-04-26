@@ -132,3 +132,4 @@ dist
 # Personal stuff
 test.js
 logs*.*
+course_resources/
