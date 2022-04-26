@@ -230,7 +230,7 @@ client.on('message', async (msg) => {
 
         HELP_COMMANDS.forEach((obj, index) => {
             if (!admins.includes(contact.id.user)) {
-                if (obj.availableTo === 'e') text += obj.command + ": " + obj.desc + "\n";
+                if (obj.availableTo === 'e') text += "*" + obj.command + ":* " + obj.desc + "\n";
             } else {
                 if ((index > 0) && (index % 5 === 0)) text += "\n"
                 text += "*" + obj.command + ":* " + obj.desc + "\n";
