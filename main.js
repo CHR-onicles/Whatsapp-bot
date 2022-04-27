@@ -377,7 +377,7 @@ client.on('message', async (msg) => {
 
     //* For Announcements
     if (msg.body.includes('❗') || msg.body.includes('‼')) {
-        //todo: add check to make sure the exclamation marks aren't the only characters in the message.
+        //todo: add check later to make sure the exclamation marks aren't the only characters in the message.
 
         if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Announcement from EPiC Devs, so do nothing")
@@ -431,6 +431,7 @@ client.on('message', async (msg) => {
             console.log("Repeated link");
         }
     }
+    target_chat.sendMessage(`Forwarded from *${current_chat.name}*`);
 })
 
 
