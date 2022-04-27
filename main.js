@@ -398,13 +398,13 @@ client.on('message', async (msg) => {
 
     //* For links
     else if (msg.body.toLowerCase().includes('https') ||
-        msg.body.toLowerCase().includes('http') ||
-        msg.body.toLowerCase().includes('www')) {
+        msg.body.toLowerCase().includes('http')) {
         if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
-        const link_pattern = /((h|H)(t|T)(t|T)(p|P)(s|S)?:\/\/[^\s]+)|((w|W)(w|W)(w|W)\.[^\s]+)/; // Pattern to recognize a link with http, https or www in a message
+        // Pattern to recognize a link with http, https in a message
+        const link_pattern = /((h|H)(t|T)(t|T)(p|P)(s|S)?:\/\/[^\s]+)/ //|((w|W)(w|W)(w|W)\.[^\s]+)/;  (www currently some weird phrases like awww....lol)
         let extracted_link = link_pattern.exec(msg.body);
         if (extracted_link) {
             extracted_link = extracted_link[0].toLowerCase();
