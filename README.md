@@ -2,7 +2,7 @@
 
 <br>
 
-This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs)) to make academic life a tiny bit easier. It makes use of a Whatsapp web library and acts just like a regular user. It was built alongside a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. Since I'm using a free Heroku dyno, I use cron-jobs to keep the dyno from sleeping and also to perform some _interesting_ calculations at specific times. The bot often interacts with a MongoDB cloud database to supplement its functionalities.
+This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs)) to make academic life a tiny bit easier. It uses a [Whatsapp web library](https://github.com/pedroslopez/whatsapp-web.js) and acts just like a regular user. It was built alongside a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. Since I'm using a free Heroku dyno, I use cron-jobs to keep the dyno from idling and also to perform some _interesting_ calculations at specific times. The bot often interacts with a MongoDB cloud database to supplement its functionalities.
 
 <br>
 
@@ -74,24 +74,24 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 
 | Command | Description | Role (to use command) |
 | ---------- | ---------- | ---- |
-| `!class` | Get the current day's classes, depending on user's elective| everyone |
-| `!classes` | Get the classes for the week, depending on user's elective | everyone |
-| `!commands` | Get commands available to a user sent to their DM in a _whatsapp list_ | everyone |
+| `!class` | Get the current day's classes, depending on user's elective| - |
+| `!classes` | Get the classes for the week, depending on user's elective | - |
+| `!commands` | Get commands available to a user sent to their DM in a _whatsapp list_ | - |
 | `!env` | Check the _environment_ the bot is running in _(Production/Development)_ | admin |
 | `!everyone` | Ping everyone in a group | admin |
-| `!exams` | Get the current exams timetable | everyone |
-| `!help` | Get commands available to a user per their role | everyone |
+| `!exams` | Get the current exams timetable | - |
+| `!help` | Get commands available to a user per their role | - |
 | `!mute` | Mute the bot | admin |
 | `!unmute` \| `!speak` | Unmute the bot | admin |
-| `!notify` | Subscribe to get notified for class | everyone |
-| `!notify stop` | Unsubscribe from getting notified for class | everyone |
+| `!notify` | Subscribe to get notified for class | - |
+| `!notify stop` | Unsubscribe from getting notified for class | - |
 | `!notify status` | Get class notifications status | admin |
 | `!notify enable all` | Enable all class notifications for the day | admin |
 | `!notify disable all` | Disable all class notifications for the day | admin |
-| `!ping` | Check if bot is active | everyone |
-| `!slides` | Get all courses materials (slides, books etc.) | everyone |
+| `!ping` | Check if bot is active | - |
+| `!slides` | Get all courses materials (slides, books etc.) | - |
 | `!subs` | Get all users who have subscribed to be notified for class | admin |
-| `!uptime` | Check how long bot has been active | everyone |
+| `!uptime` | Check how long bot has been active | - |
 
 <br>
 
