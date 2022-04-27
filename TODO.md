@@ -33,11 +33,11 @@ Project Description
 
 ### In Progress
 
-- [ ] ⭐❔After forwarding a message from a group, add the name of the group that sent the announcement/link  
 - [ ] ⚠️Implement command to stop notifications for a particular course. => !notify allow <course> || !notify stop <course>  
 - [ ] ⭐Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
 - [ ] 👍Checkout other symbols as replacements for emojis  
 
 ### Done ✓
 
+- [x] ⭐❔After forwarding a message from a group, add the name of the group that sent the announcement/link  
 

@@ -394,6 +394,7 @@ client.on('message', async (msg) => {
         } else {
             console.log('Repeated announcement');
         }
+        target_chat.sendMessage(`Forwarded announcement from *${current_chat.name}*`);
     }
 
     //* For links
@@ -430,8 +431,8 @@ client.on('message', async (msg) => {
         } else {
             console.log("Repeated link");
         }
+        target_chat.sendMessage(`Forwarded link from *${current_chat.name}*`);
     }
-    target_chat.sendMessage(`Forwarded from *${current_chat.name}*`);
 })
 
 
