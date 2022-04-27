@@ -3,7 +3,7 @@
 // --------------------------------------------------
 const WAWebJS = require("whatsapp-web.js");
 const { MessageMedia } = require("whatsapp-web.js");
-const { getUsersToNotifyForClass, getNotificationStatus } = require("../models/misc");
+const { getUsersToNotifyForClass, getNotificationStatus, getAllSuperAdmins } = require("../models/misc");
 const { ALL_CLASSES, MIME_TYPES } = require("./data");
 const { getResource } = require('../models/resources');
 
@@ -373,7 +373,7 @@ const todayClassReply = async (text, elective) => {
 }
 
 /**
- * Helper function to retrieve slides from DB and send to user.
+ * Helper function to retrieve slides from DB to send to user.
  * @param {WAWebJS.Message} msg Message object from whatsapp.
  * @param {string} courseCode String representing course code.
  * @async
@@ -382,7 +382,7 @@ const sendSlides = async (msg, courseCode) => {
     let isDone = false;
     console.log("Getting slides...")
     const materials = await getResource(courseCode);
-    if (materials.length) console.log("Got slides") 
+    if (materials.length) console.log("Got slides")
     else console.log("No slides received from DB");
     for (let i = 0; i < materials.length; ++i) { // using this for-loop style for  performance
         const cur_material = materials[i];
@@ -397,5 +397,15 @@ const sendSlides = async (msg, courseCode) => {
     console.log("Done sending slides")
 }
 
+/**
+ * Checks whether a user is an admin.
+ * @param {WAWebJS.Contact} contact Object that represents a contact on whatsapp.
+ * @async
+ * @returns **True** if contact is an admin, **False** otherwise.
+ */
+const isUserAdmin = async (contact) => {
+    const admins = await getAllSuperAdmins();
+    return admins.includes(contact.id.user);
+}
 
-module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides }
+module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserAdmin }

@@ -7,9 +7,9 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides } = require('./utils/helpers');
+const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserAdmin } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE, WAIT_REPLIES } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, getAllSuperAdmins, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications } = require('./models/misc');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications } = require('./models/misc');
 
 
 // --------------------------------------------------
@@ -80,8 +80,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
-        if (!admins.includes(contact.id.user)) {
+        const isAdmin = await isUserAdmin(contact);
+        if (!isAdmin) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         } else {
@@ -113,7 +113,7 @@ client.on('message', async (msg) => {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
-        const admins = await getAllSuperAdmins();
+        const isAdmin = await isUserAdmin(contact);
 
         if (extractCommand(msg) === '!commands' && cur_chat.isGroup) {
             await msg.reply(pickRandomReply(DM_REPLIES));
@@ -122,16 +122,16 @@ client.on('message', async (msg) => {
         // Have to keep this array here because I want the most updated list of super Admins
         // every time this is needed.
         const PING_REPLIES = [
-            `${admins.includes(contact.id.user) ? "Need me sir?" : "Hello there🐦"}`,
-            `I'm here ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
-            `Alive and well ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
-            `Speak forth ${admins.includes(contact.id.user) ? 'sir' : 'fam'}🐦`,
-            `${admins.includes(contact.id.user) ? "Sir🐦" : "Fam 🐦"}`,
-            `${admins.includes(contact.id.user) ? "Boss🐦" : "Uhuh? "}`,
+            `${isAdmin ? "Need me sir?" : "Hello there🐦"}`,
+            `I'm here ${isAdmin ? 'sir' : 'fam'}🐦`,
+            `Alive and well ${isAdmin ? 'sir' : 'fam'}🐦`,
+            `Speak forth ${isAdmin ? 'sir' : 'fam'}🐦`,
+            `${isAdmin ? "Sir🐦" : "Fam 🐦"}`,
+            `${isAdmin ? "Boss🐦" : "Uhuh? "}`,
             `Up and running 🐦`,
             `Listening in 🐦`,
             `The bot is fine, thanks for not asking 🙄`,
-            `Great ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')} ${admins.includes(contact.id.user) ? 'boss' : 'fam'} 🥳`,
+            `Great ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')} ${isAdmin ? 'boss' : 'fam'} 🥳`,
             `🙋🏽‍♂️`,
             `👋🏽`,
             `🐦`,
@@ -150,9 +150,9 @@ client.on('message', async (msg) => {
         for (let i = 0; i < HELP_COMMANDS.length; ++i) {
             const { availableTo, command, desc } = HELP_COMMANDS[i];
             ++startID;
-            if (!admins.includes(contact.id.user) && availableTo === 'e') {
+            if (!isAdmin && availableTo === 'e') {
                 temp_rows.push({ id: startID.toString(), title: command, description: desc });
-            } else if (admins.includes(contact.id.user)) {
+            } else if (isAdmin) {
                 if (!command.includes('<')) // avoiding commands that would involve extra user input for now
                     temp_rows.push({ id: startID.toString(), title: command, description: desc });
                 else continue;
@@ -163,7 +163,7 @@ client.on('message', async (msg) => {
         const list = new List(
             '\nThis is a list of commands the bot can perform',
             'See commands',
-            [{ title: 'Commands available to everyone', rows: temp_rows }],
+            [{ title: `Commands available to ${isAdmin ? 'admins' : 'everyone'}`, rows: temp_rows }],
             pickRandomReply(PING_REPLIES),
             'Powered by Ethereal bot'
         );
@@ -183,8 +183,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
-        if (admins.includes(contact.id.user)) {
+        const isAdmin = await isUserAdmin(contact);
+        if (isAdmin) {
             msg.reply(pickRandomReply(MUTE_REPLIES));
             await muteBot();
         } else {
@@ -198,19 +198,19 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
-        if (admins.includes(contact.id.user)) {
+        const isAdmin = await isUserAdmin(contact);
+        if (isAdmin) {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
     } else if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === false) {
-        const admins = await getAllSuperAdmins();
         const contact = await msg.getContact();
-        if (!admins.includes(contact.id.user)) {
+        const isAdmin = await isUserAdmin(contact);
+        if (!isAdmin) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         }
-        await msg.reply(`Haven't been muted yet ${admins.includes(contact.id.user) ? "boss" : "fam "}🐦`);
+        await msg.reply(`Haven't been muted yet ${isAdmin ? "boss" : "fam "}🐦`);
     }
 })
 
@@ -221,7 +221,7 @@ client.on('message', async (msg) => {
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
-        const admins = await getAllSuperAdmins();
+        const isAdmin = await isUserAdmin(contact);
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
 
         if (cur_chat.isGroup) {
@@ -229,7 +229,7 @@ client.on('message', async (msg) => {
         }
 
         HELP_COMMANDS.forEach((obj, index) => {
-            if (!admins.includes(contact.id.user)) {
+            if (!isAdmin) {
                 if (obj.availableTo === 'e') text += "*" + obj.command + ":* " + obj.desc + "\n";
             } else {
                 if ((index > 0) && (index % 5 === 0)) text += "\n"
@@ -237,7 +237,7 @@ client.on('message', async (msg) => {
             }
         })
 
-        if (admins.includes(contact.id.user)) {
+        if (isAdmin) {
             text += "\n\nPS:  You're an *admin*, so you have access to _special_ commands 🤫"
         }
         await chat_from_contact.sendMessage(text);
@@ -582,8 +582,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
-        if (admins.includes(contact.id.user)) {
+        const isAdmin = await isUserAdmin(contact);
+        if (isAdmin) {
             const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
             await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
                 + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
@@ -601,10 +601,10 @@ client.on('message', async (msg) => {
         const user_to_promote = extractCommandArgs(msg);
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
+        const isAdmin = await isUserAdmin(contact);
 
         // Don't do anything if run by a user who is not an admin.
-        if (!admins.includes(contact.id.user)) {
+        if (!isAdmin) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         }
@@ -633,8 +633,7 @@ client.on('message', async (msg) => {
                 await msg.reply(pickRandomReply(PROMOTE_GRANDMASTER_REPLIES));
                 return;
             }
-            const admins = await getAllSuperAdmins();
-            if (admins.includes(found_user.id.user)) {
+            if (isAdmin) {
                 await msg.reply('This user is already an admin 😕'); // todo: Add more replies for this later
                 return;
             } else {
@@ -655,10 +654,10 @@ client.on('message', async (msg) => {
         const user_to_demote = extractCommandArgs(msg);
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
+        const isAdmin = await isUserAdmin(contact);
 
         // Don't do anything if run by a user who is not an admin.
-        if (!admins.includes(contact.id.user)) {
+        if (!isAdmin) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         }
@@ -687,8 +686,7 @@ client.on('message', async (msg) => {
                 await msg.reply(pickRandomReply(DEMOTE_GRANDMASTER_REPLIES));
                 return;
             }
-            const admins = await getAllSuperAdmins();
-            if (admins.includes(found_user.id.user)) {
+            if (isAdmin) {
                 await removeSuperAdmin(found_user.id.user);
                 await msg.reply('Admin dismissed successfully! ✅'); //todo: Add more replies for this later
                 return;
@@ -707,8 +705,8 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!env' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
-        if (admins.includes(contact.id.user)) {
+        const isAdmin = await isUserAdmin(contact);
+        if (isAdmin) {
             await msg.reply(`Bot is currently running in *${process.env.NODE_ENV}* environment`)
         } else {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
@@ -724,8 +722,8 @@ client.on('message', async (msg) => {
         extractCommandArgs(msg) === 'status' &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
-        if (admins.includes(contact.id.user)) {
+        const isAdmin = await isUserAdmin(contact);
+        if (isAdmin) {
             const notifs_status = await getNotificationStatus();
             await msg.reply(`All notifications for today's classes are *${notifs_status ? 'ON ✅' : 'OFF ❌'}*`);
         } else {
@@ -744,9 +742,9 @@ client.on('message', async (msg) => {
         extractCommandArgs(msg, 2) === 'all' &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
+        const isAdmin = await isUserAdmin(contact);
         const notifs_status = await getNotificationStatus();
-        if (admins.includes(contact.id.user)) {
+        if (isAdmin) {
             if (notifs_status) {
                 await msg.reply("Notifications are already *ON* for today  👍🏽")
                 return;
@@ -769,10 +767,10 @@ client.on('message', async (msg) => {
         extractCommandArgs(msg, 2) === 'all' &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const admins = await getAllSuperAdmins();
+        const isAdmin = await isUserAdmin(contact);
         const notifs_status = await getNotificationStatus();
 
-        if (admins.includes(contact.id.user)) {
+        if (isAdmin) {
             if (!notifs_status) {
                 await msg.reply("Notifications have already been turned *OFF* 👍🏽");
                 return;
@@ -816,14 +814,8 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === '!slides' && await getMutedStatus() === false) {
         // if (process.env.NODE_ENV === 'production') {
         const contact = await msg.getContact();
-        // const admins = await getAllSuperAdmins();
         const cur_chat = await msg.getChat();
         const chat_from_contact = await contact.getChat();
-
-        // if (!admins.includes(contact.id.user)) {
-        //     await msg.reply("This command is not yet available to you, the Grandmaster is trying to figure out how to prevent abusing this command first, as it very expensive.🐦\n\n Exercise patience 🐦")
-        //     return;
-        // }
 
         if (cur_chat.isGroup) await msg.reply(pickRandomReply(DM_REPLIES));
 
@@ -848,7 +840,6 @@ client.on('message', async (msg) => {
         );
 
         chat_from_contact.sendMessage(list);
-        // msg.reply(list);
         // } else {
         // await msg.reply("The bot is currently hosted locally, so this operation cannot be performed.\n\nThe Grandmaster's data is at stake🐦")
         // }
