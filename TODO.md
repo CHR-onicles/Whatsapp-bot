@@ -6,12 +6,12 @@ Project Description
 
 ### Todo
 
-- [ ] ⭐❔Add aliases for long commands, especially those require other arguments  
+- [ ] ⭐❔Add poll feature to bot...for stuff like new features users would want, names of commands etc  
+- [ ] ⭐❔Add aliases for long commands, especially those that require other arguments  
 - [ ] ⭐❔Create a list of the class whatsapp groups that can be gotten by !groups or something  
 - [ ] ⭐❔ When forwarding links, forward the next consecutive message from the same user quoting the link/announcement as its usually more information about the announcement/link...refer to screenshot  
 - [ ] ⭐❔After forwarding a message from a group, add the name of the group that sent the announcement/link  
 - [ ] ⚠️ Add command for ignoring specific users (blacklist)  
-- [ ] ⭐❔Add poll feature to bot...for stuff like new features users would want, names of commands etc  
 - [ ] ⭐❔Add feature where bot performs currency conversions  
 - [ ] ⭐❔Add feature where bot performs basic operations like addition, subtraction, multiplication and division for now... chaining should come later  
 - [ ] ⭐❔Tell peeps something when they text "Hi" to the bot in dms???  

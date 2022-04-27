@@ -410,6 +410,14 @@ exports.WORDS_IN_LINKS_BLACKLIST = [
  */
 exports.MIME_TYPES = [
     {
+        fileExtension: 'doc',
+        mime_type: 'application/msword'
+    },
+    {
+        fileExtension: 'docx',
+        mime_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    },
+    {
         fileExtension: 'pdf',
         mime_type: 'application/pdf'
     },

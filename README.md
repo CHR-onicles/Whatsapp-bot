@@ -12,8 +12,9 @@ This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs))
   - [The problem](#the-problem)
   - [My solution](#my-solution)
   - [Demo](#demo)
-- [Who are EPiC Devs?](#who-are-epic-devs)
+- [Features](#features)
 - [Built with](#built-with)
+- [Who are EPiC Devs?](#who-are-epic-devs)
 - [Tips](#tips)
 
 <br>
@@ -53,7 +54,7 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 - Reminding us individually about the times we have class.
 - Getting our timetable for the week, and for the current day depending on the elective each of us offers in as little as 4 quick interactions (_< 20secs_) or by typing 1 command (_< 10secs_); As opposed to annoyingly asking someone else who may or may not be available at that moment.
 - Sending all course materials (PDFs, powerpoints etc) for any course as and when requested.
-- Reminding and giving us detailed descriptions of assignments we have for each course. _(not yet implemented)_
+- Reminding and giving us detailed descriptions of assignments we have for each course.
 
 <br>
 
@@ -66,6 +67,31 @@ Forgive the quality 🙏🏽, Github requires videos to be <10mb which is a pain
 Made up for the low quality with good background music though! 🤍
 
 Oh and I couldn't add all the functionalities of the bot in the demo as it was getting way too long 😪
+
+<br>
+
+## Features
+
+| Command | Description | Role (to use command) |
+| ---------- | ---------- | ---- |
+| `!class` | Get the current day's classes, depending on user's elective| everyone |
+| `!classes` | Get the classes for the week, depending on user's elective | everyone |
+| `!commands` | Get commands available to a user sent to their DM in a _whatsapp list_ | everyone |
+| `!env` | Check the _environment_ the bot is running in _(Production/Development)_ | admin |
+| `!everyone` | Ping everyone in a group | admin |
+| `!exams` | Get the current exams timetable | everyone |
+| `!help` | Get commands available to a user per their role | everyone |
+| `!mute` | Mute the bot | admin |
+| `!unmute` \| `!speak` | Unmute the bot | admin |
+| `!notify` | Subscribe to get notified for class | everyone |
+| `!notify stop` | Unsubscribe from getting notified for class | everyone |
+| `!notify status` | Get class notifications status | admin |
+| `!notify enable all` | Enable all class notifications for the day | admin |
+| `!notify disable all` | Disable all class notifications for the day | admin |
+| `!ping` | Check if bot is active | everyone |
+| `!slides` | Get all courses materials (slides, books etc.) | everyone |
+| `!subs` | Get all users who have subscribed to be notified for class | admin |
+| `!uptime` | Check how long bot has been active | everyone |
 
 <br>
 
@@ -85,7 +111,7 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 <sub>This was <i>painfully</i> done in a README last year when we coined the name for our project :)</sub><br>
 <sub>I definitely didn't take too much time on this :)))</sub>
 <br><br>
-We are a group of exquisitely talented, focused and diligent individuals who consistently exceed expectations.
+We are a group of exquisitely talented, focused and diligent individuals who consistently exceed expectations. Credits to both of my colleagues for inspiring features for the bot.
 
 Check us out!:
 
@@ -106,4 +132,4 @@ This project would be an interesting one to clone and run as it's heavily person
 Feel free to hit me up if you do have interest in it 👋🏽
 
 PS:
-As much this project was fun to build and has proven veryyy useful, I don't think it can stand the test of time for variousss technical reasons(eg: _Heroku automatically restarting dynos every 24hours, meaning after 24 hours I would have to rescan my QR code if I don't forget_, _checking up on cron-jobs to make sure they are still running_ etc) and to that extent, I would have to stop maintaining it soon. I'm also quite busy with my final year project and freelancing :(
+As much this project was fun to build and has proven veryyy useful, I don't think it can stand the test of time for variousss technical reasons(eg: _Heroku automatically restarting dynos every 24hours, meaning after 24 hours I would have to rescan my QR code if I don't forget_, _checking up on cron-jobs to make sure they are still running_ etc) and to that extent, I would have to stop maintaining it soon.
