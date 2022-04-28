@@ -33,7 +33,7 @@ const pickRandomReply = (replies) => {
  */
 const extractTime = (course_name) => {
     const time_portion = course_name.split('|')[1].trim();
-    const raw_time = time_portion.slice(1, time_portion.length);
+    const raw_time = time_portion.slice(1);
     let new_raw_time = null;
 
     if (raw_time.includes('p') && !raw_time.includes('12')) {
@@ -54,7 +54,7 @@ const extractCommand = (msg) => {
     const split = msg?.body.toLowerCase().split(/(\s+|\n+)/);
     const first_word = split[0];
     // console.log(first_word)
-    if (first_word[0] === '!') {
+    if (first_word.startsWith('!')) {
         return first_word;
     }
 }
@@ -162,9 +162,7 @@ const startNotificationCalculation = async (client) => {
 
     if (!notifs_status) return;
 
-    if (!total_users.length) {
-        return; // if there are no subscribed users, stop
-    }
+    if (!total_users.length) return; // if there are no subscribed users, stop
 
     if (today_day === 'Sat' || today_day === 'Sun') {
         console.log("No courses to be notified for during the weekend!");

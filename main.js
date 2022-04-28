@@ -107,7 +107,7 @@ client.on('message', async (msg) => {
 
 // Reply if pinged
 client.on('message', async (msg) => {
-    if ((msg.body.toLowerCase()[0] === '@' && await getMutedStatus() === false) ||
+    if ((msg.body.toLowerCase().startsWith('@') && await getMutedStatus() === false) ||
         (extractCommand(msg) === '!commands' && await getMutedStatus() === false)) {
         const first_word = msg.body.toLowerCase().split(' ')[0];
         const contact = await msg.getContact();
@@ -168,7 +168,7 @@ client.on('message', async (msg) => {
             'Powered by Ethereal bot'
         );
 
-        if (first_word.slice(1, first_word.length) === BOT_NUMBER) {
+        if (first_word.slice(1) === BOT_NUMBER) {
             await msg.reply(list);
         } else if (extractCommand(msg) === '!commands' && cur_chat.isGroup) {
             await chat_from_contact.sendMessage(list);
@@ -624,7 +624,7 @@ client.on('message', async (msg) => {
             return;
         }
 
-        const found_user = cur_chat.participants.find((user) => user.id.user === user_to_promote.substring(1, user_to_promote.length));
+        const found_user = cur_chat.participants.find((user) => user.id.user === user_to_promote.slice(1));
 
         if (found_user) {
             // The bot shouldn't be promoted lol.
@@ -677,7 +677,7 @@ client.on('message', async (msg) => {
             return;
         }
 
-        const found_user = cur_chat.participants.find((user) => user.id.user === user_to_demote.substring(1, user_to_demote.length));
+        const found_user = cur_chat.participants.find((user) => user.id.user === user_to_demote.slice(1));
 
         if (found_user) {
             // The bot shouldn't be demoted.
