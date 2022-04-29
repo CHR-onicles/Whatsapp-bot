@@ -391,10 +391,10 @@ client.on('message', async (msg) => {
         if (!current_forwarded_announcements.includes(msg.body)) {
             await addAnnouncement(msg.body);
             await msg.forward(target_chat);
+            await target_chat.sendMessage(`Forwarded announcement from *${current_chat.name}*`);
         } else {
             console.log('Repeated announcement');
         }
-        target_chat.sendMessage(`Forwarded announcement from *${current_chat.name}*`);
     }
 
     //* For links
@@ -406,6 +406,8 @@ client.on('message', async (msg) => {
         }
         // Pattern to recognize a link with http, https in a message
         const link_pattern = /((h|H)(t|T)(t|T)(p|P)(s|S)?:\/\/[^\s]+)/ //|((w|W)(w|W)(w|W)\.[^\s]+)/;  (www currently some weird phrases like awww....lol)
+        //todo: Checkout (https://docs.wwebjs.dev/Message.html#links) for native support of links
+
         let extracted_link = link_pattern.exec(msg.body);
         if (extracted_link) {
             extracted_link = extracted_link[0].toLowerCase();
@@ -428,10 +430,10 @@ client.on('message', async (msg) => {
         if (!current_forwarded_links.includes(msg.body.toLowerCase()) || !current_forwarded_links.includes(extracted_link)) {
             await addLink(msg.body);
             await msg.forward(target_chat);
+            await target_chat.sendMessage(`Forwarded link from *${current_chat.name}*`);
         } else {
             console.log("Repeated link");
         }
-        target_chat.sendMessage(`Forwarded link from *${current_chat.name}*`);
     }
 })
 
@@ -545,7 +547,7 @@ client.on('message', async (msg) => {
             msg.reply(pickRandomReply(DM_REPLIES));
         }
 
-        chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${msg.selectedRowId === '31' ? 'Data Mining' : (msg.selectedRowId === '32' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
+        await chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${msg.selectedRowId === '31' ? 'Data Mining' : (msg.selectedRowId === '32' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
         await addUserToBeNotified(contact.id.user, msg.selectedRowId);
         stopOngoingNotifications();
         await startNotificationCalculation(client);
@@ -589,6 +591,24 @@ client.on('message', async (msg) => {
             const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
             await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
                 + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
+        } else {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+            return;
+        }
+    }
+})
+
+
+// Check notifications status
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!notify' &&
+        extractCommandArgs(msg) === 'status' &&
+        await getMutedStatus() === false) {
+        const contact = await msg.getContact();
+        const isAdmin = await isUserAdmin(contact);
+        if (isAdmin) {
+            const notifs_status = await getNotificationStatus();
+            await msg.reply(`All notifications for today's classes are *${notifs_status ? 'ON ✅' : 'OFF ❌'}*`);
         } else {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
@@ -718,24 +738,6 @@ client.on('message', async (msg) => {
 })
 
 
-// Check notifications status
-client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!notify' &&
-        extractCommandArgs(msg) === 'status' &&
-        await getMutedStatus() === false) {
-        const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
-        if (isAdmin) {
-            const notifs_status = await getNotificationStatus();
-            await msg.reply(`All notifications for today's classes are *${notifs_status ? 'ON ✅' : 'OFF ❌'}*`);
-        } else {
-            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
-            return;
-        }
-    }
-})
-
-
 // Enable all notifications for the day
 // todo: Add alias: !notify -e -a
 client.on('message', async (msg) => {
@@ -752,6 +754,7 @@ client.on('message', async (msg) => {
                 return;
             }
             await enableAllNotifications();
+            startNotificationCalculation(client);
             await msg.reply("All notifications have been turned *ON* for today.")
         } else {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
@@ -841,7 +844,7 @@ client.on('message', async (msg) => {
             'Powered by Ethereal bot'
         );
 
-        chat_from_contact.sendMessage(list);
+        await chat_from_contact.sendMessage(list);
         // } else {
         // await msg.reply("The bot is currently hosted locally, so this operation cannot be performed.\n\nThe Grandmaster's data is at stake🐦")
         // }

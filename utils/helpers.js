@@ -54,9 +54,7 @@ const extractCommand = (msg) => {
     const split = msg?.body.toLowerCase().split(/(\s+|\n+)/);
     const first_word = split[0];
     // console.log(first_word)
-    if (first_word.startsWith('!')) {
-        return first_word;
-    }
+    if (first_word.startsWith('!')) return first_word;
 }
 
 
@@ -143,7 +141,7 @@ const notificationTimeCalc = (course) => {
         timeout_thirty_mins = time_left_in_ms - thirty_mins_ms;
     }
 
-    console.log(timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+    // console.log(timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
     return { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins };
 }
 
@@ -258,7 +256,7 @@ const generateTimeoutIntervals = (user, course, chats, timeout_two_hrs, timeout_
  * Stops notification callbacks from executing by clearing the dynamically created timeouts and resetting the global `VARIABLES_COUNTER` to 0.
  */
 const stopOngoingNotifications = () => {
-    for (let i = 1; i < VARIABLES_COUNTER; ++i) {
+    for (let i = 0; i < VARIABLES_COUNTER; ++i) {
         eval("clearTimeout(t" + i + ")");
         console.log(`Cleared timeout t${i}`);
     }

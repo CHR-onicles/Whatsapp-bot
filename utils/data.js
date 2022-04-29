@@ -35,7 +35,7 @@ exports.ALL_CLASSES = [
             { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
             { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
             { name: '_Networking_ | ⏰5:30pm | 🏠E10', duration: 1 },
-            { name: '_Accounting_ | ⏰6:35pm | 🏠E10', duration: 1 }
+            { name: '_Accounting_ | ⏰6:30pm | 🏠E10', duration: 1 }
         ]
     },
     {
@@ -264,15 +264,15 @@ exports.DM_REPLIES = [
  * Array containing replies for users who try to perform administrative functions on the bot.
  */
 exports.NOT_ADMIN_REPLIES = [
-    "Lel nope🐦, you are not an admin unfortunately.",
+    "Lel nope🐦, you are not a *bot admin* unfortunately.",
     "No can do🐦, you don't have sufficient privileges.",
-    "You are not an admin",
-    "Task successfully failed ❎, command reserved for admins.",
+    "You are not a *bot admin*",
+    "Task successfully failed ❎, command reserved for *bot admins*.",
     "Nope🐦, you don't have the required permissions.",
-    "Only admins can do this 🙂",
-    "Only admins can use this, so that it is not abused.",
+    "Only *bot admins* can do this 🙂",
+    "Only *bot admins* can use this, so that it is not abused.",
     "Sorry, this command is not available to you.",
-    "Not happening😗, you're not an admin.",
+    "Not happening😗, you're not a *bot admin*.",
 ]
 
 /**
