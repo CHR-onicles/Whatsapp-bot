@@ -238,7 +238,7 @@ client.on('message', async (msg) => {
         })
 
         if (isAdmin) {
-            text += "\n\nPS:  You're an *admin*, so you have access to _special_ commands 🤫"
+            text += "\n\nPS:  You're a *bot admin*, so you have access to _special_ commands 🤫"
         }
         await chat_from_contact.sendMessage(text);
     }
@@ -376,8 +376,8 @@ client.on('message', async (msg) => {
     const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID_USER);
 
     //* For Announcements
-    if (msg.body.includes('❗') || msg.body.includes('‼')) {
-        //todo: add check later to make sure the exclamation marks aren't the only characters in the message.
+    if ((msg.body.includes('❗') || msg.body.includes('‼')) && msg.body.length > 7) {
+        //todo: add ability to forward the quoted message being referenced by the exclamation marks in some cases
 
         if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Announcement from EPiC Devs, so do nothing")
@@ -398,36 +398,39 @@ client.on('message', async (msg) => {
     }
 
     //* For links
-    else if (msg.body.toLowerCase().includes('https') ||
-        msg.body.toLowerCase().includes('http')) {
+    else if (msg.links.length) {
         if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
             console.log("Link from EPiC Devs, so do nothing")
             return;
         }
-        // Pattern to recognize a link with http, https in a message
-        const link_pattern = /((h|H)(t|T)(t|T)(p|P)(s|S)?:\/\/[^\s]+)/ //|((w|W)(w|W)(w|W)\.[^\s]+)/;  (www currently some weird phrases like awww....lol)
-        //todo: Checkout (https://docs.wwebjs.dev/Message.html#links) for native support of links
 
-        let extracted_link = link_pattern.exec(msg.body);
-        if (extracted_link) {
-            extracted_link = extracted_link[0].toLowerCase();
-        } else return;
+        const links = msg.links;
+        console.log(links);
         let current_forwarded_links = await getAllLinks();
         current_forwarded_links = current_forwarded_links.map(link => link.toLowerCase());
         // console.log(current_forwarded_links)
-
         const blacklisted_stuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
 
-        for (let i = 0; i < blacklisted_stuff.length; ++i) {
-            if (extracted_link.includes(blacklisted_stuff[i])) {
-                console.log("Link contains a blacklisted item:", blacklisted_stuff[i]);
+        // Checking if whatsapp has flagged the link as suspicious
+        for (let i = 0; i < links.length; ++i) {
+            if (links[i].isSuspicious) {
+                console.log("Whatsapp flags this link as suspicious:", links[i].link);
                 return;
             }
         }
 
+        // Using this style of for-loop for performance and in order to "return" and break from this event 
+        for (let i = 0; i < links.length; ++i) {
+            for (let j = 0; j < blacklisted_stuff.length; ++j) {
+                if (links[i].link.includes(blacklisted_stuff[j])) {
+                    console.log("Link contains a blacklisted item:", blacklisted_stuff[j]);
+                    return;
+                }
+            }
+        }
+
         // console.log('recognized a link');
-        // console.log('extracted link:', extracted_link);
-        if (!current_forwarded_links.includes(msg.body.toLowerCase()) || !current_forwarded_links.includes(extracted_link)) {
+        if (!current_forwarded_links.includes(msg.body.toLowerCase())) {
             await addLink(msg.body);
             await msg.forward(target_chat);
             await target_chat.sendMessage(`Forwarded link from *${current_chat.name}*`);
@@ -625,7 +628,7 @@ client.on('message', async (msg) => {
         const contact = await msg.getContact();
         const isAdmin = await isUserAdmin(contact);
 
-        // Don't do anything if run by a user who is not an admin.
+        // Don't do anything if run by a user who is not a bot admin.
         if (!isAdmin) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
@@ -656,7 +659,7 @@ client.on('message', async (msg) => {
                 return;
             }
             if (isAdmin) {
-                await msg.reply('This user is already an admin 😕'); // todo: Add more replies for this later
+                await msg.reply('This user is already a bot admin 😕'); // todo: Add more replies for this later
                 return;
             } else {
                 await addSuperAdmin(found_user.id.user);
@@ -670,7 +673,7 @@ client.on('message', async (msg) => {
 })
 
 
-// Dismiss an admin
+// Dismiss a bot admin
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!demote' && await getMutedStatus() === false) {
         const user_to_demote = extractCommandArgs(msg);
@@ -678,7 +681,7 @@ client.on('message', async (msg) => {
         const contact = await msg.getContact();
         const isAdmin = await isUserAdmin(contact);
 
-        // Don't do anything if run by a user who is not an admin.
+        // Don't do anything if run by a user who is not a bot admin.
         if (!isAdmin) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
@@ -710,10 +713,10 @@ client.on('message', async (msg) => {
             }
             if (isAdmin) {
                 await removeSuperAdmin(found_user.id.user);
-                await msg.reply('Admin dismissed successfully! ✅'); //todo: Add more replies for this later
+                await msg.reply('Bot admin dismissed successfully! ✅'); //todo: Add more replies for this later
                 return;
             } else {
-                await msg.reply('This user is not an admin 🤦🏽‍♂️'); // todo: Add more replies for this later
+                await msg.reply('This user is not a bot admin 🤦🏽‍♂️'); // todo: Add more replies for this later
             }
         } else {
             await msg.reply("Sorry, I couldn't find that user ☹");
@@ -814,7 +817,7 @@ client.on('message', async (msg) => {
 
 
 // Gets slides
-//todo: Add check so people don't abuse this.
+//todo: Add rate-limit so people don't abuse this.
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!slides' && await getMutedStatus() === false) {
         // if (process.env.NODE_ENV === 'production') {

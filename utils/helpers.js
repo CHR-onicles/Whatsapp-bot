@@ -394,10 +394,10 @@ const sendSlides = async (msg, courseCode) => {
 }
 
 /**
- * Checks whether a user is an admin.
+ * Checks whether a user is a bot admin.
  * @param {WAWebJS.Contact} contact Object that represents a contact on whatsapp.
  * @async
- * @returns **True** if contact is an admin, **False** otherwise.
+ * @returns **True** if contact is a bot admin, **False** otherwise.
  */
 const isUserAdmin = async (contact) => {
     const admins = await getAllSuperAdmins();
