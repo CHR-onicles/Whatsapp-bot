@@ -80,6 +80,7 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 | `!env` | Check the _environment_ the bot is running in _(Production/Development)_ | admin |
 | `!everyone` | Ping everyone in a group | admin |
 | `!exams` | Get the current exams timetable | - |
+| `!gl` | Get the current group's invite link | - |
 | `!help` | Get commands available to a user per their role | - |
 | `!mute` | Mute the bot | admin |
 | `!unmute` \| `!speak` | Unmute the bot | admin |
@@ -89,6 +90,7 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 | `!notify enable all` | Enable all class notifications for the day | admin |
 | `!notify disable all` | Disable all class notifications for the day | admin |
 | `!ping` | Check if bot is active | - |
+| `!sc` | Get the bot's source code | - |
 | `!slides` | Get all courses materials (slides, books etc.) | - |
 | `!subs` | Get all users who have subscribed to be notified for class | admin |
 | `!uptime` | Check how long bot has been active | - |

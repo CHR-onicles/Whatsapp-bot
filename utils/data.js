@@ -3,6 +3,12 @@
 // bot to function correctly
 // --------------------------------------------------
 
+
+/**
+ * Source code for the bot, hosted on Github.
+ */
+exports.SOURCE_CODE = 'https://github.com/CHR-onicles/Whatsapp-bot';
+
 /**
  * Array containing timetable for Level 400 Computer Science students, all electives included.
  */
@@ -200,6 +206,11 @@ exports.HELP_COMMANDS = [
         availableTo: 'e',
         command: "!gl",
         desc: "Get current whatsapp group link 📱 "
+    },
+    {
+        availableTo: 'e',
+        command: "!sc",
+        desc: "Get bot's source code 💻 "
     },
     // {
     //     availableTo: 'admin',

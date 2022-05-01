@@ -29,7 +29,6 @@ Project Description
 ### In Progress
 
 - [ ] ⭐❔ Create a list of the class whatsapp groups that can be gotten by !groups or something  
-- [ ] ⭐❔ Get current group link with !grouplink  
 - [ ] ⭐❔ When forwarding links, forward the next consecutive message from the same user quoting the link/announcement as its usually more information about the announcement/link...refer to screenshot  
 - [ ] ⚠️Implement command to stop notifications for a particular course. => !notify allow <course> || !notify stop <course>  
 - [ ] ⭐Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
