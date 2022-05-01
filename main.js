@@ -109,7 +109,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if ((msg.body.toLowerCase().startsWith('@') && await getMutedStatus() === false) ||
         (extractCommand(msg) === '!commands' && await getMutedStatus() === false)) {
-        const first_word = msg.body.toLowerCase().split(' ')[0];
+        const first_word = msg.body.toLowerCase().split(' ').shift();
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
@@ -145,7 +145,7 @@ client.on('message', async (msg) => {
             `👁👃🏽👁`,
         ]
 
-        let startID = 100;
+        let startID = 100; // dynamic ID to be used for whatsapp list later
         const temp_rows = [];
         for (let i = 0; i < HELP_COMMANDS.length; ++i) {
             const { availableTo, command, desc } = HELP_COMMANDS[i];
@@ -181,7 +181,8 @@ client.on('message', async (msg) => {
 
 // Mute the bot
 client.on('message', async (msg) => {
-    if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') && await getMutedStatus() === false) {
+    if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') &&
+        await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const isAdmin = await isUserAdmin(contact);
         if (isAdmin) {
@@ -196,14 +197,16 @@ client.on('message', async (msg) => {
 
 // Unmute the bot
 client.on('message', async (msg) => {
-    if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === true) {
+    if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') &&
+        await getMutedStatus() === true) {
         const contact = await msg.getContact();
         const isAdmin = await isUserAdmin(contact);
         if (isAdmin) {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
-    } else if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') && await getMutedStatus() === false) {
+    } else if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') &&
+        await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const isAdmin = await isUserAdmin(contact);
         if (!isAdmin) {
@@ -289,6 +292,8 @@ client.on('message', async (msg) => {
             'Powered by Ethereal bot'
         );
         await chat_from_contact.sendMessage(list);
+        // await chat_from_contact.sendMessage("You can use *!help* or *!commands* to see a list of all the commands available 🤍")
+        //todo: replace with weighted help message
     }
 
     if (msg.type === 'list_response' && await getMutedStatus() === false) {

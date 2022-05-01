@@ -50,8 +50,7 @@ const initCollection = async () => {
 }
 initCollection();
 
-// EXPORTS
-// ---------------------------------------------------------------------------------------
+// EXPORTS ---------------------------------------------
 
 /**
  * Gets muted status of bot.
@@ -306,4 +305,3 @@ exports.removeUserToBeNotified = async (user, elective) => {
         console.log(error);
     }
 }
-

@@ -9,13 +9,13 @@ const { getResource } = require('../models/resources');
 
 
 
-// GLOBAL VARIABLES
+// GLOBAL VARIABLES ----------------------------------
 /**
  * Counter to keep track of dynamically created variables  later used in `eval` statements.
  */
-var VARIABLES_COUNTER = 0; // used in eval statement later
+var VARIABLES_COUNTER = 0;
 
-// FUNCTIONS
+// FUNCTIONS ----------------------------------------
 /**
  * Get a random reply from an array of replies.
  * @param {Array<string>} replies An array of replies.
@@ -24,7 +24,6 @@ var VARIABLES_COUNTER = 0; // used in eval statement later
 const pickRandomReply = (replies) => {
     return replies[Math.floor(Math.random() * replies.length)];
 }
-
 
 /**
  * Extract time for a course from the `ALL_CLASSES` array.
@@ -44,7 +43,6 @@ const extractTime = (course_name) => {
     return new_raw_time || raw_time;
 }
 
-
 /**
  * Extracts the command (which is usually the first word) from the message `body`.
  * @param {WAWebJS.Message} msg Message object from whatsapp.
@@ -52,11 +50,10 @@ const extractTime = (course_name) => {
  */
 const extractCommand = (msg) => {
     const split = msg?.body.toLowerCase().split(/(\s+|\n+)/);
-    const first_word = split[0];
+    const first_word = split.shift();
     // console.log(first_word)
     if (first_word.startsWith('!')) return first_word;
 }
-
 
 /**
  * Extracts the arguments/flags to supplement a command.
@@ -73,7 +70,6 @@ const extractCommandArgs = (msg, index = 1) => {
     // console.log(valid_args);
     return valid_args[index] || '';
 }
-
 
 /**
  * Converts milliseconds to days, hours, minutes and seconds.
@@ -97,7 +93,6 @@ const msToDHMS = (duration) => {
 
     return { days, hours, minutes, seconds }
 }
-
 
 /**
  * Calculates the time left in milliseconds for a reminder in 2 hours, 1 hour, and 30 minutes respectively.
@@ -144,7 +139,6 @@ const notificationTimeCalc = (course) => {
     // console.log(timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
     return { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins };
 }
-
 
 /**
  * Starts the notification intervals calculation.
@@ -219,7 +213,6 @@ const startNotificationCalculation = async (client) => {
     }
 }
 
-
 /**
  * Generates the dynamic timeouts after which the notification callbacks will send a message to all subscribed users.
  * @param {string} user A string that represents a user, usually by a phone number.
@@ -251,7 +244,6 @@ const generateTimeoutIntervals = (user, course, chats, timeout_two_hrs, timeout_
     }
 }
 
-
 /**
  * Stops notification callbacks from executing by clearing the dynamically created timeouts and resetting the global `VARIABLES_COUNTER` to 0.
  */
@@ -263,7 +255,6 @@ const stopOngoingNotifications = () => {
     console.log('Cleared all dynamic variables with timeouts');
     VARIABLES_COUNTER = 0;
 }
-
 
 /**
  * Generates reply to `!classes` command based on elective being offered.
@@ -295,7 +286,6 @@ const allClassesReply = (all_classes, elective, text) => {
     }
     return text;
 }
-
 
 /**
  * Gets classes for the current day.
