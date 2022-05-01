@@ -31,6 +31,10 @@ const MiscellaneousModel = model(currentModelName, MiscellaneousSchema);
 const DEFAULT_ID = { _id: process.env.NODE_ENV === 'production' ? 1 : 2 };  // to always update one specific document
 
 
+/**
+ * Helper function to initialize the miscellaneous/miscellaneous-dev collection.
+ * @async
+ */
 const initCollection = async () => {
     const count = await MiscellaneousModel.countDocuments({});
     // console.log(count);

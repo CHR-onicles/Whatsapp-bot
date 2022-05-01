@@ -405,7 +405,7 @@ client.on('message', async (msg) => {
         }
 
         const links = msg.links;
-        console.log(links);
+        // console.log(links);
         let current_forwarded_links = await getAllLinks();
         current_forwarded_links = current_forwarded_links.map(link => link.toLowerCase());
         // console.log(current_forwarded_links)
@@ -838,8 +838,8 @@ client.on('message', async (msg) => {
                     { id: '419', title: 'Formal Methods', description: 'CSCD 419' },
                     { id: '421', title: 'Accounting', description: 'CSCD 421' },
                     { id: '423', title: 'Software Modelling & Simulation', description: 'CSCD 423' },
-                    // {id: '409', title: 'Data Mining', description: 'CSCD 409' },
-                    // {id: '97', title: 'Networking', description: 'CSCD 427' },
+                    { id: '409', title: 'Data Mining', description: 'CSCD 409' },
+                    { id: '427', title: 'Networking', description: 'CSCD 427' },
                     // {id: '98', title: 'All materials', description: 'Get materials from all courses' }, //not yet
                 ]
             }],
@@ -866,7 +866,34 @@ client.on('message', async (msg) => {
             sendSlides(msg, 'CSCD 421');
         } else if (msg.selectedRowId === '423') {
             sendSlides(msg, 'CSCD 423');
+        } else if (msg.selectedRowId === '409') {
+            sendSlides(msg, 'CSCD 409');
+        } else if (msg.selectedRowId === '427') {
+            sendSlides(msg, 'CSCD 427');
         }
+    }
+})
+
+
+// Get group link
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!gl' && await getMutedStatus() === false) {
+        const group_chat = await msg.getChat();
+        // console.log(group_chat.participants);
+
+        if (!group_chat.isGroup) {
+            await msg.reply('This is not a group chat!');
+            return;
+        }
+
+        const bot_chat_obj = group_chat.participants.find(chat_obj => chat_obj.id.user === BOT_NUMBER);
+        if (!bot_chat_obj.isAdmin) {
+            await msg.reply("I am not an admin in this group, so I can't do this");
+            return;
+        }
+
+        const invite = 'https://chat.whatsapp.com/' + await group_chat.getInviteCode();
+        await msg.reply(invite); // link preview is not supported on Multi-Device...whatsapp fault, not whatsapp-web.js library
     }
 })
 

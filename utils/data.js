@@ -196,6 +196,11 @@ exports.HELP_COMMANDS = [
         command: "!slides",
         desc: "Get course materials for all courses 📚"
     },
+    {
+        availableTo: 'e',
+        command: "!gl",
+        desc: "Get current whatsapp group link 📱 "
+    },
     // {
     //     availableTo: 'admin',
     //     command: "*!ignore <user>",
