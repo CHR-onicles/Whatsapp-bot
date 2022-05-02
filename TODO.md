@@ -6,9 +6,6 @@ Project Description
 
 ### Todo
 
-- [ ] ⚠️ Implement antispam feature  
-- [ ] ⭐❔ Implement rate-limiting and temp ban on  abuse of certain intensive commands  
-- [ ] ⭐❔ Add poll feature to bot...for stuff like new features users would want, names of commands etc  
 - [ ] ⭐❔ Add aliases for long commands, especially those that require other arguments  
 - [ ] ⭐❔ Add command for last link/announcement sent => !last link || !last ann  
 - [ ] ⚠️ Add command for ignoring specific users (blacklist)  
@@ -19,12 +16,10 @@ Project Description
 - [ ] ⭐❔ Implement state where in development environment, development bot responds to only you, and does not perform certain functionalities that production bot would perform... like sending notifications  
 - [ ] ⚠️❔ Add functionality to mute certain groups, meaning that it wont forward any messages or respond to commands from that particular group => !mute group...bonus if bot deletes approval message after some time like in Discord  
 - [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward and !forward stop to stop forwarding messages  
-- [ ] ⚠️ Implement system of updating users when something about the bot changes...like updates with bot and stuff  
 - [ ] ⭐❔ Add command for bot to send last deleted message in a group chat if only its text  
 - [ ] ⚠️Refactor extracting course name into function  
 - [ ] ⚠️Refactor repeated variable setters to global variables  
 - [ ] ⚠️Refactor code which extracts time from the courses object  
-- [ ] ⭐❔ Properly restructure files like WhatsBot  
 
 ### In Progress
 

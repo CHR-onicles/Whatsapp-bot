@@ -394,4 +394,28 @@ const isUserAdmin = async (contact) => {
     return admins.includes(contact.id.user);
 }
 
-module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserAdmin }
+/**
+ * Gets a random item from a map using weighted probability.
+ * @param {Map<string, number>} map Map object containing a message and its weight.
+ * @returns Random item from a map.
+ */
+const pickRandomWeightedMessage = (map) => {
+    const items = [...map.keys()];
+    const weights = [...map.values()];
+    // console.log(items, weights);
+
+    let sum = weights.reduce((prev, cur) => prev + cur, 0);
+    if (sum !== 100) {
+        console.log("Sum:", sum)
+        throw new Error("Sum is NOT EQUAL TO 100")
+    }
+    const rand_val = Math.floor(Math.random() * sum);
+
+    for (let i = 0; i < items.length; ++i) {
+        sum -= weights[i];
+        if (rand_val >= sum) return items[i];
+    }
+}
+
+
+module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserAdmin, pickRandomWeightedMessage }
