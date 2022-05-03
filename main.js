@@ -7,8 +7,8 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserAdmin } = require('./utils/helpers');
-const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE, WAIT_REPLIES, SOURCE_CODE } = require('./utils/data');
+const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserAdmin, pickRandomWeightedMessage } = require('./utils/helpers');
+const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE, WAIT_REPLIES, SOURCE_CODE, FOOTNOTES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications } = require('./models/misc');
 
 
@@ -250,9 +250,9 @@ client.on('message', async (msg) => {
 
 // Check classes for the week
 client.on('message', async (msg) => {
+    const contact = await msg.getContact();
+    const chat_from_contact = await contact.getChat();
     if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
-        const contact = await msg.getContact();
-        const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
@@ -261,21 +261,24 @@ client.on('message', async (msg) => {
             await msg.reply(pickRandomReply(DM_REPLIES));
         }
 
+        // refactored repeated code into local function
+        const helperForAllClassesReply = async (text, elective) => {
+            text += allClassesReply(ALL_CLASSES, elective, text)
+            await chat_from_contact.sendMessage(text);
+            setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
+        }
+
         // if the user has already subscribed to be notified, find his elective and send the timetable based on that.
         if (dataMining.includes(contact.id.user)) {
-            text += allClassesReply(ALL_CLASSES, 'D', text)
-            await chat_from_contact.sendMessage(text);
+            helperForAllClassesReply(text, 'D');
             return;
         } else if (networking.includes(contact.id.user)) {
-            text += allClassesReply(ALL_CLASSES, 'N', text)
-            await chat_from_contact.sendMessage(text);
+            helperForAllClassesReply(text, 'N');
             return;
         } else if (softModelling.includes(contact.id.user)) {
-            text += allClassesReply(ALL_CLASSES, 'S', text)
-            await chat_from_contact.sendMessage(text);
+            helperForAllClassesReply(text, 'S');
             return;
         }
-        //todo: append a tip to help users find other commands here and for !class since they are the most used commands
 
         const list = new List(
             '\nMake a choice from the list of electives',
@@ -292,8 +295,6 @@ client.on('message', async (msg) => {
             'Powered by Ethereal bot'
         );
         await chat_from_contact.sendMessage(list);
-        // await chat_from_contact.sendMessage("You can use *!help* or *!commands* to see a list of all the commands available 🤍")
-        //todo: replace with weighted help message
     }
 
     if (msg.type === 'list_response' && await getMutedStatus() === false) {
@@ -308,15 +309,16 @@ client.on('message', async (msg) => {
             text += allClassesReply(ALL_CLASSES, 'S', text);
         }
         await msg.reply(text);
+        setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
     }
 })
 
 
 // Check class for today
 client.on('message', async (msg) => {
+    const contact = await msg.getContact();
+    const chat_from_contact = await contact.getChat();
     if (extractCommand(msg) === '!class' && await getMutedStatus() === false) {
-        const contact = await msg.getContact();
-        const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
@@ -325,19 +327,23 @@ client.on('message', async (msg) => {
             await msg.reply(pickRandomReply(DM_REPLIES));
         }
 
+        // refactored repeated code into local function
+        const helperForClassesToday = async (text, elective) => {
+            text += await todayClassReply(text, elective);
+            await chat_from_contact.sendMessage(text);
+            setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
+        }
+
         // if user has already subscribed to be notified for class, get his elective and send the current day's
         // timetable based on the elective.
         if (dataMining.includes(contact.id.user)) {
-            text += await todayClassReply(text, 'D')
-            await chat_from_contact.sendMessage(text);
+            helperForClassesToday(text, 'D');
             return;
         } else if (networking.includes(contact.id.user)) {
-            text += await todayClassReply(text, 'N')
-            await chat_from_contact.sendMessage(text);
+            helperForClassesToday(text, 'N');
             return;
         } else if (softModelling.includes(contact.id.user)) {
-            text += await todayClassReply(text, 'S')
-            await chat_from_contact.sendMessage(text);
+            helperForClassesToday(text, 'S');
             return;
         }
 
@@ -369,6 +375,7 @@ client.on('message', async (msg) => {
             text += await todayClassReply(text, 'S');
         }
         await msg.reply(text);
+        setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
     }
 })
 
@@ -817,6 +824,7 @@ client.on('message', async (msg) => {
         text += "\nPS: Please note that *Accounting* and *Data Mining* are not yet available on the School's timetable 😊"
 
         await chat_from_contact.sendMessage(text);
+        setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
     }
 })
 

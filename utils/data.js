@@ -386,6 +386,29 @@ exports.WAIT_REPLIES = [
 ]
 
 /**
+ * Map containing some extra info about the bot/random messages to be sent to users 
+ * based on weighted chances.
+ * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.
+ */
+exports.FOOTNOTES = new Map([
+    ["", 80], // send "nothing" more often, to avoid annoying users with multiple tips
+    ["Hope you are having a great day 🥳", 0.25],
+    ["Have a great day fam 🤍", 0.25],
+    ["Have a wonderful day 👍🏽", 0.5],
+    [`Good ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')}`, 1.25],
+    ["Don't forget to DO MORE 👍🏽", 0.25],
+    ["Keep on keeping on👍🏽", 0.5],
+    ["Checkout the *!help* command to see other commands you can use", 3],
+    ["Use *!commands* to see all the commands available to you in a list style", 3],
+    ["Did you know you could ping me in a group to see all the commands? 😮", 3],
+    ["Use *!notify* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 2],
+    ["Glad I could be of help 😁", 2],
+    ["I hope this was helpful🙂", 2],
+    ["Happy to help ☺", 2],
+    // ["Run *!updates* to see the bot's latest updates", 10],
+])
+
+/**
  * Array containing links that should not be forwarded from other groups.
  */
 exports.LINKS_BLACKLIST = [
