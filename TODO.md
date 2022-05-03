@@ -8,7 +8,6 @@ Project Description
 
 - [ ] ⭐❔ Add aliases for long commands, especially those that require other arguments  
 - [ ] ⭐❔ Add command for last link/announcement sent => !last link || !last ann  
-- [ ] ⚠️ Add command for ignoring specific users (blacklist)  
 - [ ] ⭐❔ Add feature where bot performs basic operations like addition, subtraction, multiplication and division for now... chaining should come later  
 - [ ] ⭐❔ Tell users something when they text "Hi" to the bot in dms? Maybe give them a list of the bot's commands.  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  
@@ -16,7 +15,6 @@ Project Description
 - [ ] ⭐❔ Implement state where in development environment, development bot responds to only you, and does not perform certain functionalities that production bot would perform... like sending notifications  
 - [ ] ⚠️❔ Add functionality to mute certain groups, meaning that it wont forward any messages or respond to commands from that particular group => !mute group...bonus if bot deletes approval message after some time like in Discord  
 - [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward and !forward stop to stop forwarding messages  
-- [ ] ⭐❔ Add command for bot to send last deleted message in a group chat if only its text  
 - [ ] ⚠️Refactor extracting course name into function  
 - [ ] ⚠️Refactor repeated variable setters to global variables  
 - [ ] ⚠️Refactor code which extracts time from the courses object  
