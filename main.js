@@ -7,7 +7,7 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserAdmin, pickRandomWeightedMessage } = require('./utils/helpers');
+const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE, WAIT_REPLIES, SOURCE_CODE, FOOTNOTES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications } = require('./models/misc');
 
@@ -79,8 +79,11 @@ client.on('message', async (msg) => {
 // Mention everyone
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
+        //todo: check if there's a quoted message and ping everyone quoting that message
+        //todo: if there's no quoted message, ping everyone as a normal reply to the command
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
+        let quoted_msg = null;
+        const isAdmin = await isUserBotAdmin(contact);
         if (!isAdmin) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
@@ -95,7 +98,10 @@ client.on('message', async (msg) => {
                     mentions.push(contact);
                     text += `@${participant.id.user} `;
                 }
-                await msg.reply(text, "", { mentions });
+                if (msg.hasQuotedMsg) {
+                    quoted_msg = await msg.getQuotedMessage();
+                    await quoted_msg.reply(text, "", { mentions });
+                } else await msg.reply(text, "", { mentions });
             } else {
                 await msg.reply("Can't do this - This is not a  group chat 😗");
                 console.log("Called !everyone in a chat that is not a group chat");
@@ -113,7 +119,7 @@ client.on('message', async (msg) => {
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
 
         if (extractCommand(msg) === '!commands' && cur_chat.isGroup) {
             await msg.reply(pickRandomReply(DM_REPLIES));
@@ -184,7 +190,7 @@ client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
         if (isAdmin) {
             msg.reply(pickRandomReply(MUTE_REPLIES));
             await muteBot();
@@ -200,7 +206,7 @@ client.on('message', async (msg) => {
     if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') &&
         await getMutedStatus() === true) {
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
         if (isAdmin) {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
@@ -208,7 +214,7 @@ client.on('message', async (msg) => {
     } else if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
         if (!isAdmin) {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
@@ -224,7 +230,7 @@ client.on('message', async (msg) => {
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
 
         if (cur_chat.isGroup) {
@@ -601,7 +607,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
         if (isAdmin) {
             const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
             await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
@@ -620,7 +626,7 @@ client.on('message', async (msg) => {
         extractCommandArgs(msg) === 'status' &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
         if (isAdmin) {
             const notifs_status = await getNotificationStatus();
             await msg.reply(`All notifications for today's classes are *${notifs_status ? 'ON ✅' : 'OFF ❌'}*`);
@@ -638,7 +644,7 @@ client.on('message', async (msg) => {
         const user_to_promote = extractCommandArgs(msg);
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
 
         // Don't do anything if run by a user who is not a bot admin.
         if (!isAdmin) {
@@ -670,7 +676,8 @@ client.on('message', async (msg) => {
                 await msg.reply(pickRandomReply(PROMOTE_GRANDMASTER_REPLIES));
                 return;
             }
-            if (isAdmin) {
+            const is_found_user_bot_admin = await isUserBotAdmin(found_user);
+            if (is_found_user_bot_admin) {
                 await msg.reply('This user is already a bot admin 😕'); // todo: Add more replies for this later
                 return;
             } else {
@@ -691,7 +698,7 @@ client.on('message', async (msg) => {
         const user_to_demote = extractCommandArgs(msg);
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
 
         // Don't do anything if run by a user who is not a bot admin.
         if (!isAdmin) {
@@ -723,7 +730,8 @@ client.on('message', async (msg) => {
                 await msg.reply(pickRandomReply(DEMOTE_GRANDMASTER_REPLIES));
                 return;
             }
-            if (isAdmin) {
+            const is_found_user_bot_admin = await isUserBotAdmin(found_user);
+            if (is_found_user_bot_admin) {
                 await removeSuperAdmin(found_user.id.user);
                 await msg.reply('Bot admin dismissed successfully! ✅'); //todo: Add more replies for this later
                 return;
@@ -742,7 +750,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!env' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
+        const isAdmin = await isUserBotAdmin(contact);
         if (isAdmin) {
             await msg.reply(`Bot is currently running in *${process.env.NODE_ENV}* environment`)
         } else {
@@ -761,13 +769,8 @@ client.on('message', async (msg) => {
         extractCommandArgs(msg, 2) === 'all' &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
-        const notifs_status = await getNotificationStatus();
+        const isAdmin = await isUserBotAdmin(contact);
         if (isAdmin) {
-            if (notifs_status) {
-                await msg.reply("Notifications are already *ON* for today  👍🏽")
-                return;
-            }
             await enableAllNotifications();
             startNotificationCalculation(client);
             await msg.reply("All notifications have been turned *ON* for today.")
@@ -787,14 +790,8 @@ client.on('message', async (msg) => {
         extractCommandArgs(msg, 2) === 'all' &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
-        const isAdmin = await isUserAdmin(contact);
-        const notifs_status = await getNotificationStatus();
-
+        const isAdmin = await isUserBotAdmin(contact);
         if (isAdmin) {
-            if (!notifs_status) {
-                await msg.reply("Notifications have already been turned *OFF* 👍🏽");
-                return;
-            }
             await disableAllNotifications();
             stopOngoingNotifications();
             await msg.reply("All notifications have been turned *OFF* for today.")

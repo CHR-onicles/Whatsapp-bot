@@ -228,17 +228,17 @@ const generateTimeoutIntervals = (user, course, chats, timeout_two_hrs, timeout_
     // Create dynamic variables to assign the timeouts to. The dynamic variables are needed in order to clear the timeouts
     // in case the user opts out or there's a recalculation of notification intervals.
     if (timeout_two_hrs > 0) {
-        ++VARIABLES_COUNTER;
+        VARIABLES_COUNTER++;
         eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours'); console.log('SENT 2hr notif for' + course.name.split('|')[0] + ' to ', + user, ' => t' + VARIABLES_COUNTER)}, timeout_two_hrs)")
         console.log('Sending 2hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
     if (timeout_one_hr > 0) {
-        ++VARIABLES_COUNTER;
+        VARIABLES_COUNTER++;
         eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour'); console.log('SENT 1hr notif for' + course.name.split('|')[0] + ' to ', + user, ' => t' + VARIABLES_COUNTER)}, timeout_one_hr)")
         console.log('Sending 1hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
     if (timeout_thirty_mins > 0) {
-        ++VARIABLES_COUNTER;
+        VARIABLES_COUNTER++;
         eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!'); console.log('SENT 30min notif for' + course.name.split('|')[0] + ' to ', + user, ' => t' + VARIABLES_COUNTER)}, timeout_thirty_mins)")
         console.log('Sending 30min notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
@@ -248,7 +248,7 @@ const generateTimeoutIntervals = (user, course, chats, timeout_two_hrs, timeout_
  * Stops notification callbacks from executing by clearing the dynamically created timeouts and resetting the global `VARIABLES_COUNTER` to 0.
  */
 const stopOngoingNotifications = () => {
-    for (let i = 0; i < VARIABLES_COUNTER; ++i) {
+    for (let i = 1; i < VARIABLES_COUNTER + 1; ++i) {
         eval("clearTimeout(t" + i + ")");
         console.log(`Cleared timeout t${i}`);
     }
@@ -389,8 +389,9 @@ const sendSlides = async (msg, courseCode) => {
  * @async
  * @returns **True** if contact is a bot admin, **False** otherwise.
  */
-const isUserAdmin = async (contact) => {
+const isUserBotAdmin = async (contact) => {
     const admins = await getAllSuperAdmins();
+    // console.log(admins, admins.includes(contact.id.user));
     return admins.includes(contact.id.user);
 }
 
@@ -418,4 +419,4 @@ const pickRandomWeightedMessage = (map) => {
 }
 
 
-module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserAdmin, pickRandomWeightedMessage }
+module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage }

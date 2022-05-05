@@ -236,7 +236,7 @@ exports.addSuperAdmin = async (newAdmin) => {
 
 /**
  * Demotes a user from being a super admin of the bot.
- * @param {string} admin A string containing a whatsapp user.
+ * @param {string} admin A string containing a whatsapp user's number.
  * @async
  */
 exports.removeSuperAdmin = async (admin) => {
