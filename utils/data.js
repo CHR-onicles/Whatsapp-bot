@@ -164,6 +164,11 @@ exports.HELP_COMMANDS = [
     },
     {
         availableTo: 'a',
+        command: "!admins",
+        desc: "Get all admins 👮🏽‍♂️👮🏽‍♀️"
+    },
+    {
+        availableTo: 'a',
         command: "!promote _<user>_",
         desc: "Make user an admin 👮🏽‍♂️"
     },

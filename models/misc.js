@@ -17,6 +17,7 @@ const MiscellaneousSchema = new Schema({
     allLinks: [String],
     allAnnouncements: [String],
     superAdmins: [String],
+    forwardToUsers: [String],
     electiveDataMining: [String],
     electiveSoftModelling: [String],
     electiveNetworking: [String],
@@ -304,4 +305,15 @@ exports.removeUserToBeNotified = async (user, elective) => {
     } catch (error) {
         console.log(error);
     }
+}
+
+/**
+ * Gets users/groups who want announcements/links forwarded to them.
+ * @async
+ * @returns List of users/groups where announcements and links will be forwarded to.
+ */
+exports.getForwardToUsers = async () => {
+    const users = await MiscellaneousModel.findOne(DEFAULT_ID, { forwardToUsers: 1 });
+    // console.log(users.forwardToUsers);
+    return users.forwardToUsers;
 }

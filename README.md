@@ -74,6 +74,7 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 
 | Command | Description | Role (to use command) |
 | ---------- | ---------- | ---- |
+| `!admins` | Get all current bot admins| admin |
 | `!class` | Get the current day's classes, depending on user's elective| - |
 | `!classes` | Get the classes for the week, depending on user's elective | - |
 | `!commands` | Get commands available to a user sent to their DM in a _whatsapp list_ | - |

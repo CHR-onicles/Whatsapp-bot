@@ -9,7 +9,7 @@ require('dotenv').config();
 require('./utils/db');
 const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE, WAIT_REPLIES, SOURCE_CODE, FOOTNOTES } = require('./utils/data');
-const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications } = require('./models/misc');
+const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications, getForwardToUsers, getAllSuperAdmins } = require('./models/misc');
 
 
 // --------------------------------------------------
@@ -18,7 +18,7 @@ const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, ad
 const GRANDMASTER = process.env.GRANDMASTER; // Owner of the bot
 const BOT_NUMBER = process.env.BOT_NUMBER; // The bot's whatsapp number
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
-const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // this is the group where links and announcements are forwarded to by default
+// const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // this is the group where links and announcements are forwarded to by default
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
 
@@ -386,41 +386,61 @@ client.on('message', async (msg) => {
 })
 
 
-// Forward messages with links/announcements (in other groups) to EPiC Devs
+// Forward messages with links/announcements (in other groups) to EPiC Devs for now
 client.on('message', async (msg) => {
     if (await getMutedStatus() === true) return;
-    const current_chat = await msg.getChat();
-    const chats = await client.getChats();
-    const target_chat = chats.find(chat => chat.id.user === EPIC_DEVS_GROUP_ID_USER);
+
+    // local helper function to initialize stuff
+    const helperForInit = async (msg) => {
+        const current_chat = await msg.getChat();
+        const chats = await client.getChats();
+        const forwardToUsers = await getForwardToUsers();
+        const target_chats = [];
+
+        for (let i = 0; i < chats.length; ++i) {
+            for (let j = 0; j < forwardToUsers.length; ++j) {
+                if (chats[i].id.user === forwardToUsers[j]) target_chats.push(chats[i]);
+            }
+        }
+        return { current_chat, forwardToUsers, target_chats };
+    }
 
     //* For Announcements
-    if ((msg.body.includes('❗') || msg.body.includes('‼')) && msg.body.length > 7) {
-        //todo: add ability to forward the quoted message being referenced by the exclamation marks in some cases
-
-        if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
-            console.log("Announcement from EPiC Devs, so do nothing")
-            return;
-        }
-
+    if ((msg.body.includes('❗') || msg.body.includes('‼')) && msg.body.length > 1) {
+        const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
+        let quoted_msg = null;
+        forwardToUsers.forEach(user => {
+            if (current_chat.id.user === user) {
+                console.log("Announcement from forwardedUsers, so do nothing");
+                return;
+            }
+        });
         const current_forwarded_announcements = await getAllAnnouncements();
-
         // console.log('Recognized an announcement');
 
         if (!current_forwarded_announcements.includes(msg.body)) {
             await addAnnouncement(msg.body);
-            await msg.forward(target_chat);
-            await target_chat.sendMessage(`Forwarded announcement from *${current_chat.name}*`);
+            if (msg.hasQuotedMsg) {
+                quoted_msg = await msg.getQuotedMessage();
+                target_chats.forEach(async (chat) => await quoted_msg.forward(chat));
+            }
+            target_chats.forEach(async (chat) => await msg.forward(chat));
+            target_chats.forEach(async (chat) => await chat.sendMessage(`Forwarded announcement from *${current_chat.name}*`));
         } else {
             console.log('Repeated announcement');
         }
     }
 
+
     //* For links
     else if (msg.links.length) {
-        if (current_chat.id.user === EPIC_DEVS_GROUP_ID_USER) {
-            console.log("Link from EPiC Devs, so do nothing")
-            return;
-        }
+        const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
+        forwardToUsers.forEach(user => {
+            if (current_chat.id.user === user) {
+                console.log("Link from forwardedUsers, so do nothing")
+                return;
+            }
+        });
 
         const links = msg.links;
         // console.log(links);
@@ -450,8 +470,8 @@ client.on('message', async (msg) => {
         // console.log('recognized a link');
         if (!current_forwarded_links.includes(msg.body.toLowerCase())) {
             await addLink(msg.body);
-            await msg.forward(target_chat);
-            await target_chat.sendMessage(`Forwarded link from *${current_chat.name}*`);
+            target_chats.forEach(async (chat) => await msg.forward(chat));
+            target_chats.forEach(async (chat) => await chat.sendMessage(`Forwarded link from *${current_chat.name}*`));
         } else {
             console.log("Repeated link");
         }
@@ -638,7 +658,23 @@ client.on('message', async (msg) => {
 })
 
 
-// Promote a user to be admin
+// Get all bot admins
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === '!admins' && await getMutedStatus() === false) {
+        const contact = await msg.getContact();
+        const isAdmin = await isUserBotAdmin(contact);
+        const allAdmins = await getAllSuperAdmins();
+
+        if (!isAdmin) {
+            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+            return;
+        }
+        await msg.reply("〘✪ Bot Admins ✪〙\n\n" + allAdmins.map(admin => "✪ " + admin + "\n").join(''));
+    }
+})
+
+
+// Promote a user to be a bot admin
 client.on('message', async (msg) => {
     if (extractCommand(msg) === '!promote' && await getMutedStatus() === false) {
         const user_to_promote = extractCommandArgs(msg);
