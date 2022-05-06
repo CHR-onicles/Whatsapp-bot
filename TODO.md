@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐❔ Create a list of the class whatsapp groups that can be gotten by !groups or something  
 - [ ] ⭐❔ Add aliases for long commands, especially those that require other arguments  
 - [ ] ⭐❔ Add command for last link/announcement sent => !last link || !last ann  
 - [ ] ⭐❔ Add feature where bot performs basic operations like addition, subtraction, multiplication and division for now... chaining should come later  
@@ -20,11 +21,10 @@ Project Description
 
 ### In Progress
 
-- [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward and !forward stop to stop forwarding messages  
-- [ ] ⭐❔ Create a list of the class whatsapp groups that can be gotten by !groups or something  
 - [ ] ⚠️Implement command to stop notifications for a particular course. => !notify allow <course> || !notify stop <course>  
 - [ ] ⭐Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
 - [ ] 👍Checkout other symbols as replacements for emojis  
+- [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward and !forward stop to stop forwarding messages  
 
 ### Done ✓
 

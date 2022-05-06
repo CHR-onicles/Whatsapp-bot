@@ -18,7 +18,6 @@ const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, ad
 const GRANDMASTER = process.env.GRANDMASTER; // Owner of the bot
 const BOT_NUMBER = process.env.BOT_NUMBER; // The bot's whatsapp number
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
-// const EPIC_DEVS_GROUP_ID_USER = process.env.EPIC_DEVS_GROUP_ID_USER; // this is the group where links and announcements are forwarded to by default
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
 
@@ -66,6 +65,10 @@ client.on('ready', async () => {
 
 // Ping bot
 client.on('message', async (msg) => {
+    // Attempting to improve performance by letting the bot sleep for half a second...
+    // this needs to be placed only once as all message events will eventually execute this.
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     if (extractCommand(msg) === '!ping' && await getMutedStatus() === false) {
         msg.reply('pong 🏓');
         // Ping the user who type the command
@@ -443,6 +446,11 @@ client.on('message', async (msg) => {
         });
 
         const links = msg.links;
+        // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol" and "hey.me" 
+        // and insecure links from leaking through
+        for (let i = 0; i < links.length; ++i) {
+            if (!links[i].link.includes('https')) return;
+        }
         // console.log(links);
         let current_forwarded_links = await getAllLinks();
         current_forwarded_links = current_forwarded_links.map(link => link.toLowerCase());
@@ -669,7 +677,7 @@ client.on('message', async (msg) => {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         }
-        await msg.reply("〘✪ Bot Admins ✪〙\n\n" + allAdmins.map(admin => "✪ " + admin + "\n").join(''));
+        await msg.reply("〘✪ Bot Admins ✪〙\n\n" + allAdmins.map(admin => "✪ +" + admin + "\n").join(''));
     }
 })
 
@@ -851,10 +859,8 @@ client.on('message', async (msg) => {
         if (cur_chat.isGroup) msg.reply(pickRandomReply(DM_REPLIES));
 
         EXAM_TIMETABLE.forEach(({ date, time, courseCode, courseTitle, examMode }) => {
-            text += "📝\n*Date:* " + date + "\n*Time:* " + time + "\n*Course code:* " + courseCode + "\n*Course title:* " + courseTitle + "\n*Exam mode:* " + examMode + "\n\n";
+            text += (examMode.toLowerCase().includes('physical') ? "📝" : "🖥") + "\n*Date:* " + date + "\n*Time:* " + time + "\n*Course code:* " + courseCode + "\n*Course title:* " + courseTitle + "\n*Exam mode:* " + examMode + "\n\n";
         });
-
-        text += "\nPS: Please note that *Accounting* and *Data Mining* are not yet available on the School's timetable 😊"
 
         await chat_from_contact.sendMessage(text);
         setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
