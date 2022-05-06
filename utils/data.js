@@ -58,21 +58,27 @@ exports.ALL_CLASSES = [
 
 /**
  * Array containing current L400 1st Semester Computer Science exams timetable.
- * It's currently missing **Accounting**  and **Data Mining** because they aren't available yet.
  */
 exports.EXAM_TIMETABLE = [
     {
-        date: "Sunday, May 15 2022",
-        time: "3:30pm",
-        courseCode: "CSCD 417",
-        courseTitle: "Theory & Survey",
-        examMode: "Onsite/Physical"
+        date: "Saturday, May 14 2022",
+        time: "11:30am",
+        courseCode: "CSCD 421",
+        courseTitle: "Accounting",
+        examMode: "Onsite/Online"
     },
     {
         date: "Monday, May 16 2022",
         time: "7:30am",
         courseCode: "CSCD 419",
         courseTitle: "Formal Methods",
+        examMode: "Onsite/Physical"
+    },
+    {
+        date: "Wednesday, May 18 2022",
+        time: "7:30am",
+        courseCode: "CSCD 417",
+        courseTitle: "Theory & Survey",
         examMode: "Onsite/Physical"
     },
     {
