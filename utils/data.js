@@ -269,8 +269,11 @@ exports.UNMUTE_REPLIES = [
 exports.DM_REPLIES = [
     'Check dm 🐦',
     'Dm 🐦',
+    '𝓓𝓶 👍🏽',
+    'ℙ𝕞 👍🏽',
     'Pm 🐦',
-    'Check your Pms 🐦',
+    '𝑪𝒉𝒆𝒄𝒌 𝑷𝑴𝒔 🐦',
+    'In your PMs 🐦',
     'Sliding in your dm 👍🏽',
     'Acknowledged 👍🏽 ',
     'Gotcha 🐦',
@@ -282,6 +285,8 @@ exports.DM_REPLIES = [
     '🤖✅',
     '👀✅',
     '👍🏽',
+    '🙃👍🏽',
+    '👽✅'
 ]
 
 /**
