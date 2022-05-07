@@ -7,7 +7,7 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage } = require('./utils/helpers');
+const { current_env, current_prefix, pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE, WAIT_REPLIES, SOURCE_CODE, FOOTNOTES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications, getForwardToUsers, getAllSuperAdmins } = require('./models/misc');
 
@@ -20,6 +20,7 @@ const BOT_NUMBER = process.env.BOT_NUMBER; // The bot's whatsapp number
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
+console.log("Current prefix:", current_prefix)
 
 
 // --------------------------------------------------
@@ -69,7 +70,7 @@ client.on('message', async (msg) => {
     // this needs to be placed only once as all message events will eventually execute this.
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    if (extractCommand(msg) === '!ping' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === (current_prefix + 'ping') && await getMutedStatus() === false) {
         msg.reply('pong 🏓');
         // Ping the user who type the command
         // const c = await msg.getContact();
@@ -81,7 +82,7 @@ client.on('message', async (msg) => {
 
 // Mention everyone
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!everyone' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'everyone' && await getMutedStatus() === false) {
         //todo: check if there's a quoted message and ping everyone quoting that message
         //todo: if there's no quoted message, ping everyone as a normal reply to the command
         const contact = await msg.getContact();
@@ -107,7 +108,7 @@ client.on('message', async (msg) => {
                 } else await msg.reply(text, "", { mentions });
             } else {
                 await msg.reply("Can't do this - This is not a  group chat 😗");
-                console.log("Called !everyone in a chat that is not a group chat");
+                console.log("Called " + current_prefix + "everyone in a chat that is not a group chat");
             }
         }
     }
@@ -117,14 +118,14 @@ client.on('message', async (msg) => {
 // Reply if pinged
 client.on('message', async (msg) => {
     if ((msg.body.toLowerCase().startsWith('@') && await getMutedStatus() === false) ||
-        (extractCommand(msg) === '!commands' && await getMutedStatus() === false)) {
+        (extractCommand(msg) === current_prefix + 'commands' && await getMutedStatus() === false)) {
         const first_word = msg.body.toLowerCase().split(' ').shift();
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
         const cur_chat = await msg.getChat();
         const isAdmin = await isUserBotAdmin(contact);
 
-        if (extractCommand(msg) === '!commands' && cur_chat.isGroup) {
+        if (extractCommand(msg) === current_prefix + 'commands' && cur_chat.isGroup) {
             await msg.reply(pickRandomReply(DM_REPLIES));
         }
 
@@ -179,9 +180,9 @@ client.on('message', async (msg) => {
 
         if (first_word.slice(1) === BOT_NUMBER) {
             await msg.reply(list);
-        } else if (extractCommand(msg) === '!commands' && cur_chat.isGroup) {
+        } else if (extractCommand(msg) === current_prefix + 'commands' && cur_chat.isGroup) {
             await chat_from_contact.sendMessage(list);
-        } else if (extractCommand(msg) === '!commands' && !cur_chat.isGroup) {
+        } else if (extractCommand(msg) === current_prefix + 'commands' && !cur_chat.isGroup) {
             await msg.reply(list);
         }
     }
@@ -190,7 +191,7 @@ client.on('message', async (msg) => {
 
 // Mute the bot
 client.on('message', async (msg) => {
-    if ((extractCommand(msg) === '!mute' || extractCommand(msg) === '!silence') &&
+    if ((extractCommand(msg) === current_prefix + 'mute' || extractCommand(msg) === current_prefix + 'silence') &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const isAdmin = await isUserBotAdmin(contact);
@@ -206,7 +207,7 @@ client.on('message', async (msg) => {
 
 // Unmute the bot
 client.on('message', async (msg) => {
-    if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') &&
+    if ((extractCommand(msg) === current_prefix + 'unmute' || extractCommand(msg) === current_prefix + 'speak') &&
         await getMutedStatus() === true) {
         const contact = await msg.getContact();
         const isAdmin = await isUserBotAdmin(contact);
@@ -214,7 +215,7 @@ client.on('message', async (msg) => {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
-    } else if ((extractCommand(msg) === '!unmute' || extractCommand(msg) === '!speak') &&
+    } else if ((extractCommand(msg) === current_prefix + 'unmute' || extractCommand(msg) === current_prefix + 'speak') &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const isAdmin = await isUserBotAdmin(contact);
@@ -229,7 +230,7 @@ client.on('message', async (msg) => {
 
 // Help users with commands 
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!help' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'help' && await getMutedStatus() === false) {
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
         const chat_from_contact = await contact.getChat();
@@ -261,7 +262,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     const contact = await msg.getContact();
     const chat_from_contact = await contact.getChat();
-    if (extractCommand(msg) === '!classes' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'classes' && await getMutedStatus() === false) {
         const cur_chat = await msg.getChat();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
@@ -327,7 +328,7 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     const contact = await msg.getContact();
     const chat_from_contact = await contact.getChat();
-    if (extractCommand(msg) === '!class' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'class' && await getMutedStatus() === false) {
         const cur_chat = await msg.getChat();
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         let text = "";
@@ -532,7 +533,7 @@ client.on('message', async (msg) => {
 
 // Check bot uptime
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!uptime' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'uptime' && await getMutedStatus() === false) {
         const current_time = new Date();
         const { days, hours, minutes, seconds } = msToDHMS(current_time - BOT_START_TIME);
         await msg.reply(`🟢 *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : 0}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`);
@@ -542,7 +543,7 @@ client.on('message', async (msg) => {
 
 //Add user to notification list for class
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!notify' &&
+    if (extractCommand(msg) === current_prefix + 'notify' &&
         extractCommandArgs(msg) !== 'stop' &&
         extractCommandArgs(msg) !== 'disable' &&
         extractCommandArgs(msg) !== 'enable' &&
@@ -606,7 +607,7 @@ client.on('message', async (msg) => {
 
 //Stop notifying user for class
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!notify' &&
+    if (extractCommand(msg) === current_prefix + 'notify' &&
         extractCommandArgs(msg) === 'stop' &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
@@ -633,7 +634,7 @@ client.on('message', async (msg) => {
 
 // Get users on class notifications list
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!subs' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'subs' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const isAdmin = await isUserBotAdmin(contact);
         if (isAdmin) {
@@ -650,7 +651,7 @@ client.on('message', async (msg) => {
 
 // Check notifications status
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!notify' &&
+    if (extractCommand(msg) === current_prefix + 'notify' &&
         extractCommandArgs(msg) === 'status' &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
@@ -668,7 +669,7 @@ client.on('message', async (msg) => {
 
 // Get all bot admins
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!admins' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'admins' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const isAdmin = await isUserBotAdmin(contact);
         const allAdmins = await getAllSuperAdmins();
@@ -677,14 +678,14 @@ client.on('message', async (msg) => {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
         }
-        await msg.reply("〘✪ Bot Admins ✪〙\n\n" + allAdmins.map(admin => "✪ +" + admin + "\n").join(''));
+        await msg.reply("〘✪ 𝔹𝕠𝕥 𝕒𝕕𝕞𝕚𝕟𝕤 ✪〙\n\n" + allAdmins.map(admin => "✪ +" + admin + "\n").join(''));
     }
 })
 
 
 // Promote a user to be a bot admin
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!promote' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'promote' && await getMutedStatus() === false) {
         const user_to_promote = extractCommandArgs(msg);
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
@@ -738,7 +739,7 @@ client.on('message', async (msg) => {
 
 // Dismiss a bot admin
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!demote' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'demote' && await getMutedStatus() === false) {
         const user_to_demote = extractCommandArgs(msg);
         const cur_chat = await msg.getChat();
         const contact = await msg.getContact();
@@ -792,11 +793,11 @@ client.on('message', async (msg) => {
 
 // Check the environment the bot is running in
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!env' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'env' && await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const isAdmin = await isUserBotAdmin(contact);
         if (isAdmin) {
-            await msg.reply(`Bot is currently running in *${process.env.NODE_ENV}* environment`)
+            await msg.reply(`Bot is currently running in *${current_env}* environment`)
         } else {
             await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
             return;
@@ -808,7 +809,7 @@ client.on('message', async (msg) => {
 // Enable all notifications for the day
 // todo: Add alias: !notify -e -a
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!notify' &&
+    if (extractCommand(msg) === current_prefix + 'notify' &&
         extractCommandArgs(msg, 1) === 'enable' &&
         extractCommandArgs(msg, 2) === 'all' &&
         await getMutedStatus() === false) {
@@ -829,7 +830,7 @@ client.on('message', async (msg) => {
 // Disable all notifications for the day
 // todo: Add alias: !notify -d -a
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!notify' &&
+    if (extractCommand(msg) === current_prefix + 'notify' &&
         extractCommandArgs(msg, 1) === 'disable' &&
         extractCommandArgs(msg, 2) === 'all' &&
         await getMutedStatus() === false) {
@@ -849,7 +850,7 @@ client.on('message', async (msg) => {
 
 // Get L400 1st Sem Exams timetable
 client.on('message', async (msg) => {
-    if ((extractCommand(msg) === '!exams' || extractCommand(msg) === '!exam') &&
+    if ((extractCommand(msg) === current_prefix + 'exams' || extractCommand(msg) === current_prefix + 'exam') &&
         await getMutedStatus() === false) {
         const contact = await msg.getContact();
         const cur_chat = await msg.getChat();
@@ -871,8 +872,8 @@ client.on('message', async (msg) => {
 // Gets slides
 //todo: Add rate-limit so people don't abuse this.
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!slides' && await getMutedStatus() === false) {
-        // if (process.env.NODE_ENV === 'production') {
+    if (extractCommand(msg) === current_prefix + 'slides' && await getMutedStatus() === false) {
+        // if (current_env === 'production') {
         const contact = await msg.getContact();
         const cur_chat = await msg.getChat();
         const chat_from_contact = await contact.getChat();
@@ -892,7 +893,6 @@ client.on('message', async (msg) => {
                     { id: '423', title: 'Software Modelling & Simulation', description: 'CSCD 423' },
                     { id: '409', title: 'Data Mining', description: 'CSCD 409' },
                     { id: '427', title: 'Networking', description: 'CSCD 427' },
-                    // {id: '98', title: 'All materials', description: 'Get materials from all courses' }, //not yet
                 ]
             }],
             'What course material can I help you with?🐦', //todo: change to something else
@@ -929,7 +929,7 @@ client.on('message', async (msg) => {
 
 // Get group link
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!gl' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'gl' && await getMutedStatus() === false) {
         const group_chat = await msg.getChat();
         // console.log(group_chat.participants);
 
@@ -952,7 +952,7 @@ client.on('message', async (msg) => {
 
 // Get bot's source code
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === '!sc' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'sc' && await getMutedStatus() === false) {
         await msg.reply("My source code can be found here:\n\n" + SOURCE_CODE, '', { linkPreview: true }); // link preview not working on Multi-Device
     }
 })
