@@ -188,7 +188,7 @@ exports.HELP_COMMANDS = [
     {
         availableTo: 'a',
         command: `${current_prefix}env`,
-        desc: "Check the current environme`${current_prefix} of the bot `"
+        desc: "Check the current environment of the bot"
     },
     {
         availableTo: 'a',

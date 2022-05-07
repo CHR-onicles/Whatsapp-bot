@@ -83,8 +83,6 @@ client.on('message', async (msg) => {
 // Mention everyone
 client.on('message', async (msg) => {
     if (extractCommand(msg) === current_prefix + 'everyone' && await getMutedStatus() === false) {
-        //todo: check if there's a quoted message and ping everyone quoting that message
-        //todo: if there's no quoted message, ping everyone as a normal reply to the command
         const contact = await msg.getContact();
         let quoted_msg = null;
         const isAdmin = await isUserBotAdmin(contact);
@@ -241,9 +239,14 @@ client.on('message', async (msg) => {
             await msg.reply(pickRandomReply(DM_REPLIES));
         }
 
+        let temp_count = 0;
         HELP_COMMANDS.forEach((obj, index) => {
             if (!isAdmin) {
-                if (obj.availableTo === 'e') text += "*" + obj.command + ":* " + obj.desc + "\n";
+                if (obj.availableTo === 'e') {
+                    if ((temp_count > 0) && (temp_count % 5 === 0)) text += "\n"; // to space out commands and group them in fives.
+                    text += "*" + obj.command + ":* " + obj.desc + "\n";
+                    temp_count++;
+                }
             } else {
                 if ((index > 0) && (index % 5 === 0)) text += "\n"
                 text += "*" + obj.command + ":* " + obj.desc + "\n";
