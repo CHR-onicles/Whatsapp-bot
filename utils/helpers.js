@@ -14,6 +14,9 @@ const { getResource } = require('../models/resources');
  * Counter to keep track of dynamically created variables  later used in `eval` statements.
  */
 var VARIABLES_COUNTER = 0;
+const current_env = process.env.NODE_ENV;
+const current_prefix = current_env === 'production' ? '!' : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
+
 
 // FUNCTIONS ----------------------------------------
 /**
@@ -52,7 +55,7 @@ const extractCommand = (msg) => {
     const split = msg?.body.toLowerCase().split(/(\s+|\n+)/);
     const first_word = split.shift();
     // console.log(first_word)
-    if (first_word.startsWith('!')) return first_word;
+    if (first_word.startsWith(current_prefix)) return first_word;
 }
 
 /**
@@ -419,4 +422,4 @@ const pickRandomWeightedMessage = (map) => {
 }
 
 
-module.exports = { pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage }
+module.exports = { current_env, current_prefix, pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage }

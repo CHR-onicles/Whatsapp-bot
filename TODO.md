@@ -6,6 +6,8 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐❔ Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
+- [ ] ⭐❔ Get bot overall status and/or diagnostics with !status command  
 - [ ] ⭐❔ Create a list of the class whatsapp groups that can be gotten by !groups or something  
 - [ ] ⭐❔ Add aliases for long commands, especially those that require other arguments  
 - [ ] ⭐❔ Add command for last link/announcement sent => !last link || !last ann  
@@ -21,10 +23,11 @@ Project Description
 
 ### In Progress
 
+- [ ] ⚠️ Prevent production-version list_responses from leaking into DEV-version of bot possibly with different sets of list IDs  
+- [ ] ⭐Use custom fonts for footers of bot replies  
 - [ ] ⚠️Implement command to stop notifications for a particular course. => !notify allow <course> || !notify stop <course>  
-- [ ] ⭐Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
 - [ ] 👍Checkout other symbols as replacements for emojis  
-- [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward and !forward stop to stop forwarding messages  
+- [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward; and !forward stop to stop forwarding messages  
 
 ### Done ✓
 

@@ -3,6 +3,8 @@
 // bot to function correctly
 // --------------------------------------------------
 
+const current_prefix = process.env.NODE_ENV === 'production' ? '!' : process.env.DEV_PREFIX; // doing this instead of importing to avoid circular dependency
+
 
 /**
  * Source code for the bot, hosted on Github.
@@ -110,133 +112,128 @@ exports.EXAM_TIMETABLE = [
 exports.HELP_COMMANDS = [
     {
         availableTo: 'e', // everyone
-        command: "!ping",
+        command: `${current_prefix}ping`,
         desc: "Check if I'm available 🙋🏽‍♂️"
     },
     {
         availableTo: 'e',
-        command: "!uptime",
+        command: `${current_prefix}uptime`,
         desc: "See how long I've been awake 🟢"
     },
     {
         availableTo: 'e',
-        command: "!help",
+        command: `${current_prefix}help`,
         desc: "Get commands that can be used with me 💡"
     },
     {
         availableTo: 'a', // admins
-        command: "!mute",
+        command: `${current_prefix}mute`,
         desc: "Get me to be quiet 😅"
     },
     {
         availableTo: 'a',
-        command: "!unmute",
+        command: `${current_prefix}unmute`,
         desc: "Allow me to talk 🙂"
     },
     {
         availableTo: 'a',
-        command: "!everyone",
+        command: `${current_prefix}everyone`,
         desc: "Ping everyone in the group 😮"
     },
     {
         availableTo: 'e',
-        command: "!classes",
+        command: `${current_prefix}classes`,
         desc: "Get all the classes you have this week 📚"
     },
     {
         availableTo: 'e',
-        command: "!class",
+        command: `${current_prefix}class`,
         desc: "Get today's classes 📕"
     },
     {
         availableTo: 'e',
-        command: "!notify",
+        command: `${current_prefix}notify`,
         desc: "Get notified for class 🔔"
     },
     {
         availableTo: 'e',
-        command: "!notify stop",
+        command: `${current_prefix}notify stop`,
         desc: "Stop getting notified for class 🔕"
     },
     {
         availableTo: 'a',
-        command: "!subs",
+        command: `${current_prefix}subs`,
         desc: "Get users who want to be notified for class 👯‍♂️"
     },
     {
         availableTo: 'e',
-        command: "!commands",
+        command: `${current_prefix}commands`,
         desc: "Get bot's commands in a list style in your DMs 🥂"
     },
     {
-        availableTo: 'a',
-        command: "!admins",
-        desc: "Get all admins 👮🏽‍♂️👮🏽‍♀️"
+        availableTo: 'a', // maybe change later to everyone
+        command: `${current_prefix}admins`,
+        desc: "Get all bot admins 👮🏽‍♂️👮🏽‍♀️"
     },
     {
         availableTo: 'a',
-        command: "!promote _<user>_",
+        command: `${current_prefix}promote _<user>_`,
         desc: "Make user an admin 👮🏽‍♂️"
     },
     {
         availableTo: 'a',
-        command: "!demote _<user>_",
+        command: `${current_prefix}demote _<user>_`,
         desc: "Dismiss an admin 💀"
     },
     {
         availableTo: 'a',
-        command: "!env",
-        desc: "Check the current environment of the bot 🤖"
+        command: `${current_prefix}env`,
+        desc: "Check the current environme`${current_prefix} of the bot `"
     },
     {
         availableTo: 'a',
-        command: "!notify status",
+        command: `${current_prefix}notify status`,
         desc: "Get class notifications status 📄"
     },
     {
         availableTo: 'a',
-        command: "!notify enable all",
+        command: `${current_prefix}notify enable all`,
         desc: "Enable all class notifications for the day ✔"
     },
     {
         availableTo: 'a',
-        command: "!notify disable all",
+        command: `${current_prefix}notify disable all`,
         desc: "Disable all class notifications for the day ❌"
     },
     {
         availableTo: 'e',
-        command: "!exams",
+        command: `${current_prefix}exams`,
         desc: "Get the current exams timetable 📝"
     },
     {
         availableTo: 'e',
-        command: "!slides",
+        command: `${current_prefix}slides`,
         desc: "Get course materials for all courses 📚"
     },
     {
         availableTo: 'e',
-        command: "!gl",
+        command: `${current_prefix}gl`,
         desc: "Get current whatsapp group link 📱 "
     },
     {
         availableTo: 'e',
-        command: "!sc",
+        command: `${current_prefix}sc`,
         desc: "Get bot's source code 💻 "
     },
     // {
-    //     availableTo: 'admin',
-    //     command: "*!ignore <user>",
+    //     availableTo: 'a',
+    //     command: `${current_prefix}ignore <user>`,
     //     desc: "Ignore a specific user 💀"
     // },
     // {
-    //     availableTo: 'admin',
-    //     command: "*!acknowledge <user>",
+    //     availableTo: 'a',
+    //     command: `${current_prefix}acknowledge <user>`,
     //     desc: "Respond to a specific user 😄"
-    // },
-    // {
-    //     availableTo: 'everyone',
-    //     command: "*!admins",
-    //     desc: "See all users who can perform administrative functions on the bot 👮🏽‍♂️"
     // },
 ]
 
@@ -272,8 +269,11 @@ exports.UNMUTE_REPLIES = [
 exports.DM_REPLIES = [
     'Check dm 🐦',
     'Dm 🐦',
+    '𝓓𝓶 👍🏽',
+    'ℙ𝕞 👍🏽',
     'Pm 🐦',
-    'Check your Pms 🐦',
+    '𝑪𝒉𝒆𝒄𝒌 𝑷𝑴𝒔 🐦',
+    'In your PMs 🐦',
     'Sliding in your dm 👍🏽',
     'Acknowledged 👍🏽 ',
     'Gotcha 🐦',
@@ -285,6 +285,8 @@ exports.DM_REPLIES = [
     '🤖✅',
     '👀✅',
     '👍🏽',
+    '🙃👍🏽',
+    '👽✅'
 ]
 
 /**
@@ -402,17 +404,17 @@ exports.WAIT_REPLIES = [
  * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.
  */
 exports.FOOTNOTES = new Map([
-    ["", 80], // send "nothing" more often, to avoid annoying users with multiple tips
-    ["Hope you are having a great day 🥳", 0.25],
-    ["Have a great day fam 🤍", 0.25],
+    ["", 75], // send "nothing" more often, to avoid annoying users with multiple tips
+    ["Hope you are having a great day 🥳", 0.5],
+    ["Have a great day fam 🤍", 0.5],
     ["Have a wonderful day 👍🏽", 0.5],
-    [`Good ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')}`, 1.25],
-    ["Don't forget to DO MORE 👍🏽", 0.25],
+    [`Good ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')}`, 2],
+    ["Don't forget to DO MORE 👍🏽", 0.5],
     ["Keep on keeping on👍🏽", 0.5],
-    ["Checkout the *!help* command to see other commands you can use", 3],
-    ["Use *!commands* to see all the commands available to you in a list style", 3],
-    ["Did you know you could ping me in a group to see all the commands? 😮", 3],
-    ["Use *!notify* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 2],
+    ["Checkout the *!help* command to see other commands you can use", 4],
+    ["Use *!commands* to see all the commands available to you in a list style", 4],
+    ["Did you know you could ping me in a group to see all the commands? 😮", 3.5],
+    ["Use *!notify* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 3],
     ["Glad I could be of help 😁", 2],
     ["I hope this was helpful🙂", 2],
     ["Happy to help ☺", 2],
