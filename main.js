@@ -56,20 +56,30 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 
 // Bot initialization
 client.on('ready', async () => {
-    console.log('Client is ready!\n');
+    console.log('Client is ready!');
     BOT_START_TIME = new Date();
     await startNotificationCalculation(client);
-    //     const chats = await client.getChats();
-    //     console.log(chats[0]);
+
+    const chats = await client.getChats();
+    const grandmaster_chat = chats.find(chat => chat.id.user === GRANDMASTER);
+    const hours_23 = 82800000; // 23 hours in milliseconds
+    setTimeout(async () => {
+        await grandmaster_chat.sendMessage("Reminder to restart the bot after 23 hours!");
+    }, hours_23);
+    console.log("Preparing to send bot restart reminder in 23 hours\n");
 });
+
+
+// Execute some logic whenever a message event fires
+client.on('message', async () => {
+    // Attempting to improve performance by letting the bot sleep for half a second...
+    // this needs to be placed only once as all message events will eventually execute this.
+    await new Promise(resolve => setTimeout(resolve, 500));
+})
 
 
 // Ping bot
 client.on('message', async (msg) => {
-    // Attempting to improve performance by letting the bot sleep for half a second...
-    // this needs to be placed only once as all message events will eventually execute this.
-    await new Promise(resolve => setTimeout(resolve, 500));
-
     if (extractCommand(msg) === (current_prefix + 'ping') && await getMutedStatus() === false) {
         msg.reply('pong 🏓');
         // Ping the user who type the command
