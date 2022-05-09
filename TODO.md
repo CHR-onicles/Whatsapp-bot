@@ -20,13 +20,13 @@ Project Description
 - [ ] ⚠️Refactor extracting course name into function  
 - [ ] ⚠️Refactor repeated variable setters to global variables  
 - [ ] ⚠️Refactor code which extracts time from the courses object  
+- [ ] ⚠️Implement command to stop notifications for a particular course. => !notify allow <course> || !notify stop <course>  
 
 ### In Progress
 
+- [ ] ⚠️ Add logic to strike through exams when they are done  
 - [ ] ⚠️ Prevent production-version list_responses from leaking into DEV-version of bot possibly with different sets of list IDs  
-- [ ] ⭐Use custom fonts for footers of bot replies  
-- [ ] ⚠️Implement command to stop notifications for a particular course. => !notify allow <course> || !notify stop <course>  
-- [ ] 👍Checkout other symbols as replacements for emojis  
+- [ ] ⭐ Use custom fonts for footers of bot replies  
 - [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward; and !forward stop to stop forwarding messages  
 
 ### Done ✓

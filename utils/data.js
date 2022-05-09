@@ -404,17 +404,19 @@ exports.WAIT_REPLIES = [
  * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.
  */
 exports.FOOTNOTES = new Map([
-    ["", 75], // send "nothing" more often, to avoid annoying users with multiple tips
-    ["Hope you are having a great day 🥳", 0.5],
-    ["Have a great day fam 🤍", 0.5],
-    ["Have a wonderful day 👍🏽", 0.5],
-    [`Good ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')}`, 2],
+    ["", 70], // send "nothing" more often, to avoid annoying users with multiple tips
+    ["Hope you are having a great day 🥳", 1],
+    ["Have a great day fam 🤍", 1],
+    ["Have a wonderful day 👍🏽", 1],
+    [`Good ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')}`, 3],
     ["Don't forget to DO MORE 👍🏽", 0.5],
     ["Keep on keeping on👍🏽", 0.5],
+    ["Have you tried !𝒉𝒆𝒍𝒑 ?", 3],
+    ["Checked out !𝕔𝕠𝕞𝕞𝕒𝕟𝕕𝕤 ?", 2],
     ["Checkout the *!help* command to see other commands you can use", 4],
     ["Use *!commands* to see all the commands available to you in a list style", 4],
-    ["Did you know you could ping me in a group to see all the commands? 😮", 3.5],
-    ["Use *!notify* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 3],
+    ["Did you know you could ping me in a group to see all the commands? 😮", 4],
+    // ["Use *!notify* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 3],
     ["Glad I could be of help 😁", 2],
     ["I hope this was helpful🙂", 2],
     ["Happy to help ☺", 2],

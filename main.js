@@ -60,13 +60,16 @@ client.on('ready', async () => {
     BOT_START_TIME = new Date();
     await startNotificationCalculation(client);
 
-    const chats = await client.getChats();
-    const grandmaster_chat = chats.find(chat => chat.id.user === GRANDMASTER);
-    const hours_23 = 82800000; // 23 hours in milliseconds
-    setTimeout(async () => {
-        await grandmaster_chat.sendMessage("Reminder to restart the bot after 23 hours!");
-    }, hours_23);
-    console.log("Preparing to send bot restart reminder in 23 hours\n");
+
+    if (current_env === 'production') {
+        const chats = await client.getChats();
+        const grandmaster_chat = chats.find(chat => chat.id.user === GRANDMASTER);
+        const hours_23 = 82800000; // 23 hours in milliseconds
+        setTimeout(async () => {
+            await grandmaster_chat.sendMessage("Reminder to restart the bot after 23 hours!");
+        }, hours_23);
+        console.log("Preparing to send bot restart reminder in 23 hours\n");
+    }
 });
 
 
@@ -105,10 +108,15 @@ client.on('message', async (msg) => {
             const mentions = [];
 
             if (chat.participants) {
-                for (let participant of chat.participants) {
-                    const contact = await client.getContactById(participant.id._serialized);
-                    mentions.push(contact);
+                for (const participant of chat.participants) {
+                    const new_contact = await client.getContactById(participant.id._serialized);
+                    if (new_contact.id.user.includes(contact.id.user) || new_contact.id.user.includes(BOT_NUMBER)) continue;
+                    mentions.push(new_contact);
                     text += `@${participant.id.user} `;
+                }
+                if (!mentions.length) {
+                    await msg.reply("No other person to ping apart from you and me :(");
+                    return;
                 }
                 if (msg.hasQuotedMsg) {
                     quoted_msg = await msg.getQuotedMessage();
@@ -165,8 +173,8 @@ client.on('message', async (msg) => {
 
         let startID = 100; // dynamic ID to be used for whatsapp list later
         const temp_rows = [];
-        for (let i = 0; i < HELP_COMMANDS.length; ++i) {
-            const { availableTo, command, desc } = HELP_COMMANDS[i];
+        for (const com of HELP_COMMANDS) {
+            const { availableTo, command, desc } = com;
             ++startID;
             if (!isAdmin && availableTo === 'e') {
                 temp_rows.push({ id: startID.toString(), title: command, description: desc });
@@ -414,9 +422,9 @@ client.on('message', async (msg) => {
         const forwardToUsers = await getForwardToUsers();
         const target_chats = [];
 
-        for (let i = 0; i < chats.length; ++i) {
-            for (let j = 0; j < forwardToUsers.length; ++j) {
-                if (chats[i].id.user === forwardToUsers[j]) target_chats.push(chats[i]);
+        for (const chat of chats) {
+            for (const ftu of forwardToUsers) {
+                if (chat.id.user === ftu) target_chats.push(chat);
             }
         }
         return { current_chat, forwardToUsers, target_chats };
@@ -462,8 +470,8 @@ client.on('message', async (msg) => {
         const links = msg.links;
         // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol" and "hey.me" 
         // and insecure links from leaking through
-        for (let i = 0; i < links.length; ++i) {
-            if (!links[i].link.includes('https')) return;
+        for (const single_link of links) {
+            if (!single_link.link.includes('https')) return;
         }
         // console.log(links);
         let current_forwarded_links = await getAllLinks();
@@ -472,18 +480,18 @@ client.on('message', async (msg) => {
         const blacklisted_stuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
 
         // Checking if whatsapp has flagged the link as suspicious
-        for (let i = 0; i < links.length; ++i) {
-            if (links[i].isSuspicious) {
-                console.log("Whatsapp flags this link as suspicious:", links[i].link);
+        for (const single_link of links) {
+            if (single_link.isSuspicious) {
+                console.log("Whatsapp flags this link as suspicious:", single_link.link);
                 return;
             }
         }
 
         // Using this style of for-loop for performance and in order to "return" and break from this event 
-        for (let i = 0; i < links.length; ++i) {
-            for (let j = 0; j < blacklisted_stuff.length; ++j) {
-                if (links[i].link.includes(blacklisted_stuff[j])) {
-                    console.log("Link contains a blacklisted item:", blacklisted_stuff[j]);
+        for (const single_link of links) {
+            for (const item of blacklisted_stuff) {
+                if (single_link.link.includes(item)) {
+                    console.log("Link contains a blacklisted item:", item);
                     return;
                 }
             }

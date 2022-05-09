@@ -171,45 +171,45 @@ const startNotificationCalculation = async (client) => {
     });
     // console.log(courses);
 
-    for (let i = 0; i < courses.length; ++i) {
-        const class_time = extractTime(courses[i].name);
+    for (const course of courses) {
+        const class_time = extractTime(course.name);
         const class_time_hrs = +class_time.split(':')[0];
         const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
-        const { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins } = notificationTimeCalc(courses[i]);
+        const { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins } = notificationTimeCalc(course);
 
         const cur_time = new Date();
         const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
         const time_left_in_ms = new_class_time - cur_time;
         if (time_left_in_ms < 0) continue; // if the time for a course is past, skip to next course
 
-        if (courses[i].name.includes('Data Mining')) {
+        if (course.name.includes('Data Mining')) {
             if (dataMining.length) {
                 dataMining.forEach(student => {
-                    generateTimeoutIntervals(student, courses[i], chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
-                    console.log('Student:', student, ' course:', courses[i])
+                    generateTimeoutIntervals(student, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                    console.log('Student:', student, ' course:', course)
                 })
                 console.log('\n');
             }
-        } else if (courses[i].name.includes('Networking')) {
+        } else if (course.name.includes('Networking')) {
             if (networking.length) {
                 networking.forEach(student => {
-                    generateTimeoutIntervals(student, courses[i], chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
-                    console.log('Student:', student, ' course:', courses[i])
+                    generateTimeoutIntervals(student, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                    console.log('Student:', student, ' course:', course)
                 })
                 console.log('\n');
             }
-        } else if (courses[i].name.includes('Soft. Modelling')) {
+        } else if (course.name.includes('Soft. Modelling')) {
             if (softModelling.length) {
                 softModelling.forEach(student => {
-                    generateTimeoutIntervals(student, courses[i], chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
-                    console.log('Student:', student, ' course:', courses[i])
+                    generateTimeoutIntervals(student, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                    console.log('Student:', student, ' course:', course)
                 })
                 console.log('\n');
             }
         } else {
             total_users.forEach(student => {
-                generateTimeoutIntervals(student, courses[i], chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
-                console.log('Student:', student, ' course:', courses[i])
+                generateTimeoutIntervals(student, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                console.log('Student:', student, ' course:', course)
             })
             console.log('\n');
         }
@@ -373,14 +373,14 @@ const sendSlides = async (msg, courseCode) => {
     const materials = await getResource(courseCode);
     if (materials.length) console.log("Got slides")
     else console.log("No slides received from DB");
-    for (let i = 0; i < materials.length; ++i) { // using this for-loop style for  performance
-        const cur_material = materials[i];
+    for (const material of materials) {
+        const cur_material = material;
         const file_extension = cur_material.title.split(".")[cur_material.title.split(".").length - 1]; // always extract the last "." and what comes after
         const { mime_type } = MIME_TYPES.find(obj => obj.fileExtension === file_extension);
         const slide = new MessageMedia(mime_type, cur_material.binData, cur_material.title);
         await msg.reply(slide);
         console.log("Sent a slide")
-        if (i === materials.length - 1) isDone = true;
+        if (material === materials[materials.length - 1]) isDone = true;
     }
     if (isDone) await msg.reply("Done 👍🏽");
     console.log("Done sending slides")
