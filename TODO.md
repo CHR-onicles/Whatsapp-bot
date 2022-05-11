@@ -6,13 +6,13 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐❔ Add feature where bot automatically deletes some admin command replies after carrying them out...like promotion or demotion (depends on the outcome of testing text ephemeral messages perhaps)  
 - [ ] ⭐❔ Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
 - [ ] ⭐❔ Get bot overall status and/or diagnostics with !status command  
 - [ ] ⭐❔ Create a list of the class whatsapp groups that can be gotten by !groups or something  
 - [ ] ⭐❔ Add aliases for long commands, especially those that require other arguments  
 - [ ] ⭐❔ Add command for last link/announcement sent => !last link || !last ann  
 - [ ] ⭐❔ Add feature where bot performs basic operations like addition, subtraction, multiplication and division for now... chaining should come later  
-- [ ] ⭐❔ Tell users something when they text "Hi" to the bot in dms? Maybe give them a list of the bot's commands.  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  
 - [ ] ⭐❔ Add feature where bot sends logs to my dm....basically all important console logs in the codebase  
 - [ ] ⭐❔ Implement state where in development environment, development bot responds to only you, and does not perform certain functionalities that production bot would perform... like sending notifications  
@@ -24,8 +24,9 @@ Project Description
 
 ### In Progress
 
-- [ ] ⚠️ Add logic to strike through exams when they are done  
-- [ ] ⚠️ Prevent production-version list_responses from leaking into DEV-version of bot possibly with different sets of list IDs  
+- [ ] Test sending ephemeral text messages  
+- [ ] Run yarn install to upgrade packages  
+- [ ] 🐞 Bug in uptime where if hours > 0 and mins are 0 it doesn't add "mins"  
 - [ ] ⭐ Use custom fonts for footers of bot replies  
 - [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward; and !forward stop to stop forwarding messages  
 

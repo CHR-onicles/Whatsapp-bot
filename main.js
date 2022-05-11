@@ -739,8 +739,11 @@ client.on('message', async (msg) => {
                 await msg.reply(pickRandomReply(PROMOTE_BOT_REPLIES));
                 return;
             } else if (found_user.id.user === GRANDMASTER) {
-                await msg.reply(pickRandomReply(PROMOTE_GRANDMASTER_REPLIES));
-                return;
+                const isGMAdmin = await isUserBotAdmin(found_user);
+                if (isGMAdmin) {
+                    await msg.reply(pickRandomReply(PROMOTE_GRANDMASTER_REPLIES));
+                    return;
+                }
             }
             const is_found_user_bot_admin = await isUserBotAdmin(found_user);
             if (is_found_user_bot_admin) {
