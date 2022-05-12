@@ -460,12 +460,12 @@ client.on('message', async (msg) => {
     //* For links
     else if (msg.links.length) {
         const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
-        forwardToUsers.forEach(user => {
+        for (const user of forwardToUsers) {
             if (current_chat.id.user === user) {
                 console.log("Link from forwardedUsers, so do nothing")
                 return;
             }
-        });
+        }
 
         const links = msg.links;
         // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol" and "hey.me" 

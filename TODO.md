@@ -25,7 +25,6 @@ Project Description
 ### In Progress
 
 - [ ] Test sending ephemeral text messages  
-- [ ] Run yarn install to upgrade packages  
 - [ ] 🐞 Bug in uptime where if hours > 0 and mins are 0 it doesn't add "mins"  
 - [ ] ⭐ Use custom fonts for footers of bot replies  
 - [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward; and !forward stop to stop forwarding messages  
