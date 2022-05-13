@@ -280,7 +280,6 @@ exports.DM_REPLIES = [
     'Got you👍🏽',
     'Say no more...dm🐦',
     'DM-ing you now 👍🏽',
-    'Checked your DMs yet?🐦',
     '✅',
     '🤖✅',
     '👀✅',

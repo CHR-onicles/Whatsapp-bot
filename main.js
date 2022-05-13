@@ -557,7 +557,7 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === current_prefix + 'uptime' && await getMutedStatus() === false) {
         const current_time = new Date();
         const { days, hours, minutes, seconds } = msToDHMS(current_time - BOT_START_TIME);
-        await msg.reply(`🟢 *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : 0}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`);
+        await msg.reply(`🟢 *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : '0mins'}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`);
     }
 })
 
