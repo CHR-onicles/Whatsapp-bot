@@ -883,8 +883,15 @@ client.on('message', async (msg) => {
 
         if (cur_chat.isGroup) msg.reply(pickRandomReply(DM_REPLIES));
 
-        EXAM_TIMETABLE.forEach(({ date, time, courseCode, courseTitle, examMode }) => {
-            text += (examMode.toLowerCase().includes('physical') ? "📝" : "🖥") + "\n*Date:* " + date + "\n*Time:* " + time + "\n*Course code:* " + courseCode + "\n*Course title:* " + courseTitle + "\n*Exam mode:* " + examMode + "\n\n";
+        EXAM_TIMETABLE.forEach(({ _date, date, time, courseCode, courseTitle, examMode }, index) => {
+            const is_passed = new Date() - _date > 0 ? true : false; // Check if the exam has already been written
+            text += (examMode.toLowerCase().includes('physical') ? "📝" : "🖥") +
+                `\n${is_passed ? '~' : ''}*Date:* ` + date + `${is_passed ? '~' : ''}` +
+                `\n${is_passed ? '~' : ''}*Time:* ` + time + `${is_passed ? '~' : ''}` +
+                `\n${is_passed ? '~' : ''}*Course code:* ` + courseCode + `${is_passed ? '~' : ''}` +
+                `\n${is_passed ? '~' : ''}*Course title:* ` + courseTitle + `${is_passed ? '~' : ''}` +
+                `\n${is_passed ? '~' : ''}*Exam mode:* ` + examMode + `${is_passed ? '~' : ''}` +
+                `${index === EXAM_TIMETABLE.length - 1 ? '' : '\n\n'}`;
         });
 
         await chat_from_contact.sendMessage(text);
