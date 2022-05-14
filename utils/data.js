@@ -64,7 +64,7 @@ exports.ALL_CLASSES = [
 exports.EXAM_TIMETABLE = [
     {
         date: "Saturday, May 14 2022",
-        time: "11:30am",
+        time: "1:20pm",
         courseCode: "CSCD 421",
         courseTitle: "Accounting",
         examMode: "Onsite/Online"
@@ -279,7 +279,6 @@ exports.DM_REPLIES = [
     'Gotcha 🐦',
     'Got you👍🏽',
     'Say no more...dm🐦',
-    'DM-ing you now 👍🏽',
     '✅',
     '🤖✅',
     '👀✅',
@@ -351,7 +350,6 @@ exports.PROMOTE_GRANDMASTER_REPLIES = [
     "You are not worthy to promote the Grandmaster🐦",
     "Only the worthy can do this🐦",
     "I'll think about it🐦",
-    "😮",
     "❌",
     "You can't promote the Grandmaster.",
     "Lol okay",
