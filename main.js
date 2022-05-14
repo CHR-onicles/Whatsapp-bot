@@ -60,7 +60,6 @@ client.on('ready', async () => {
     BOT_START_TIME = new Date();
     await startNotificationCalculation(client);
 
-
     if (current_env === 'production') {
         const chats = await client.getChats();
         const grandmaster_chat = chats.find(chat => chat.id.user === GRANDMASTER);
@@ -84,7 +83,8 @@ client.on('message', async () => {
 // Ping bot
 client.on('message', async (msg) => {
     if (extractCommand(msg) === (current_prefix + 'ping') && await getMutedStatus() === false) {
-        msg.reply('pong 🏓');
+        await msg.reply('pong 🏓');
+
         // Ping the user who type the command
         // const c = await msg.getContact();
         // const mentions = [c];
