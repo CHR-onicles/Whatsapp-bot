@@ -133,6 +133,3 @@ This project would be an interesting one to clone and run as it's heavily person
 - [TODO.md Kanban Taskboard](https://marketplace.visualstudio.com/items?itemName=coddx.coddx-alpha) to see my TODO list in a more elegant form.
 
 Feel free to hit me up if you do have interest in it 👋🏽
-
-PS:
-As much this project was fun to build and has proven veryyy useful, I don't think it can stand the test of time for variousss technical reasons(eg: _Heroku automatically restarting dynos every 24hours, meaning after 24 hours I would have to rescan my QR code if I don't forget_, _checking up on cron-jobs to make sure they are still running_ etc) and to that extent, I would have to stop maintaining it soon.

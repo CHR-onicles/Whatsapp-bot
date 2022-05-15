@@ -12,7 +12,6 @@ Project Description
 - [ ] ⭐❔ Create a list of the class whatsapp groups that can be gotten by !groups or something  
 - [ ] ⭐❔ Add aliases for long commands, especially those that require other arguments  
 - [ ] ⭐❔ Add command for last link/announcement sent => !last link || !last ann  
-- [ ] ⭐❔ Add feature where bot performs basic operations like addition, subtraction, multiplication and division for now... chaining should come later  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  
 - [ ] ⭐❔ Add feature where bot sends logs to my dm....basically all important console logs in the codebase  
 - [ ] ⭐❔ Implement state where in development environment, development bot responds to only you, and does not perform certain functionalities that production bot would perform... like sending notifications  
