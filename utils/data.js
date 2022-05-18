@@ -297,8 +297,8 @@ exports.DM_REPLIES = [
  * Array containing replies for users who try to perform administrative functions on the bot.
  */
 exports.NOT_ADMIN_REPLIES = [
-    "Lel nope🐦, you are not a *bot admin* unfortunately.",
-    "No can do🐦, you don't have sufficient privileges.",
+    "No please 🐦, you are not a *bot admin* unfortunately.",
+    "No can do 🐦, you don't have sufficient privileges.",
     "You are not a *bot admin*",
     "Task successfully failed ❎, command reserved for *bot admins*.",
     "Nope🐦, you don't have the required permissions.",
@@ -359,7 +359,6 @@ exports.PROMOTE_GRANDMASTER_REPLIES = [
     "❌",
     "You can't promote the Grandmaster.",
     "Lol okay",
-    "Okayyy?",
     "How much more power do you want the Grandmaster to have?"
 ]
 
@@ -372,7 +371,6 @@ exports.DEMOTE_GRANDMASTER_REPLIES = [
     "❌",
     "🙄",
     "🤦🏽‍♂️",
-    "💔",
     "Think it through first 👍🏽",
     "We don't do that here 🙄",
     "I'll think about it🐦",
@@ -385,20 +383,37 @@ exports.DEMOTE_GRANDMASTER_REPLIES = [
     "You can't demote the Grandmaster.",
     "wHy, just WhY",
     "This was foreseen, and you will be banned soon.",
-    "Okay and have a great day 👍🏽",
     "Ignored, have a great day 👍🏽"
 ]
 
+/**
+ * Array containing replies to commands that require the bot to perform actions that may take long.
+ */
 exports.WAIT_REPLIES = [
     "Gimme a sec🐦",
     "Just a second",
     "One sec🐦",
     "Loading, please wait ⏳",
     "Hold on",
+    "Hang on",
     "Loading ⏳",
-    "Gimme a minute, or two 🐦",
+    "Gimme a minute 🐦",
+    "Uno momento 🐦",
     "Please wait, I'll tell you when I'm done 👍🏽",
-    "Processing some binary data ⏳, please wait"
+    "Processing some binary data ⏳, please wait",
+]
+
+/**
+ * Array containing replies to `!slides` command.
+ */
+exports.COURSE_MATERIALS_REPLIES = [
+    "Need some slides?",
+    "Oh you need slides? 🐦",
+    "Need any course materials?",
+    "What materials can I help you with?",
+    "Looking for course materials?",
+    "Your search for slides ends here 🐦",
+    "Your wish is my command 🐦",
 ]
 
 /**
