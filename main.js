@@ -63,10 +63,10 @@ client.on('ready', async () => {
     if (current_env === 'production') {
         const chats = await client.getChats();
         const grandmaster_chat = chats.find(chat => chat.id.user === GRANDMASTER);
-        const hours_23 = 82800000; // 23 hours in milliseconds
+        const _23_hours_in_ms = 82_800_000; // using numeric separator for readability
         setTimeout(async () => {
             await grandmaster_chat.sendMessage("Reminder to restart the bot after 23 hours!");
-        }, hours_23);
+        }, _23_hours_in_ms);
         console.log("Preparing to send bot restart reminder in 23 hours\n");
     }
 });
@@ -434,12 +434,14 @@ client.on('message', async (msg) => {
     if ((msg.body.includes('❗') || msg.body.includes('‼')) && msg.body.length > 1) {
         const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
         let quoted_msg = null;
-        forwardToUsers.forEach(user => {
+
+        // Dont forward announcements from chats which receive forwarded announcements
+        for (const user of forwardToUsers) {
             if (current_chat.id.user === user) {
-                console.log("Announcement from forwardedUsers, so do nothing");
+                console.log("Announcement from forwardedUsers, so do nothing")
                 return;
             }
-        });
+        }
         const current_forwarded_announcements = await getAllAnnouncements();
         // console.log('Recognized an announcement');
 
@@ -460,6 +462,8 @@ client.on('message', async (msg) => {
     //* For links
     else if (msg.links.length) {
         const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
+
+        // Dont forward links from chats which receive forwarded links
         for (const user of forwardToUsers) {
             if (current_chat.id.user === user) {
                 console.log("Link from forwardedUsers, so do nothing")
