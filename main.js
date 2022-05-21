@@ -7,7 +7,7 @@ const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 require('./utils/db');
-const { current_env, current_prefix, pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage } = require('./utils/helpers');
+const { current_env, current_prefix, pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, MUTE_REPLIES, UNMUTE_REPLIES, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, EXAM_TIMETABLE, WAIT_REPLIES, SOURCE_CODE, FOOTNOTES, COURSE_MATERIALS_REPLIES } = require('./utils/data');
 const { muteBot, unmuteBot, getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addSuperAdmin, removeSuperAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications, getForwardToUsers, getAllSuperAdmins } = require('./models/misc');
 
@@ -432,6 +432,14 @@ client.on('message', async (msg) => {
 
     //* For Announcements
     if ((msg.body.includes('❗') || msg.body.includes('‼')) && msg.body.length > 1) {
+        // If length of message is less than 20 characters and all the characters
+        // are the same(announcement emojis), don't forward the announcement. To prevent forwarding just announcement emojis
+        //? Can't fetch messages in order properly so I won't attempt to check for the message 
+        //? just  before this one since it most likely will be the announcement
+        if (msg.body.length < 20) {
+            if (areAllItemsEqual([...msg.body])) return;
+        }
+
         const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
         let quoted_msg = null;
 

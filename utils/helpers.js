@@ -421,5 +421,12 @@ const pickRandomWeightedMessage = (map) => {
     }
 }
 
+/**
+ * Checks whether all elements in an array are the same.
+ * @param {Array} arr Array containing some elements
+ * @returns True if all elements are equal, false otherwise
+ */
+const areAllItemsEqual = arr => arr.every(item => item === arr[0]);
 
-module.exports = { current_env, current_prefix, pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage }
+
+module.exports = { current_env, current_prefix, pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual }
