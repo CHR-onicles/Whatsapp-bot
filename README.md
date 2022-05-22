@@ -81,7 +81,7 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 | `!env` | Check the _environment_ the bot is running in _(Production/Development)_ | admin |
 | `!everyone` | Ping everyone in a group | admin |
 | `!exams` | Get the current exams timetable | - |
-| `!gl` | Get the current group's invite link | - |
+| `!grouplink` \| `!gl` | Get the current group's invite link | - |
 | `!help` | Get commands available to a user per their role | - |
 | `!mute` | Mute the bot | admin |
 | `!unmute` \| `!speak` | Unmute the bot | admin |

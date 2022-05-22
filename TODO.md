@@ -10,7 +10,6 @@ Project Description
 - [ ] ⭐❔ Add feature where bot automatically deletes some admin command replies after carrying them out...like promotion or demotion  
 - [ ] ⭐❔ Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
 - [ ] ⭐❔ Get bot's overall status and/or diagnostics with !status command  
-- [ ] ⭐❔ Create a list of the class whatsapp groups that can be gotten by !groups or something  
 - [ ] ⭐❔ Add aliases for long commands, especially those that require other arguments  
 - [ ] ⭐❔ Add command for last link/announcement sent => !last link || !last ann  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  
@@ -24,6 +23,7 @@ Project Description
 
 ### In Progress
 
+- [ ] ⚠️ Specify the range of numbers used for all the list_responses at the top of main.js  
 - [ ] ⭐ Use custom fonts for footers of bot replies  
 - [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward; and !forward stop to stop forwarding messages  
 

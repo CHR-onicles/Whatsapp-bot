@@ -972,7 +972,8 @@ client.on('message', async (msg) => {
 
 // Get group link
 client.on('message', async (msg) => {
-    if (extractCommand(msg) === current_prefix + 'gl' && await getMutedStatus() === false) {
+    if (extractCommand(msg) === current_prefix + 'gl' || extractCommand(msg) === current_prefix + 'grouplink' &&
+        await getMutedStatus() === false) {
         const group_chat = await msg.getChat();
         // console.log(group_chat.participants);
 

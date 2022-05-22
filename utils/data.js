@@ -223,8 +223,8 @@ exports.HELP_COMMANDS = [
     },
     {
         availableTo: 'e',
-        command: `${current_prefix}gl`,
-        desc: "Get current whatsapp group link 📱 "
+        command: `${current_prefix}grouplink`,
+        desc: "Get current group link 📱 "
     },
     {
         availableTo: 'e',
