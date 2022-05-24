@@ -6,6 +6,8 @@ Project Description
 
 ### Todo
 
+- [ ] 👍🏽 Re-record demo vid showing moderator view and normal view  
+- [ ] ⚠️ Prevent people from calling the bot with whatsapp call  
 - [ ] ⚠️ Replace "bot admin" with "bot mod" or "mod" to prevent conflict with "whatsapp admin" ... New level of hierarchy should be everyone -> mod -> Super mod -> Grandmaster  
 - [ ] ⭐❔ Reply to incorrect commands in dms? Basically any word starting with "!" but doesn't execute any actual command  
 - [ ] ⭐❔ Add feature where bot automatically deletes some admin command replies after carrying them out...like promotion or demotion  

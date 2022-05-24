@@ -103,9 +103,8 @@ client.on('message', async (msg) => {
     if (extractCommand(msg) === (current_prefix + 'status') && await getMutedStatus() === false) {
         const all_chats = await client.getChats();
         const { group_chats, private_chats } = all_chats.reduce((chats, chat) => {
-            if (chat.isGroup) {
-                chats.group_chats += 1;
-            } else chats.private_chats += 1;
+            if (chat.isGroup) chats.group_chats += 1
+            else chats.private_chats += 1;
             return chats;
         }, { group_chats: 0, private_chats: 0 })
         const current_time = new Date();
