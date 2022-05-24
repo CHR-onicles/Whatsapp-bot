@@ -122,9 +122,9 @@ exports.HELP_COMMANDS = [
         desc: "Check if I'm available 🙋🏽‍♂️"
     },
     {
-        availableTo: 'e',
-        command: `${current_prefix}uptime`,
-        desc: "See how long I've been awake 🟢"
+        // availableTo: 'e',
+        // command: `${current_prefix}uptime`,
+        // desc: "See how long I've been awake 🟢"
     },
     {
         availableTo: 'e',

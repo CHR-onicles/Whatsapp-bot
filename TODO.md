@@ -6,10 +6,10 @@ Project Description
 
 ### Todo
 
+- [ ] ⚠️ Replace "bot admin" with "bot mod" or "mod" to prevent conflict with "whatsapp admin" ... New level of hierarchy should be everyone -> mod -> Super mod -> Grandmaster  
 - [ ] ⭐❔ Reply to incorrect commands in dms? Basically any word starting with "!" but doesn't execute any actual command  
 - [ ] ⭐❔ Add feature where bot automatically deletes some admin command replies after carrying them out...like promotion or demotion  
 - [ ] ⭐❔ Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
-- [ ] ⭐❔ Get bot's overall status and/or diagnostics with !status command  
 - [ ] ⭐❔ Add aliases for long commands, especially those that require other arguments  
 - [ ] ⭐❔ Add command for last link/announcement sent => !last link || !last ann  
 - [ ] ⭐❔ Add feature where in DEV environment, all dm-related and forwarding-related functionalities point to my DMs in order not to disturb other peeps and groups.  

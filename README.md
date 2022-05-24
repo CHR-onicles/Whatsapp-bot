@@ -93,8 +93,8 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 | `!ping` | Check if bot is active | - |
 | `!sc` | Get the bot's source code | - |
 | `!slides` | Get all courses materials (slides, books etc.) | - |
+| `!status` | Get the bot's diagnostics | admin |
 | `!subs` | Get all users who have subscribed to be notified for class | admin |
-| `!uptime` | Check how long bot has been active | - |
 
 <br>
 
