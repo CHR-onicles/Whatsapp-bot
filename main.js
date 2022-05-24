@@ -5,6 +5,7 @@ const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 require('dotenv').config();
+const { totalmem } = require('os');
 
 require('./utils/db');
 const { current_env, current_prefix, pickRandomReply, msToDHMS, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual } = require('./utils/helpers');
@@ -84,6 +85,11 @@ client.on('message', async () => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === (current_prefix + 'ping') && await getMutedStatus() === false) {
         await msg.reply('pong 🏓');
+        // const chats = await client.getChats();
+        // console.log(chats[0], chats[0].isGroup);
+
+        await msg.reply();
+
 
         // Ping the user who type the command
         // const c = await msg.getContact();
@@ -91,6 +97,28 @@ client.on('message', async (msg) => {
         // msg.reply('@' + c.id.user, '', {mentions})
     }
 });
+
+// Check bot's overall status
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === (current_prefix + 'status') && await getMutedStatus() === false) {
+        const all_chats = await client.getChats();
+        const { group_chats, private_chats } = all_chats.reduce((chats, chat) => {
+            if (chat.isGroup) chats.group_chats += 1
+            else chats.private_chats += 1;
+            return chats;
+        }, { group_chats: 0, private_chats: 0 })
+        const current_time = new Date();
+        const { days, hours, minutes, seconds } = msToDHMS(current_time - BOT_START_TIME);
+        const uptime_text = `[🔰] *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : '0mins'}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`;
+        const ram_usage_text = `[🔰] *Ram:* ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB / ${Math.round(totalmem / 1024 / 1024)} MB`;
+        const total_chats_text = `[🔰] *Total chats:* ${all_chats.length}`;
+        const group_chats_text = `[🔰] *Group chats:* ${group_chats}`;
+        const private_chats_text = `[🔰] *Private chats:* ${private_chats}`;
+
+        await msg.reply('▄▀▄▀  𝔹𝕆𝕋 𝕊𝕋𝔸𝕋𝕌𝕊  ▀▄▀▄\n\n' + uptime_text + '\n' + ram_usage_text + '\n' +
+            total_chats_text + '\n' + group_chats_text + '\n' + private_chats_text);
+    }
+})
 
 
 // Mention everyone
@@ -562,16 +590,6 @@ client.on('message', async (msg) => {
 //     }
 // })
 /**/
-
-
-// Check bot uptime
-client.on('message', async (msg) => {
-    if (extractCommand(msg) === current_prefix + 'uptime' && await getMutedStatus() === false) {
-        const current_time = new Date();
-        const { days, hours, minutes, seconds } = msToDHMS(current_time - BOT_START_TIME);
-        await msg.reply(`🟢 *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : '0mins'}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`);
-    }
-})
 
 
 //Add user to notification list for class
