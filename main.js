@@ -87,10 +87,6 @@ client.on('message', async (msg) => {
         await msg.reply('pong 🏓');
         // const chats = await client.getChats();
         // console.log(chats[0], chats[0].isGroup);
-
-        await msg.reply();
-
-
         // Ping the user who type the command
         // const c = await msg.getContact();
         // const mentions = [c];
@@ -102,11 +98,13 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (extractCommand(msg) === (current_prefix + 'status') && await getMutedStatus() === false) {
         const all_chats = await client.getChats();
+        const blocked_chats = await client.getBlockedContacts();
         const { group_chats, private_chats } = all_chats.reduce((chats, chat) => {
-            if (chat.isGroup) chats.group_chats += 1
+            if (chat.isGroup) chats.group_chats += 1;
             else chats.private_chats += 1;
             return chats;
-        }, { group_chats: 0, private_chats: 0 })
+        }, { group_chats: 0, private_chats: 0 });
+
         const current_time = new Date();
         const { days, hours, minutes, seconds } = msToDHMS(current_time - BOT_START_TIME);
         const uptime_text = `[🔰] *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : '0mins'}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`;
@@ -114,9 +112,10 @@ client.on('message', async (msg) => {
         const total_chats_text = `[🔰] *Total chats:* ${all_chats.length}`;
         const group_chats_text = `[🔰] *Group chats:* ${group_chats}`;
         const private_chats_text = `[🔰] *Private chats:* ${private_chats}`;
+        const blocked_chats_text = `[🔰] *Blocked chats:* ${blocked_chats.length}`;
 
         await msg.reply('▄▀▄▀  𝔹𝕆𝕋 𝕊𝕋𝔸𝕋𝕌𝕊  ▀▄▀▄\n\n' + uptime_text + '\n' + ram_usage_text + '\n' +
-            total_chats_text + '\n' + group_chats_text + '\n' + private_chats_text);
+            total_chats_text + '\n' + group_chats_text + '\n' + private_chats_text + '\n' + blocked_chats_text);
     }
 })
 
