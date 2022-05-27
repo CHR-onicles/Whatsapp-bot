@@ -6,7 +6,9 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐❔ Log response time after any command is run in order to give average response time for diagnostics  
 - [ ] 👍🏽 Re-record demo vid showing moderator view and normal view  
+- [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward; and !forward stop to stop forwarding messages  
 - [ ] ⚠️ Prevent people from calling the bot with whatsapp call  
 - [ ] ⚠️ Replace "bot admin" with "bot mod" or "mod" to prevent conflict with "whatsapp admin" ... New level of hierarchy should be everyone -> mod -> Super mod -> Grandmaster  
 - [ ] ⭐❔ Reply to incorrect commands in dms? Basically any word starting with "!" but doesn't execute any actual command  
@@ -26,8 +28,6 @@ Project Description
 ### In Progress
 
 - [ ] ⚠️ Specify the range of numbers used for all the list_responses at the top of main.js  
-- [ ] ⭐ Use custom fonts for footers of bot replies  
-- [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward; and !forward stop to stop forwarding messages  
 
 ### Done ✓
 

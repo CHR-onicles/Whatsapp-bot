@@ -84,7 +84,10 @@ client.on('message', async () => {
 // Ping bot
 client.on('message', async (msg) => {
     if (extractCommand(msg) === (current_prefix + 'ping') && await getMutedStatus() === false) {
-        await msg.reply('pong 🏓');
+        const msg_timestamp = new Date(msg.timestamp * 1000);
+        const actual_ping = msg_timestamp - new Date();
+        console.log(actual_ping)
+        await msg.reply(`Responds in _${actual_ping}ms_`);
         // const chats = await client.getChats();
         // console.log(chats[0], chats[0].isGroup);
         // Ping the user who type the command
@@ -107,15 +110,19 @@ client.on('message', async (msg) => {
 
         const current_time = new Date();
         const { days, hours, minutes, seconds } = msToDHMS(current_time - BOT_START_TIME);
-        const uptime_text = `[🔰] *Uptime:* ${days ? days : ''}${days ? (days === 1 ? 'day' : 'days') : ''} ${hours ? hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''} ${minutes ? minutes : '0mins'}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`;
+        const platform_text = `[🔰] *Platform:* ${process.platform}`;
+        const response_time_text = `[🔰] *Response time:* ${new Date(msg.timestamp * 1000) - new Date()}ms`;
+        const uptime_text = `[🔰] *Uptime:*${days ? ' ' + days : ''}${days ? (days === 1 ? 'day' : 'days') : ''}${hours ? ' ' + hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''}${minutes ? ' ' + minutes : ' 0mins'}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`;
         const ram_usage_text = `[🔰] *Ram:* ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB / ${Math.round(totalmem / 1024 / 1024)} MB`;
         const total_chats_text = `[🔰] *Total chats:* ${all_chats.length}`;
         const group_chats_text = `[🔰] *Group chats:* ${group_chats}`;
         const private_chats_text = `[🔰] *Private chats:* ${private_chats}`;
         const blocked_chats_text = `[🔰] *Blocked chats:* ${blocked_chats.length}`;
 
-        await msg.reply('▄▀▄▀  𝔹𝕆𝕋 𝕊𝕋𝔸𝕋𝕌𝕊  ▀▄▀▄\n\n' + uptime_text + '\n' + ram_usage_text + '\n' +
-            total_chats_text + '\n' + group_chats_text + '\n' + private_chats_text + '\n' + blocked_chats_text);
+        await msg.reply('▄▀▄▀  𝔹𝕆𝕋 𝕊𝕋𝔸𝕋𝕌𝕊  ▀▄▀▄\n\n' + platform_text + '\n' + response_time_text + '\n' +
+            uptime_text + '\n' + ram_usage_text + '\n' +
+            total_chats_text + '\n' + group_chats_text + '\n' +
+            private_chats_text + '\n' + blocked_chats_text);
     }
 })
 
