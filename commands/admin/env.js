@@ -1,5 +1,5 @@
 const { getMutedStatus } = require("models/misc");
-const { NOT_ADMIN_REPLIES } = require("utils/data");
+const { NOT_BOT_ADMIN_REPLIES } = require("utils/data");
 const { isUserBotAdmin, current_env, pickRandomReply, current_prefix } = require("utils/helpers");
 
 const execute = async (client, msg) => {
@@ -10,7 +10,7 @@ const execute = async (client, msg) => {
     if (isAdmin) {
         await msg.reply(`Bot is currently running in *${current_env}* environment`)
     } else {
-        await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+        await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
         return;
     }
 }

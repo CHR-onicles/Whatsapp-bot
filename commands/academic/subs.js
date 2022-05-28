@@ -1,5 +1,5 @@
 const { getMutedStatus, getUsersToNotifyForClass } = require("models/misc");
-const { NOT_ADMIN_REPLIES } = require("utils/data");
+const { NOT_BOT_ADMIN_REPLIES } = require("utils/data");
 const { isUserBotAdmin, pickRandomReply, current_prefix } = require("utils/helpers");
 
 const execute = async (client, msg) => {
@@ -12,7 +12,7 @@ const execute = async (client, msg) => {
         await msg.reply('The following users have agreed to be notified for class:\n\n' + '*Data Mining:*\n' + dataMining.map(user => '→ ' + user + '\n').join('') + '\n'
             + '*Networking:*\n' + networking.map(user => '→ ' + user + '\n').join('') + '\n' + '*Software Modelling:*\n' + softModelling.map(user => '→ ' + user + '\n').join(''));
     } else {
-        await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+        await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
         return;
     }
 }

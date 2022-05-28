@@ -3,7 +3,7 @@
 // --------------------------------------------------
 const WAWebJS = require("whatsapp-web.js");
 const { MessageMedia } = require("whatsapp-web.js");
-const { getUsersToNotifyForClass, getNotificationStatus, getAllSuperAdmins } = require("../models/misc");
+const { getUsersToNotifyForClass, getNotificationStatus, getAllBotAdmins } = require("../models/misc");
 const { ALL_CLASSES, MIME_TYPES } = require("./data");
 const { getResource } = require('../models/resources');
 
@@ -393,7 +393,7 @@ const sendSlides = async (msg, courseCode) => {
  * @returns **True** if contact is a bot admin, **False** otherwise.
  */
 const isUserBotAdmin = async (contact) => {
-    const admins = await getAllSuperAdmins();
+    const admins = await getAllBotAdmins();
     // console.log(admins, admins.includes(contact.id.user));
     return admins.includes(contact.id.user);
 }

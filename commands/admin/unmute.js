@@ -1,5 +1,5 @@
 const { getMutedStatus, unmuteBot } = require("models/misc");
-const { NOT_ADMIN_REPLIES, UNMUTE_REPLIES } = require("utils/data");
+const { NOT_BOT_ADMIN_REPLIES, UNMUTE_REPLIES } = require("utils/data");
 const { pickRandomReply, isUserBotAdmin, current_prefix } = require("utils/helpers");
 
 const execute = async (client, msg) => {
@@ -13,7 +13,7 @@ const execute = async (client, msg) => {
         }
     } else {
         if (!isAdmin) {
-            await msg.reply(pickRandomReply(NOT_ADMIN_REPLIES));
+            await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
             return;
         }
         await msg.reply(`Haven't been muted yet 🐦`);

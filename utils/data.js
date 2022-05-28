@@ -294,16 +294,16 @@ exports.DM_REPLIES = [
 ]
 
 /**
- * Array containing replies for users who try to perform administrative functions on the bot.
+ * Array containing replies for users who try to perform administrative functions on the bot but are not bot admins.
  */
-exports.NOT_ADMIN_REPLIES = [
+exports.NOT_BOT_ADMIN_REPLIES = [
     "No please 🐦, you are not a *bot admin* unfortunately.",
     "No can do 🐦, you don't have sufficient privileges.",
     "You are not a *bot admin*",
     "Task successfully failed ❎, command reserved for *bot admins*.",
     "Nope🐦, you don't have the required permissions.",
     "Only *bot admins* can do this 🙂",
-    "Only *bot admins* can use this, so that it is not abused.",
+    // "Only *bot admins* can use this, so that it is not abused.",
     "Sorry, this command is not available to you.",
     "Not happening😗, you're not a *bot admin*.",
 ]

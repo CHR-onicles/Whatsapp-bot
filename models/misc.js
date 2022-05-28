@@ -16,7 +16,7 @@ const MiscellaneousSchema = new Schema({
     isNotifsOn: { type: Boolean, default: true },
     allLinks: [String],
     allAnnouncements: [String],
-    superAdmins: [String],
+    botAdmins: [String],
     forwardToUsers: [String],
     electiveDataMining: [String],
     electiveSoftModelling: [String],
@@ -40,7 +40,7 @@ const initCollection = async () => {
     const count = await MiscellaneousModel.countDocuments({});
     // console.log(count);
     if (!count) {
-        const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: [process.env.GRANDMASTER], electiveSoftModelling: [process.env.GRANDMASTER] });
+        const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, botAdmins: [process.env.GRANDMASTER], electiveSoftModelling: [process.env.GRANDMASTER] });
         // const misc = new MiscellaneousModel();
         try {
             await misc.save();
@@ -211,24 +211,24 @@ exports.removeAllAnnouncements = async () => {
 }
 
 /**
- * Gets all super admins from the database.
+ * Gets all bot admins from the database.
  * @async
- * @returns {Array<string>} An array containing super admins.
+ * @returns {Array<string>} An array containing bot admins.
  */
-exports.getAllSuperAdmins = async () => {
-    const superAdmins = await MiscellaneousModel.distinct("superAdmins");
-    // console.log(superAdmins);
-    return superAdmins;
+exports.getAllBotAdmins = async () => {
+    const botAdmins = await MiscellaneousModel.distinct("botAdmins");
+    // console.log(botAdmins);
+    return botAdmins;
 }
 
 /**
- * Adds a user as a super admin of the bot.
- * @param {string} newAdmin A string containing the user to be made a super admin.
+ * Adds a user as a bot admin.
+ * @param {string} newAdmin A string containing the user to be made a bot admin.
  * @async
  */
-exports.addSuperAdmin = async (newAdmin) => {
+exports.addBotAdmin = async (newAdmin) => {
     try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { superAdmins: newAdmin } });
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { botAdmins: newAdmin } });
         // console.log(res);
     } catch (error) {
         console.log(error)
@@ -236,13 +236,13 @@ exports.addSuperAdmin = async (newAdmin) => {
 }
 
 /**
- * Demotes a user from being a super admin of the bot.
+ * Demotes a user from being a bot admin.
  * @param {string} admin A string containing a whatsapp user's number.
  * @async
  */
-exports.removeSuperAdmin = async (admin) => {
+exports.removeBotAdmin = async (admin) => {
     try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { superAdmins: admin } });
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { botAdmins: admin } });
         // console.log(res);
     } catch (error) {
         console.log(error);
