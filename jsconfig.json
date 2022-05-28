@@ -1,0 +1,6 @@
+{
+  "__comment__": "Creating absolute path from source to prevent long relative paths, i.e. ../../../../",
+  "compilerOptions": {
+    "baseUrl": "./"
+  }
+}

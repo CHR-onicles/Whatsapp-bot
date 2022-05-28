@@ -428,5 +428,29 @@ const pickRandomWeightedMessage = (map) => {
  */
 const areAllItemsEqual = arr => arr.every(item => item === arr[0]);
 
+/**
+ * Sleeps the bot for some time.
+ * @param {number} milliseconds Represents the amount of time to sleep in milliseconds
+ */
+const sleep = async (milliseconds = 500) => {
+    await new Promise(resolve => setTimeout(resolve, milliseconds));
+}
 
-module.exports = { current_env, current_prefix, pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual }
+
+module.exports = {
+    current_env, current_prefix,
+    pickRandomReply,
+    extractTime,
+    extractCommand,
+    extractCommandArgs,
+    msToDHMS, notificationTimeCalc,
+    startNotificationCalculation,
+    stopOngoingNotifications,
+    allClassesReply,
+    todayClassReply,
+    sendSlides,
+    isUserBotAdmin,
+    pickRandomWeightedMessage,
+    areAllItemsEqual,
+    sleep
+}
