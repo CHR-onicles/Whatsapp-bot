@@ -1,6 +1,6 @@
-const { getMutedStatus, unmuteBot } = require("models/misc");
-const { NOT_BOT_ADMIN_REPLIES, UNMUTE_REPLIES } = require("utils/data");
-const { pickRandomReply, isUserBotAdmin, current_prefix } = require("utils/helpers");
+const { getMutedStatus, unmuteBot } = require("../../models/misc");
+const { NOT_BOT_ADMIN_REPLIES, UNMUTE_REPLIES } = require("../../utils/data");
+const { pickRandomReply, isUserBotAdmin, current_prefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     const contact = await msg.getContact();

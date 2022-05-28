@@ -1,5 +1,5 @@
-const { getMutedStatus } = require("models/misc");
-const { current_prefix } = require("utils/helpers");
+const { getMutedStatus } = require("../../models/misc");
+const { current_prefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;

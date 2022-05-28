@@ -5,10 +5,11 @@ const app = require('express')();
 const { Client, LocalAuth, List } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 require('dotenv').config();
-const { totalmem } = require('os');
+const path = require('path');
+const fs = require('fs');
 
-require('./utils/db');
-const { current_env, current_prefix, pickRandomReply, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual } = require('./utils/helpers');
+// require('./utils/db');
+const { current_env, current_prefix, pickRandomReply, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual, sleep } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_BOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, WAIT_REPLIES, FOOTNOTES, COURSE_MATERIALS_REPLIES } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addBotAdmin, removeBotAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications, getForwardToUsers } = require('./models/misc');
 
@@ -21,6 +22,7 @@ const BOT_NUMBER = process.env.BOT_NUMBER; // The bot's whatsapp number
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
+const args = {};
 console.log("Current prefix:", current_prefix)
 
 
@@ -59,6 +61,7 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 client.on('ready', async () => {
     console.log('Client is ready!');
     BOT_START_TIME = new Date();
+    args.BOT_START_TIME = BOT_START_TIME;
     await startNotificationCalculation(client);
 
     if (current_env === 'production') {
@@ -73,9 +76,39 @@ client.on('ready', async () => {
 });
 
 
-client.commands = new Map([/* aliases and name of command as key, value is command */]);
+client.commands = new Map();
+
+const root_dir = path.join(__dirname, './commands');
+fs.readdir('./commands', (err, folders) => {
+    if (err) return console.error(err);
+    folders.forEach(folder => {
+        const commands = fs.readdirSync(`${root_dir}/${folder}`).filter((file) => file.endsWith(".js"));
+        for (let file of commands) {
+            const command = require(`${root_dir}/${folder}/${file}`);
+            client.commands.set(command.name, command);
+            console.log('done')
+        }
+
+    })
+    console.log(client.commands.has('everyone'));
+    console.log(client.commands.size);
+    console.log(client.commands);
+
+})
 
 
+
+
+
+
+
+
+
+
+
+// ----------------------------------------------
+// OTHER COMMANDS TO BE DEALT WITH LATER
+// ----------------------------------------------
 
 // Reply if pinged (contains list but no response)
 client.on('message', async (msg) => {
@@ -149,7 +182,6 @@ client.on('message', async (msg) => {
         }
     }
 });
-
 
 // Help users with commands (will contain extra arguments)
 client.on('message', async (msg) => {
@@ -804,4 +836,4 @@ app.all("*", (req, res) => {
 
 
 // Start bot
-client.initialize();
+// client.initialize();

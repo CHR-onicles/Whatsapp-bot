@@ -1,6 +1,6 @@
-const { getMutedStatus, getAllBotAdmins } = require("models/misc");
-const { NOT_BOT_ADMIN_REPLIES } = require("utils/data");
-const { pickRandomReply, isUserBotAdmin, current_prefix } = require("utils/helpers");
+const { getMutedStatus, getAllBotAdmins } = require("../../models/misc");
+const { NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
+const { pickRandomReply, isUserBotAdmin, current_prefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;

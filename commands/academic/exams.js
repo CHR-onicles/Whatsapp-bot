@@ -1,6 +1,6 @@
-const { getMutedStatus } = require("models/misc");
-const { DM_REPLIES, EXAM_TIMETABLE, FOOTNOTES } = require("utils/data");
-const { pickRandomReply, pickRandomWeightedMessage, current_prefix } = require("utils/helpers");
+const { getMutedStatus } = require("../../models/misc");
+const { DM_REPLIES, EXAM_TIMETABLE, FOOTNOTES } = require("../../utils/data");
+const { pickRandomReply, pickRandomWeightedMessage, current_prefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;

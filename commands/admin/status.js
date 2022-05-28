@@ -1,8 +1,14 @@
-const { getMutedStatus } = require("models/misc");
-const { msToDHMS, current_prefix } = require("utils/helpers");
+const { getMutedStatus } = require("../../models/misc");
+const { msToDHMS, current_prefix } = require("../../utils/helpers");
+const { totalmem } = require('os');
 
-const execute = async (client, msg) => {
+
+const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
+
+    const { BOT_START_TIME } = args;
+    if (!BOT_START_TIME) throw new Error('Invalid Bot Start Time');
+
     const all_chats = await client.getChats();
     const blocked_chats = await client.getBlockedContacts();
     const { group_chats, private_chats } = all_chats.reduce((chats, chat) => {
