@@ -18,7 +18,7 @@ const execute = async (client, msg) => {
 
 module.exports = {
     name: "mute",
-    description: "Mute the bot",
+    description: "Mute the bot 🤐",
     alias: ["silence", "quiet"],
     category: "admin", // admin | everyone
     help: `To use this command, type: ${current_prefix}mute`,

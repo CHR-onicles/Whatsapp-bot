@@ -107,6 +107,29 @@ client.on('message', async (msg) => {
         console.log("Not done reading commands");
         return;
     }
+
+    // To handle list responses for certain commands
+    if (msg.type === "list_response") {
+        args.isListResponse = true;
+        const selectedRowId = msg.selectedRowId.split('-')[0];
+
+        switch (selectedRowId) {
+            case 'slides':
+                client.commands.get('slides').execute(client, msg, args);
+                break;
+            case 'class':
+                client.commands.get('class').execute(client, msg, args);
+                break;
+            case 'classes':
+                client.commands.get('classes').execute(client, msg, args);
+                break;
+            default:
+                console.log(`Couldn't find the command related to ${selectedRowId}`);
+                break;
+        }
+        return;
+    }
+
     const possibleCommand = extractCommand(msg);
     const isValidCommand = possibleCommand.startsWith(current_prefix);
     isMention = msg.body.startsWith('@');
@@ -135,6 +158,118 @@ client.on('message', async (msg) => {
 })
 
 
+// Forward messages with links/announcements (in other groups) to EPiC Devs for now
+// Not a command so needs to be here
+client.on('message', async (msg) => {
+    if (await getMutedStatus() === true) return;
+
+    // local helper function to initialize stuff
+    const helperForInit = async (msg) => {
+        const current_chat = await msg.getChat();
+        const chats = await client.getChats();
+        const forwardToUsers = await getForwardToUsers();
+        const target_chats = [];
+
+        for (const chat of chats) {
+            for (const ftu of forwardToUsers) {
+                if (chat.id.user === ftu) target_chats.push(chat);
+            }
+        }
+        return { current_chat, forwardToUsers, target_chats };
+    }
+
+    //* For Announcements
+    if ((msg.body.includes('❗') || msg.body.includes('‼')) && msg.body.length > 1) {
+        // If length of message is less than 20 characters and all the characters
+        // are the same(announcement emojis), don't forward the announcement. To prevent forwarding just announcement emojis
+        //? Can't fetch messages in order properly so I won't attempt to check for the message 
+        //? just  before this one since it most likely will be the announcement
+        if (msg.body.length < 20) {
+            if (areAllItemsEqual([...msg.body])) return;
+        }
+
+        const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
+        let quoted_msg = null;
+
+        // Dont forward announcements from chats which receive forwarded announcements
+        for (const user of forwardToUsers) {
+            if (current_chat.id.user === user) {
+                console.log("Announcement from forwardedUsers, so do nothing")
+                return;
+            }
+        }
+        const current_forwarded_announcements = await getAllAnnouncements();
+        // console.log('Recognized an announcement');
+
+        if (!current_forwarded_announcements.includes(msg.body)) {
+            await addAnnouncement(msg.body);
+            if (msg.hasQuotedMsg) {
+                quoted_msg = await msg.getQuotedMessage();
+                target_chats.forEach(async (chat) => await quoted_msg.forward(chat));
+            }
+            target_chats.forEach(async (chat) => await msg.forward(chat));
+            target_chats.forEach(async (chat) => await chat.sendMessage(`Forwarded announcement from *${current_chat.name}*`));
+        } else {
+            console.log('Repeated announcement');
+        }
+    }
+
+
+    //* For links
+    else if (msg.links.length) {
+        const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
+
+        // Dont forward links from chats which receive forwarded links
+        for (const user of forwardToUsers) {
+            if (current_chat.id.user === user) {
+                console.log("Link from forwardedUsers, so do nothing")
+                return;
+            }
+        }
+
+        const links = msg.links;
+        // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol" and "hey.me" 
+        // and insecure links from leaking through
+        for (const single_link of links) {
+            if (!single_link.link.includes('https')) return;
+        }
+        // console.log(links);
+        let current_forwarded_links = await getAllLinks();
+        current_forwarded_links = current_forwarded_links.map(link => link.toLowerCase());
+        // console.log(current_forwarded_links)
+        const blacklisted_stuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
+
+        // Checking if whatsapp has flagged the link as suspicious
+        for (const single_link of links) {
+            if (single_link.isSuspicious) {
+                console.log("Whatsapp flags this link as suspicious:", single_link.link);
+                return;
+            }
+        }
+
+        // Using this style of for-loop for performance and in order to "return" and break from this event 
+        for (const single_link of links) {
+            for (const item of blacklisted_stuff) {
+                if (single_link.link.includes(item)) {
+                    console.log("Link contains a blacklisted item:", item);
+                    return;
+                }
+            }
+        }
+
+        // console.log('recognized a link');
+        if (!current_forwarded_links.includes(msg.body.toLowerCase())) {
+            await addLink(msg.body);
+            target_chats.forEach(async (chat) => await msg.forward(chat));
+            target_chats.forEach(async (chat) => await chat.sendMessage(`Forwarded link from *${current_chat.name}*`));
+        } else {
+            console.log("Repeated link");
+        }
+    }
+})
+
+
+
 
 
 
@@ -146,7 +281,8 @@ client.on('message', async (msg) => {
 // ----------------------------------------------
 
 
-// // Help users with commands (will contain extra arguments)
+
+// Help users with commands (will contain extra arguments)
 // client.on('message', async (msg) => {
 //     if (extractCommand(msg) === current_prefix + 'help' && await getMutedStatus() === false) {
 //         const cur_chat = await msg.getChat();
@@ -181,292 +317,7 @@ client.on('message', async (msg) => {
 // })
 
 
-// // Check classes for the week (contains list response)
-// client.on('message', async (msg) => {
-//     const contact = await msg.getContact();
-//     const chat_from_contact = await contact.getChat();
-//     if (extractCommand(msg) === current_prefix + 'classes' && await getMutedStatus() === false) {
-//         const cur_chat = await msg.getChat();
-//         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-//         let text = "";
-
-//         if (cur_chat.isGroup) {
-//             await msg.reply(pickRandomReply(DM_REPLIES));
-//         }
-
-//         // refactored repeated code into local function
-//         const helperForAllClassesReply = async (text, elective) => {
-//             text += allClassesReply(ALL_CLASSES, elective, text)
-//             await chat_from_contact.sendMessage(text);
-//             setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
-//         }
-
-//         // if the user has already subscribed to be notified, find his elective and send the timetable based on that.
-//         if (dataMining.includes(contact.id.user)) {
-//             helperForAllClassesReply(text, 'D');
-//             return;
-//         } else if (networking.includes(contact.id.user)) {
-//             helperForAllClassesReply(text, 'N');
-//             return;
-//         } else if (softModelling.includes(contact.id.user)) {
-//             helperForAllClassesReply(text, 'S');
-//             return;
-//         }
-
-//         const list = new List(
-//             '\nMake a choice from the list of electives',
-//             'See electives',
-//             [{
-//                 title: 'Commands available to everyone', rows: [
-//                     { id: '11', title: 'Data Mining', description: 'For those offering Data Mining' },
-//                     { id: '12', title: 'Networking', description: "For those offering Networking" },
-//                     { id: '13', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
-//                 ]
-//             }
-//             ],
-//             'What elective do you offer?',
-//             'Powered by Ethereal bot'
-//         );
-//         await chat_from_contact.sendMessage(list);
-//     }
-
-//     if (msg.type === 'list_response' && await getMutedStatus() === false) {
-//         if (parseInt(msg.selectedRowId) < 11 || parseInt(msg.selectedRowId) > 13) return;
-//         let text = "";
-//         // console.log(msg.selectedRowId);
-//         if (msg.selectedRowId === '11') {
-//             text += allClassesReply(ALL_CLASSES, 'D', text);
-//         } else if (msg.selectedRowId === '12') {
-//             text += allClassesReply(ALL_CLASSES, 'N', text);
-//         } else if (msg.selectedRowId === '13') {
-//             text += allClassesReply(ALL_CLASSES, 'S', text);
-//         }
-//         await msg.reply(text);
-//         setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
-//     }
-// })
-
-
-// // Check class for today (contains list response)
-// client.on('message', async (msg) => {
-//     const contact = await msg.getContact();
-//     const chat_from_contact = await contact.getChat();
-//     if (extractCommand(msg) === current_prefix + 'class' && await getMutedStatus() === false) {
-//         const cur_chat = await msg.getChat();
-//         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-//         let text = "";
-
-//         if (cur_chat.isGroup) {
-//             await msg.reply(pickRandomReply(DM_REPLIES));
-//         }
-
-//         // refactored repeated code into local function
-//         const helperForClassesToday = async (text, elective) => {
-//             text += await todayClassReply(text, elective);
-//             await chat_from_contact.sendMessage(text);
-//             setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
-//         }
-
-//         // if user has already subscribed to be notified for class, get his elective and send the current day's
-//         // timetable based on the elective.
-//         if (dataMining.includes(contact.id.user)) {
-//             helperForClassesToday(text, 'D');
-//             return;
-//         } else if (networking.includes(contact.id.user)) {
-//             helperForClassesToday(text, 'N');
-//             return;
-//         } else if (softModelling.includes(contact.id.user)) {
-//             helperForClassesToday(text, 'S');
-//             return;
-//         }
-
-//         const list = new List(
-//             '\nMake a choice from the list of electives',
-//             'See electives',
-//             [{
-//                 title: 'Commands available to everyone', rows: [
-//                     { id: '21', title: 'Data Mining', description: 'For those offering Data Mining' },
-//                     { id: '22', title: 'Networking', description: "For those offering Networking" },
-//                     { id: '23', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
-//                 ]
-//             }
-//             ],
-//             'What elective do you offer?',
-//             'Powered by Ethereal bot'
-//         );
-//         await chat_from_contact.sendMessage(list);
-//     }
-
-//     if (msg.type === 'list_response' && await getMutedStatus() === false) {
-//         if (parseInt(msg.selectedRowId) < 21 || parseInt(msg.selectedRowId) > 23) return;
-//         let text = "";
-//         if (msg.selectedRowId === '21') {
-//             text += await todayClassReply(text, 'D');
-//         } else if (msg.selectedRowId === '22') {
-//             text += await todayClassReply(text, 'N');
-//         } else if (msg.selectedRowId === '23') {
-//             text += await todayClassReply(text, 'S');
-//         }
-//         await msg.reply(text);
-//         setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
-//     }
-// })
-
-
-// // Forward messages with links/announcements (in other groups) to EPiC Devs for now
-// client.on('message', async (msg) => {
-//     if (await getMutedStatus() === true) return;
-
-//     // local helper function to initialize stuff
-//     const helperForInit = async (msg) => {
-//         const current_chat = await msg.getChat();
-//         const chats = await client.getChats();
-//         const forwardToUsers = await getForwardToUsers();
-//         const target_chats = [];
-
-//         for (const chat of chats) {
-//             for (const ftu of forwardToUsers) {
-//                 if (chat.id.user === ftu) target_chats.push(chat);
-//             }
-//         }
-//         return { current_chat, forwardToUsers, target_chats };
-//     }
-
-//     //* For Announcements
-//     if ((msg.body.includes('❗') || msg.body.includes('‼')) && msg.body.length > 1) {
-//         // If length of message is less than 20 characters and all the characters
-//         // are the same(announcement emojis), don't forward the announcement. To prevent forwarding just announcement emojis
-//         //? Can't fetch messages in order properly so I won't attempt to check for the message 
-//         //? just  before this one since it most likely will be the announcement
-//         if (msg.body.length < 20) {
-//             if (areAllItemsEqual([...msg.body])) return;
-//         }
-
-//         const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
-//         let quoted_msg = null;
-
-//         // Dont forward announcements from chats which receive forwarded announcements
-//         for (const user of forwardToUsers) {
-//             if (current_chat.id.user === user) {
-//                 console.log("Announcement from forwardedUsers, so do nothing")
-//                 return;
-//             }
-//         }
-//         const current_forwarded_announcements = await getAllAnnouncements();
-//         // console.log('Recognized an announcement');
-
-//         if (!current_forwarded_announcements.includes(msg.body)) {
-//             await addAnnouncement(msg.body);
-//             if (msg.hasQuotedMsg) {
-//                 quoted_msg = await msg.getQuotedMessage();
-//                 target_chats.forEach(async (chat) => await quoted_msg.forward(chat));
-//             }
-//             target_chats.forEach(async (chat) => await msg.forward(chat));
-//             target_chats.forEach(async (chat) => await chat.sendMessage(`Forwarded announcement from *${current_chat.name}*`));
-//         } else {
-//             console.log('Repeated announcement');
-//         }
-//     }
-
-
-//     //* For links
-//     else if (msg.links.length) {
-//         const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
-
-//         // Dont forward links from chats which receive forwarded links
-//         for (const user of forwardToUsers) {
-//             if (current_chat.id.user === user) {
-//                 console.log("Link from forwardedUsers, so do nothing")
-//                 return;
-//             }
-//         }
-
-//         const links = msg.links;
-//         // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol" and "hey.me" 
-//         // and insecure links from leaking through
-//         for (const single_link of links) {
-//             if (!single_link.link.includes('https')) return;
-//         }
-//         // console.log(links);
-//         let current_forwarded_links = await getAllLinks();
-//         current_forwarded_links = current_forwarded_links.map(link => link.toLowerCase());
-//         // console.log(current_forwarded_links)
-//         const blacklisted_stuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
-
-//         // Checking if whatsapp has flagged the link as suspicious
-//         for (const single_link of links) {
-//             if (single_link.isSuspicious) {
-//                 console.log("Whatsapp flags this link as suspicious:", single_link.link);
-//                 return;
-//             }
-//         }
-
-//         // Using this style of for-loop for performance and in order to "return" and break from this event 
-//         for (const single_link of links) {
-//             for (const item of blacklisted_stuff) {
-//                 if (single_link.link.includes(item)) {
-//                     console.log("Link contains a blacklisted item:", item);
-//                     return;
-//                 }
-//             }
-//         }
-
-//         // console.log('recognized a link');
-//         if (!current_forwarded_links.includes(msg.body.toLowerCase())) {
-//             await addLink(msg.body);
-//             target_chats.forEach(async (chat) => await msg.forward(chat));
-//             target_chats.forEach(async (chat) => await chat.sendMessage(`Forwarded link from *${current_chat.name}*`));
-//         } else {
-//             console.log("Repeated link");
-//         }
-//     }
-// })
-
-
-// //! Schedule DM - could be turned into a custom reminder feature for users
-// // client.on('message', async (msg) => {
-// //     if (extractCommand(msg) === '!sdm' && await getMutedStatus() === false) {
-// //         const contact = await msg.getContact();
-// //         const chat_from_contact = await contact.getChat();
-// //         const pattern = /!sdm\s+[1-9](h|m|s)\s+("|')[\w\s]+("|')/
-// //         if (!pattern.test(msg.body)) {
-// //             await msg.reply(`❌ Wrong format\n\n✅ The correct format is:\n*!sdm (1-9)(h|m|s) ("message")*\n\nExample: !sdm 5m "How are you?"\n\nThis sends the message: 'How are you?' in 5 minutes`)
-// //         } else {
-// //             await msg.reply("✅");
-
-// //             const time = msg.body.split(' ')[1];
-// //             const time_value = +time[0];
-// //             const time_unit = time[1].toLowerCase();
-// //             let message = null;
-
-// //             if (msg.body.includes(`"`)) {
-// //                 message = msg.body.split(`"`)[1];
-// //             } else if (msg.body.includes(`'`)) {
-// //                 message = msg.body.split(`'`)[1];
-// //             }
-// //             let timeout = null;
-
-// //             switch (time_unit) {
-// //                 case 's':
-// //                     timeout = time_value * 1000;
-// //                     break;
-// //                 case 'm':
-// //                     timeout = time_value * 60 * 1000;
-// //                     break;
-// //                 default:
-// //                     break;
-// //             }
-
-// //             setTimeout(async () => {
-// //                 await chat_from_contact.sendMessage(message);
-// //             }, timeout);
-// //         }
-// //     }
-// // })
-// /**/
-
-
-// //Add user to notification list for class (may contain extra arguments)
+//Add user to notification list for class (may contain extra arguments)
 // client.on('message', async (msg) => {
 //     if (extractCommand(msg) === current_prefix + 'notify' &&
 //         extractCommandArgs(msg) !== 'stop' &&
@@ -530,7 +381,7 @@ client.on('message', async (msg) => {
 // })
 
 
-// //Stop notifying user for class (contains extra arguments)
+// Stop notifying user for class (contains extra arguments)
 // client.on('message', async (msg) => {
 //     if (extractCommand(msg) === current_prefix + 'notify' &&
 //         extractCommandArgs(msg) === 'stop' &&
@@ -557,7 +408,7 @@ client.on('message', async (msg) => {
 // })
 
 
-// // Check notifications status (contains extra arguments)
+// Check notifications status (contains extra arguments)
 // client.on('message', async (msg) => {
 //     if (extractCommand(msg) === current_prefix + 'notify' &&
 //         extractCommandArgs(msg) === 'status' &&
@@ -575,7 +426,7 @@ client.on('message', async (msg) => {
 // })
 
 
-// // Promote a user to be a bot admin (contains extra arguments)
+// Promote a user to be a bot admin (contains extra arguments)
 // client.on('message', async (msg) => {
 //     if (extractCommand(msg) === current_prefix + 'promote' && await getMutedStatus() === false) {
 //         const user_to_promote = extractCommandArgs(msg);
@@ -632,7 +483,7 @@ client.on('message', async (msg) => {
 // })
 
 
-// // Dismiss a bot admin (contains extra arguments)
+// Dismiss a bot admin (contains extra arguments)
 // client.on('message', async (msg) => {
 //     if (extractCommand(msg) === current_prefix + 'demote' && await getMutedStatus() === false) {
 //         const user_to_demote = extractCommandArgs(msg);
@@ -686,7 +537,7 @@ client.on('message', async (msg) => {
 // })
 
 
-// // Enable all notifications for the day (contains extra arguments)
+// Enable all notifications for the day (contains extra arguments)
 // client.on('message', async (msg) => {
 //     if (extractCommand(msg) === current_prefix + 'notify' &&
 //         extractCommandArgs(msg, 1) === 'enable' &&
@@ -706,7 +557,7 @@ client.on('message', async (msg) => {
 // })
 
 
-// // Disable all notifications for the day (contains extra arguments)
+// Disable all notifications for the day (contains extra arguments)
 // client.on('message', async (msg) => {
 //     if (extractCommand(msg) === current_prefix + 'notify' &&
 //         extractCommandArgs(msg, 1) === 'disable' &&
@@ -726,61 +577,52 @@ client.on('message', async (msg) => {
 // })
 
 
-// // Gets slides (contains list response)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'slides' && await getMutedStatus() === false) {
-//         // if (current_env === 'production') {
+
+
+
+//! Schedule DM - could be turned into a custom reminder feature for users
+/*client.on('message', async (msg) => {
+//     if (extractCommand(msg) === '!sdm' && await getMutedStatus() === false) {
 //         const contact = await msg.getContact();
-//         const cur_chat = await msg.getChat();
 //         const chat_from_contact = await contact.getChat();
+//         const pattern = /!sdm\s+[1-9](h|m|s)\s+("|')[\w\s]+("|')/
+//         if (!pattern.test(msg.body)) {
+//             await msg.reply(`❌ Wrong format\n\n✅ The correct format is:\n*!sdm (1-9)(h|m|s) ("message")*\n\nExample: !sdm 5m "How are you?"\n\nThis sends the message: 'How are you?' in 5 minutes`)
+//         } else {
+//             await msg.reply("✅");
 
-//         if (cur_chat.isGroup) await msg.reply(pickRandomReply(DM_REPLIES));
+//             const time = msg.body.split(' ')[1];
+//             const time_value = +time[0];
+//             const time_unit = time[1].toLowerCase();
+//             let message = null;
 
-//         const list = new List(
-//             '\nThis is a list of courses with available materials',
-//             'See courses',
-//             [{
-//                 title: '',
-//                 rows: [
-//                     { id: '415', title: 'Compilers', description: 'CSCD 415' },
-//                     { id: '417', title: 'Theory & Survey of Programming Languages', description: 'CSCD 417' },
-//                     { id: '419', title: 'Formal Methods', description: 'CSCD 419' },
-//                     { id: '421', title: 'Accounting', description: 'CSCD 421' },
-//                     { id: '423', title: 'Software Modelling & Simulation', description: 'CSCD 423' },
-//                     { id: '409', title: 'Data Mining', description: 'CSCD 409' },
-//                     { id: '427', title: 'Networking', description: 'CSCD 427' },
-//                 ]
-//             }],
-//             pickRandomReply(COURSE_MATERIALS_REPLIES),
-//             'Powered by Ethereal bot'
-//         );
+//             if (msg.body.includes(`"`)) {
+//                 message = msg.body.split(`"`)[1];
+//             } else if (msg.body.includes(`'`)) {
+//                 message = msg.body.split(`'`)[1];
+//             }
+//             let timeout = null;
 
-//         await chat_from_contact.sendMessage(list);
-//         // } else {
-//         // await msg.reply("The bot is currently hosted locally, so this operation cannot be performed.\n\nThe Grandmaster's data is at stake🐦")
-//         // }
-//     }
+//             switch (time_unit) {
+//                 case 's':
+//                     timeout = time_value * 1000;
+//                     break;
+//                 case 'm':
+//                     timeout = time_value * 60 * 1000;
+//                     break;
+//                 default:
+//                     break;
+//             }
 
-//     if (msg.type === 'list_response' && await getMutedStatus() === false) {
-//         if (parseInt(msg.selectedRowId) < 409 || parseInt(msg.selectedRowId) > 427) return;
-//         await msg.reply(pickRandomReply(WAIT_REPLIES));
-//         if (msg.selectedRowId === '415') {
-//             sendSlides(msg, 'CSCD 415');
-//         } else if (msg.selectedRowId === '417') {
-//             sendSlides(msg, 'CSCD 417');
-//         } else if (msg.selectedRowId === '419') {
-//             sendSlides(msg, 'CSCD 419');
-//         } else if (msg.selectedRowId === '421') {
-//             sendSlides(msg, 'CSCD 421');
-//         } else if (msg.selectedRowId === '423') {
-//             sendSlides(msg, 'CSCD 423');
-//         } else if (msg.selectedRowId === '409') {
-//             sendSlides(msg, 'CSCD 409');
-//         } else if (msg.selectedRowId === '427') {
-//             sendSlides(msg, 'CSCD 427');
+//             setTimeout(async () => {
+//                 await chat_from_contact.sendMessage(message);
+//             }, timeout);
 //         }
 //     }
 // })
+*/
+
+
 
 
 // ---------------------------------------------------------------------------------------

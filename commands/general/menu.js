@@ -54,7 +54,7 @@ const execute = async (client, msg, args) => {
 
 module.exports = {
     name: "menu",
-    description: "Get list of commands",
+    description: "Get list of commands ⚙",
     alias: ["commands", "command", "coms", "comms", "menus"],
     category: "everyone", // admin | everyone
     help: `To use this command, type: ${current_prefix}menu or ping the bot in a group chat`,

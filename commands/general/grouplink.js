@@ -25,7 +25,7 @@ const execute = async (client, msg) => {
 
 module.exports = {
     name: "grouplink",
-    description: "Get the current group's invite link",
+    description: "Get the current group's invite link 📱",
     alias: ["gl", "glink"],
     category: "everyone", // admin | everyone
     help: `To use this command, type: ${current_prefix}grouplink`,

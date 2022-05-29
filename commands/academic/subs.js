@@ -20,7 +20,7 @@ const execute = async (client, msg) => {
 
 module.exports = {
     name: "subs",
-    description: "Get users subscribed for class notifications",
+    description: "Get users subscribed for class notifications 👯‍♂️",
     alias: ["sub"],
     category: "admin", // admin | everyone
     help: `To use this command, type: ${current_prefix}subs`,

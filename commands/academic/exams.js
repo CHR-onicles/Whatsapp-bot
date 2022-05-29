@@ -30,7 +30,7 @@ const execute = async (client, msg) => {
 
 module.exports = {
     name: "exams",
-    description: "Get the current L400 2nd Sem exams timetable",
+    description: "Get the current L400 2nd Sem exams timetable 📝",
     alias: ["exam"],
     category: "everyone", // admin | everyone
     help: `To use this command, type: ${current_prefix}exams`,

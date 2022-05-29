@@ -134,7 +134,7 @@ exports.HELP_COMMANDS = [
     {
         availableTo: 'a', // admins
         command: `${current_prefix}mute`,
-        desc: "Get me to be quiet 😅"
+        desc: "Get me to be quiet 🤐"
     },
     {
         availableTo: 'a',
@@ -144,7 +144,7 @@ exports.HELP_COMMANDS = [
     {
         availableTo: 'a',
         command: `${current_prefix}everyone`,
-        desc: "Ping everyone in the group 😮"
+        desc: "Ping everyone in the group 🔊"
     },
     {
         availableTo: 'e',

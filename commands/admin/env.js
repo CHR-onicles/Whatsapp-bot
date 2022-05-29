@@ -18,7 +18,7 @@ const execute = async (client, msg) => {
 
 module.exports = {
     name: "env",
-    description: "Get the environment the bot is running in currently",
+    description: "Get the environment the bot is running in currently 🦺",
     alias: [],
     category: "admin", // admin | everyone
     help: `To use this command, type: ${current_prefix}env`,

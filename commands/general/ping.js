@@ -14,9 +14,9 @@ const execute = async (client, msg) => {
 
 module.exports = {
     name: "ping",
-    description: "Get response time of the bot in milliseconds",
+    description: "Get response time of the bot in milliseconds 🙋🏽‍♂️",
     alias: ["p"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type: ${current_prefix}help`,
+    help: `To use this command, type: ${current_prefix}ping`,
     execute,
 }

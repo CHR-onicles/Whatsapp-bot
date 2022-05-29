@@ -1,13 +1,13 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus, getUsersToNotifyForClass } = require("../../models/misc");
-const { FOOTNOTES, DM_REPLIES } = require("../../utils/data");
-const { current_prefix, todayClassReply, pickRandomWeightedMessage, pickRandomReply } = require("../../utils/helpers");
+const { DM_REPLIES, FOOTNOTES, ALL_CLASSES } = require("../../utils/data");
+const { pickRandomReply, current_prefix, pickRandomWeightedMessage, allClassesReply } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
 
     const { isListResponse } = args;
-    // console.log('isListResponse From class:', isListResponse)
+    // console.log('isListResponse From classes:', isListResponse)
     const contact = await msg.getContact();
     const chat_from_contact = await contact.getChat();
     const cur_chat = await msg.getChat();
@@ -19,22 +19,21 @@ const execute = async (client, msg, args) => {
     }
 
     // refactored repeated code into local function
-    const helperForClassesToday = async (text, elective) => {
-        text += await todayClassReply(text, elective);
+    const helperForAllClassesReply = async (text, elective) => {
+        text += allClassesReply(ALL_CLASSES, elective, text)
         await chat_from_contact.sendMessage(text);
         setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
     }
 
-    // if user has already subscribed to be notified for class, get his elective and send the current day's
-    // timetable based on the elective.
+    // if the user has already subscribed to be notified, find his elective and send the timetable based on that.
     if (dataMining.includes(contact.id.user)) {
-        helperForClassesToday(text, 'D');
+        helperForAllClassesReply(text, 'D');
         return;
     } else if (networking.includes(contact.id.user)) {
-        helperForClassesToday(text, 'N');
+        helperForAllClassesReply(text, 'N');
         return;
     } else if (softModelling.includes(contact.id.user)) {
-        helperForClassesToday(text, 'S');
+        helperForAllClassesReply(text, 'S');
         return;
     }
 
@@ -43,32 +42,30 @@ const execute = async (client, msg, args) => {
         'See electives',
         [{
             title: 'Commands available to everyone', rows: [
-                { id: 'class-1', title: 'Data Mining', description: 'For those offering Data Mining' },
-                { id: 'class-2', title: 'Networking', description: "For those offering Networking" },
-                { id: 'class-3', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                { id: 'classes-1', title: 'Data Mining', description: 'For those offering Data Mining' },
+                { id: 'classes-2', title: 'Networking', description: "For those offering Networking" },
+                { id: 'classes-3', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
             ]
         }
         ],
         'What elective do you offer?',
         'Powered by Ethereal bot'
     );
-
     !isListResponse && await chat_from_contact.sendMessage(list);
 
     if (isListResponse) {
         let text = "";
-        console.log('From class:', msg.selectedRowId);
         const selectedRowId = msg.selectedRowId.split('-')[1];
 
         switch (selectedRowId) {
             case '1':
-                text += await todayClassReply(text, 'D');
+                text += allClassesReply(ALL_CLASSES, 'D', text);
                 break;
             case '2':
-                text += await todayClassReply(text, 'N');
+                text += allClassesReply(ALL_CLASSES, 'N', text);
                 break;
             case '3':
-                text += await todayClassReply(text, 'S');
+                text += allClassesReply(ALL_CLASSES, 'S', text);
                 break;
             default:
                 break;
@@ -82,10 +79,10 @@ const execute = async (client, msg, args) => {
 
 
 module.exports = {
-    name: "class",
-    description: "Get today's classes depending on your elective 📕",
+    name: "classes",
+    description: "Get the classes for the week 📚",
     alias: [],
     category: "everyone", // admin | everyone
-    help: `To use this command, type: ${current_prefix}class, then select an elective`,
+    help: `To use this command, type: ${current_prefix}classes, then select your elective`,
     execute,
 }
