@@ -18,12 +18,12 @@ const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLi
 // Global variables
 // --------------------------------------------------
 const GRANDMASTER = process.env.GRANDMASTER; // Owner of the bot
-const BOT_NUMBER = process.env.BOT_NUMBER; // The bot's whatsapp number
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
 const args = {};
 let isDoneReadingCommands = false;
+let isMention = false;
 console.log("Current prefix:", current_prefix)
 
 
@@ -99,17 +99,30 @@ fs.readdir('./commands', (err, folders) => {
     // console.log(client.commands.get(checkForAlias(client.commands, 'all')));
 })
 
-// handle message event
+
+// Handle message event
 client.on('message', async (msg) => {
     await sleep(500);
     if (!isDoneReadingCommands) {
         console.log("Not done reading commands");
         return;
     }
-    // await new Promise(resolve => setTimeout(resolve, 3000));
     const possibleCommand = extractCommand(msg);
     const isValidCommand = possibleCommand.startsWith(current_prefix);
-    if (!isValidCommand) return; // stop processing if message doesn't start with a valid command syntax
+    isMention = msg.body.startsWith('@');
+    if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax
+
+    // Check if mention is for bot
+    if (isMention) {
+        args.isMention = isMention;
+        try {
+            client.commands.get('menu').execute(client, msg, args);
+        } catch (error) {
+            console.error(error);
+        }
+        return;
+    }
+
     const cmd = client.commands.get(possibleCommand.slice(1)) || client.commands.get(checkForAlias(client.commands, possibleCommand.slice(1)));
     console.log('\nPossible cmd:', possibleCommand, '\nCmd:', cmd, '\nArgs:', args);
     if (!cmd) return;
@@ -132,78 +145,6 @@ client.on('message', async (msg) => {
 // OTHER COMMANDS TO BE DEALT WITH LATER
 // ----------------------------------------------
 
-// Reply if pinged (contains list but no response)
-// client.on('message', async (msg) => {
-//     if ((msg.body.toLowerCase().startsWith('@') && await getMutedStatus() === false) ||
-//         (extractCommand(msg) === current_prefix + 'commands' && await getMutedStatus() === false)) {
-//         const first_word = msg.body.toLowerCase().split(' ').shift();
-//         const contact = await msg.getContact();
-//         const chat_from_contact = await contact.getChat();
-//         const cur_chat = await msg.getChat();
-//         const isBotAdmin = await isUserBotAdmin(contact);
-
-//         if (extractCommand(msg) === current_prefix + 'commands' && cur_chat.isGroup) {
-//             await msg.reply(pickRandomReply(DM_REPLIES));
-//         }
-
-//         // Have to keep this array here because I want the most updated list of super Admins
-//         // every time this is needed.
-//         const PING_REPLIES = [
-//             `${isBotAdmin ? "Need me sir?" : "Hello there🐦"}`,
-//             `I'm here ${isBotAdmin ? 'sir' : 'fam'}🐦`,
-//             `Alive and well ${isBotAdmin ? 'sir' : 'fam'}🐦`,
-//             `Speak forth ${isBotAdmin ? 'sir' : 'fam'}🐦`,
-//             `${isBotAdmin ? "Sir🐦" : "Fam 🐦"}`,
-//             `${isBotAdmin ? "Boss🐦" : "Uhuh? "}`,
-//             `Up and running 🐦`,
-//             `Listening in 🐦`,
-//             `The bot is fine, thanks for not asking 🙄`,
-//             `Great ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')} ${isBotAdmin ? 'boss' : 'fam'} 🥳`,
-//             `🙋🏽‍♂️`,
-//             `👋🏽`,
-//             `🐦`,
-//             `👀`,
-//             `🤖`,
-//             `👊🏽`,
-//             `Adey 🐦`,
-//             `Yo 🐦`,
-//             `Sup 🐦`,
-//             `Hola 🙋🏽‍♂️`,
-//             `👁👃🏽👁`,
-//         ]
-
-//         let startID = 100; // dynamic ID to be used for whatsapp list later
-//         const temp_rows = [];
-//         for (const com of HELP_COMMANDS) {
-//             const { availableTo, command, desc } = com;
-//             ++startID;
-//             if (!isBotAdmin && availableTo === 'e') {
-//                 temp_rows.push({ id: startID.toString(), title: command, description: desc });
-//             } else if (isBotAdmin) {
-//                 if (!command.includes('<')) // avoiding commands that would involve extra user input for now
-//                     temp_rows.push({ id: startID.toString(), title: command, description: desc });
-//                 else continue;
-//             }
-//         }
-//         // console.log(temp_rows);
-
-//         const list = new List(
-//             '\nThis is a list of commands the bot can perform',
-//             'See commands',
-//             [{ title: `Commands available to ${isBotAdmin ? 'admins' : 'everyone'}`, rows: temp_rows }],
-//             pickRandomReply(PING_REPLIES),
-//             'Powered by Ethereal bot'
-//         );
-
-//         if (first_word.slice(1) === BOT_NUMBER) {
-//             await msg.reply(list);
-//         } else if (extractCommand(msg) === current_prefix + 'commands' && cur_chat.isGroup) {
-//             await chat_from_contact.sendMessage(list);
-//         } else if (extractCommand(msg) === current_prefix + 'commands' && !cur_chat.isGroup) {
-//             await msg.reply(list);
-//         }
-//     }
-// });
 
 // // Help users with commands (will contain extra arguments)
 // client.on('message', async (msg) => {

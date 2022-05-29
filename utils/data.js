@@ -122,9 +122,9 @@ exports.HELP_COMMANDS = [
         desc: "Check if I'm available 🙋🏽‍♂️"
     },
     {
-        // availableTo: 'e',
-        // command: `${current_prefix}uptime`,
-        // desc: "See how long I've been awake 🟢"
+    availableTo: 'a',
+    command: `${current_prefix}status`,
+    desc: "Check bot's overall status 🟢"
     },
     {
         availableTo: 'e',
@@ -242,6 +242,45 @@ exports.HELP_COMMANDS = [
     //     desc: "Respond to a specific user 😄"
     // },
 ]
+
+/**
+ * Object containing arrays of replies for both bot admins and everyone.
+ */
+exports.PING_REPLIES = {
+    botAdmin: [
+        "Need me sir?",
+        "Sir",
+        "Boss",
+        "I'm here sir 🐦",
+        "Alive and well sir 🐦",
+        "Speak forth sir 🐦",
+        "Greetings boss 🐦"
+    ],
+    everyone: [
+        "Fam 🐦",
+        "Uhuh? 🐦",
+        "Hello there🐦",
+        "I'm here fam 🐦",
+        "Alive and well fam 🐦",
+        "Speak forth fam 🐦",
+        "Up and running 🐦",
+        "Listening in 🐦",
+        "Greetings 🐦",
+        "The bot is fine, thanks for not asking 🙄",
+        `Great ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours() < 17 ? 'afternoon' : 'evening')} 🥳`,
+        "🙋🏽‍♂️",
+        "👋🏽",
+        "🐦",
+        "👀",
+        "🤖",
+        "👊🏽",
+        "Adey 🐦",
+        "Yo 🐦",
+        "Sup 🐦",
+        "Hola 🙋🏽‍♂️",
+        "👁👃🏽👁",
+    ]
+}
 
 /**
  * Array containing replies to the `!mute` command.
