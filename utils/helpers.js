@@ -56,6 +56,7 @@ const extractCommand = (msg) => {
     const first_word = split.shift();
     // console.log(first_word)
     if (first_word.startsWith(current_prefix)) return first_word;
+    return '';
 }
 
 /**

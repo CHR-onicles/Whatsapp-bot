@@ -111,7 +111,7 @@ client.on('message', async (msg) => {
     const isValidCommand = possibleCommand.startsWith(current_prefix);
     if (!isValidCommand) return; // stop processing if message doesn't start with a valid command syntax
     const cmd = client.commands.get(possibleCommand.slice(1)) || client.commands.get(checkForAlias(client.commands, possibleCommand.slice(1)));
-    console.log(possibleCommand, cmd, args);
+    console.log('\nPossible cmd:', possibleCommand, '\nCmd:', cmd, '\nArgs:', args);
     if (!cmd) return;
 
     try {

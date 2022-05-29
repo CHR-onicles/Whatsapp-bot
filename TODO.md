@@ -6,9 +6,8 @@ Project Description
 
 ### Todo
 
-- [ ] 🐞 Bug with response time calculation...sometimes negative  
 - [ ] ⭐❔ While displaying list of admins, add pushnames ??  
-- [ ] ⭐❔ Log response time after any command is run in order to give average response time for diagnostics  
+- [ ] ⭐❔ Log response time after any command is run in order to give average response time in status  
 - [ ] 👍🏽 Re-record demo vid showing moderator view and normal view  
 - [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward; and !forward stop to stop forwarding messages  
 - [ ] ⚠️ Prevent people from calling the bot with whatsapp call  

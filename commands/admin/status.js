@@ -22,7 +22,7 @@ const execute = async (client, msg, args) => {
     let reply = ['▄▀▄▀  𝔹𝕆𝕋 𝕊𝕋𝔸𝕋𝕌𝕊  ▀▄▀▄\n'];
 
     reply.push(`[🔰] *Platform:* ${process.platform}`);
-    reply.push(`[🔰] *Response time:* ${new Date() - new Date(msg.timestamp * 1000)}ms`);
+    reply.push(`[🔰] *Response time:* ${Math.abs(new Date() - new Date(msg.timestamp * 1000))}ms`);
     reply.push(`[🔰] *Uptime:*${days ? ' ' + days : ''}${days ? (days === 1 ? 'day' : 'days') : ''}${hours ? ' ' + hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''}${minutes ? ' ' + minutes : ' 0mins'}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`);
     reply.push(`[🔰] *Ram:* ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB / ${Math.round(totalmem / 1024 / 1024)} MB`);
     reply.push(`[🔰] *Total chats:* ${all_chats.length}`);
