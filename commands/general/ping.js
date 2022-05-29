@@ -4,7 +4,8 @@ const { current_prefix } = require("../../utils/helpers");
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
     const msg_timestamp = new Date(msg.timestamp * 1000);
-    const actual_ping = msg_timestamp - new Date();
+    // const actual_ping = msg_timestamp - new Date();
+    const actual_ping = new Date() - msg_timestamp;
     console.log(actual_ping)
     await msg.reply(`Response in _${actual_ping}ms_`);
 }

@@ -21,7 +21,7 @@ const execute = async (client, msg) => {
 module.exports = {
     name: "botadmins",
     description: "Get all bot admins",
-    alias: ["badmins", "botadmin"],
+    alias: ["badmins", "badmin", "botadmin"],
     category: "admin", // admin | everyone
     help: `To use this command, type: ${current_prefix}botadmins`,
     execute,

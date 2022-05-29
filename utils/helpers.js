@@ -61,17 +61,22 @@ const extractCommand = (msg) => {
 /**
  * Extracts the arguments/flags to supplement a command.
  * @param {WAWebJS.Message} msg Message object from whatsapp .
- * @param {number} index Index of specific extra arguments to supplement a command. Default is 1 because 0 is the actual command.
- * @returns {string} Empty string if no arguments are attached to command or the argument at the provided index if arguments are present.
+ * @returns {Array<string>} Empty array if no arguments are attached to command or an array of arguments.
  */
-const extractCommandArgs = (msg, index = 1) => {
+const extractCommandArgs = (msg) => {
     // If there's a newline ignore everything after the new line
     const args = msg.body.toLowerCase().split('\n')[0]; // enforce arguments being separated from commands strictly by space(s)
 
     // Now split's the group of words by a space... these should be the valid args
-    const valid_args = args.split(' ');
+    let valid_args = args.split(' ');
     // console.log(valid_args);
-    return valid_args[index] || '';
+
+    if (valid_args.length) {
+        valid_args = valid_args.map(arg => arg.trim());
+        return valid_args.slice(1);
+    }
+    else return [];
+
 }
 
 /**
@@ -400,7 +405,7 @@ const isUserBotAdmin = async (contact) => {
 
 /**
  * Gets a random item from a map using weighted probability.
- * @param {Map<string, number>} map Map object containing a message and its weight.
+ * @param {Map<string, number>} map Map containing a message and its weight.
  * @returns Random item from a map.
  */
 const pickRandomWeightedMessage = (map) => {
@@ -436,6 +441,25 @@ const sleep = async (milliseconds = 500) => {
     await new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
+/**
+ * 
+ * @param {Map<String, Object>} map Map containing commands and their relevant information.
+ * @param {string} keyword String representing the keyword to search for.
+ * @returns {string} String representing key from map.
+ */
+const checkForAlias = (map, keyword) => {
+    for (const entry of map) {
+        const aliases = entry[1].alias;
+        // console.log(aliases);
+
+        if (aliases.includes(keyword)) {
+            // console.log(entry[0]);
+            return entry[0];
+        }
+    }
+}
+
+
 
 module.exports = {
     current_env, current_prefix,
@@ -452,5 +476,6 @@ module.exports = {
     isUserBotAdmin,
     pickRandomWeightedMessage,
     areAllItemsEqual,
-    sleep
+    sleep,
+    checkForAlias
 }

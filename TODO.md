@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] 🐞 Bug with response time calculation...sometimes negative  
 - [ ] ⭐❔ While displaying list of admins, add pushnames ??  
 - [ ] ⭐❔ Log response time after any command is run in order to give average response time for diagnostics  
 - [ ] 👍🏽 Re-record demo vid showing moderator view and normal view  
@@ -27,7 +28,6 @@ Project Description
 
 ### In Progress
 
-- [ ] ⚠️ Change all constants with "ADMIN" to "BOT_ADMIN" in data.js  
 - [ ] ⚠️ Specify the range of numbers used for all the list_responses at the top of main.js  
 
 ### Done ✓
