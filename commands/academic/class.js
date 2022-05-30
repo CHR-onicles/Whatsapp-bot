@@ -67,10 +67,14 @@ const execute = async (client, msg, args) => {
             case '1_dev': //using two IDs to prevent list response from one environment to leak into another environment
                 if (current_env !== 'development') break;
                 text += await todayClassReply(text, 'D');
+                await msg.reply(text + `\nFrom ${current_env} env`);
+                setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
                 break;
-                case '1_prod':
+            case '1_prod':
                 if (current_env !== 'production') break;
                 text += await todayClassReply(text, 'D');
+                await msg.reply(text + `\nFrom ${current_env} env`);
+                setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
                 break;
             case '2_dev':
             case '2_prod':
@@ -84,8 +88,6 @@ const execute = async (client, msg, args) => {
                 break;
         }
 
-        await msg.reply(text + `\nFrom ${current_env} env`);
-        setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
         args.isListResponse = false; // to prevent evaluating list response when message type is text
     }
 }
