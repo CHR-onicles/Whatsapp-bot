@@ -97,7 +97,7 @@ const execute = async (client, msg, args) => {
                 break;
 
             case '3_prod':
-                if (current_env !== 'development') break;
+                if (current_env !== 'production') break;
                 helperFunc('S');
                 break;
 
