@@ -64,7 +64,7 @@ const execute = async (client, msg, args) => {
         const selectedRowId = msg.selectedRowId.split('-')[1];
 
         // helper function for prevent redundancy
-        const helperFunc = (elective) => {
+        const helperFunc = async (elective) => {
             text += await todayClassReply(text, elective);
             await msg.reply(text + `\nFrom ${current_env} env`);
             setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
