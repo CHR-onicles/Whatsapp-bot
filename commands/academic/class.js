@@ -1,7 +1,7 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus, getUsersToNotifyForClass } = require("../../models/misc");
 const { FOOTNOTES, DM_REPLIES } = require("../../utils/data");
-const { current_prefix, todayClassReply, pickRandomWeightedMessage, pickRandomReply } = require("../../utils/helpers");
+const { current_prefix, todayClassReply, pickRandomWeightedMessage, pickRandomReply, current_env } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
@@ -43,12 +43,11 @@ const execute = async (client, msg, args) => {
         'See electives',
         [{
             title: 'Commands available to everyone', rows: [
-                { id: 'class-1', title: 'Data Mining', description: 'For those offering Data Mining' },
-                { id: 'class-2', title: 'Networking', description: "For those offering Networking" },
-                { id: 'class-3', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                { id: current_env === 'development' ? 'class-1_dev' : 'class-1_prod', title: 'Data Mining', description: 'For those offering Data Mining' },
+                { id: current_env === 'development' ? 'class-2_dev' : 'class-2_prod', title: 'Networking', description: "For those offering Networking" },
+                { id: current_env === 'development' ? 'class-3_dev' : 'class-3_prod', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
             ]
-        }
-        ],
+        }],
         'What elective do you offer?',
         'Powered by Ethereal bot'
     );
@@ -61,20 +60,23 @@ const execute = async (client, msg, args) => {
         const selectedRowId = msg.selectedRowId.split('-')[1];
 
         switch (selectedRowId) {
-            case '1':
+            case '1_dev':
+            case '1_prod': //using two IDs to prevent list response from one environment to leak into another environment
                 text += await todayClassReply(text, 'D');
                 break;
-            case '2':
+            case '2_dev':
+            case '2_prod':
                 text += await todayClassReply(text, 'N');
                 break;
-            case '3':
+            case '3_dev':
+            case '3_prod':
                 text += await todayClassReply(text, 'S');
                 break;
             default:
                 break;
         }
 
-        await msg.reply(text);
+        await msg.reply(text + `\nFrom ${current_env} env`);
         setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
         args.isListResponse = false; // to prevent evaluating list response when message type is text
     }
