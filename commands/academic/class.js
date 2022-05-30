@@ -63,27 +63,44 @@ const execute = async (client, msg, args) => {
         console.log('Last prefix used in LR:', lastPrefixUsed)
         const selectedRowId = msg.selectedRowId.split('-')[1];
 
+        // helper function for prevent redundancy
+        const helperFunc = (elective) => {
+            text += await todayClassReply(text, elective);
+            await msg.reply(text + `\nFrom ${current_env} env`);
+            setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
+        }
+
         switch (selectedRowId) {
-            case '1_dev': //using two IDs to prevent list response from one environment to leak into another environment
+            case '1_dev':
                 if (current_env !== 'development') break;
-                text += await todayClassReply(text, 'D');
-                await msg.reply(text + `\nFrom ${current_env} env`);
-                setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
+                helperFunc('D');
                 break;
+
             case '1_prod':
                 if (current_env !== 'production') break;
-                text += await todayClassReply(text, 'D');
-                await msg.reply(text + `\nFrom ${current_env} env`);
-                setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
+                helperFunc('D');
                 break;
+
             case '2_dev':
+                if (current_env !== 'development') break;
+                helperFunc('N');
+                break;
+
             case '2_prod':
-                text += await todayClassReply(text, 'N');
+                if (current_env !== 'production') break;
+                helperFunc('N');
                 break;
+
             case '3_dev':
-            case '3_prod':
-                text += await todayClassReply(text, 'S');
+                if (current_env !== 'development') break;
+                helperFunc('S');
                 break;
+
+            case '3_prod':
+                if (current_env !== 'development') break;
+                helperFunc('S');
+                break;
+
             default:
                 break;
         }
