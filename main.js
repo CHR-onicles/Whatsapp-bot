@@ -141,6 +141,8 @@ client.on('message', async (msg) => {
 
     // Check if mention is for bot
     if (isMention) {
+        const first_word = msg.body.toLowerCase().split(' ').shift();
+        if (!(first_word.slice(1) === process.env.BOT_NUMBER)) return; // Stop processing if the bot is not the one mentioned
         args.isMention = isMention;
         try {
             client.commands.get('menu').execute(client, msg, args);

@@ -6,8 +6,6 @@ const { isUserBotAdmin, pickRandomReply, current_prefix } = require("../../utils
 const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
 
-    const { isMention } = args;
-    const first_word = msg.body.toLowerCase().split(' ').shift();
     const contact = await msg.getContact();
     const chat_from_contact = await contact.getChat();
     const cur_chat = await msg.getChat();
@@ -46,7 +44,7 @@ const execute = async (client, msg, args) => {
 
     if (cur_chat.isGroup) {
         await chat_from_contact.sendMessage(list);
-    } else if (!cur_chat.isGroup || (isMention && first_word.slice(1) === process.env.BOT_NUMBER)) {
+    } else if (!cur_chat.isGroup) {
         await msg.reply(list);
     }
 }

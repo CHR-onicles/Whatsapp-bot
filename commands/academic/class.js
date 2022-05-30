@@ -7,6 +7,7 @@ const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
 
     const { isListResponse, lastPrefixUsed } = args;
+    console.log('last prefix used from class:', lastPrefixUsed)
     // console.log('isListResponse From class:', isListResponse)
     const contact = await msg.getContact();
     const chat_from_contact = await contact.getChat();
@@ -42,7 +43,8 @@ const execute = async (client, msg, args) => {
         '\nMake a choice from the list of electives',
         'See electives',
         [{
-            title: 'Commands available to everyone', rows: [
+            title: 'Commands available to everyone',
+            rows: [
                 { id: lastPrefixUsed === PROD_PREFIX ? 'class-1_prod' : 'class-1_dev', title: 'Data Mining', description: 'For those offering Data Mining' },
                 { id: lastPrefixUsed === PROD_PREFIX ? 'class-2_prod' : 'class-2_dev', title: 'Networking', description: "For those offering Networking" },
                 { id: lastPrefixUsed === PROD_PREFIX ? 'class-3_prod' : 'class-3_dev', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
@@ -51,18 +53,23 @@ const execute = async (client, msg, args) => {
         'What elective do you offer?',
         'Powered by Ethereal bot'
     );
+    console.log("After creating list, lastPrefixedUsed:", lastPrefixUsed)
 
     !isListResponse && await chat_from_contact.sendMessage(list);
 
     if (isListResponse) {
         let text = "";
         console.log('From class:', msg.selectedRowId);
+        console.log('Last prefix used in LR:', lastPrefixUsed)
         const selectedRowId = msg.selectedRowId.split('-')[1];
-        console.log('Split selected rowID:', selectedRowId);
 
         switch (selectedRowId) {
-            case '1_dev':
-            case '1_prod': //using two IDs to prevent list response from one environment to leak into another environment
+            case '1_dev': //using two IDs to prevent list response from one environment to leak into another environment
+                if (current_env !== 'development') break;
+                text += await todayClassReply(text, 'D');
+                break;
+                case '1_prod':
+                if (current_env !== 'production') break;
                 text += await todayClassReply(text, 'D');
                 break;
             case '2_dev':
