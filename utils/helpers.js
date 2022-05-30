@@ -15,7 +15,8 @@ const { getResource } = require('../models/resources');
  */
 var VARIABLES_COUNTER = 0;
 const current_env = process.env.NODE_ENV;
-const current_prefix = current_env === 'production' ? '!' : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
+const PROD_PREFIX = '!';
+const current_prefix = current_env === 'production' ? PROD_PREFIX : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
 
 
 // FUNCTIONS ----------------------------------------
@@ -463,7 +464,9 @@ const checkForAlias = (map, keyword) => {
 
 
 module.exports = {
-    current_env, current_prefix,
+    current_env, 
+    current_prefix,
+    PROD_PREFIX,
     pickRandomReply,
     extractTime,
     extractCommand,

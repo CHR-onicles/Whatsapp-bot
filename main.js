@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 require('./utils/db');
-const { current_env, current_prefix, pickRandomReply, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual, sleep, checkForAlias } = require('./utils/helpers');
+const { current_env, current_prefix, pickRandomReply, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual, sleep, checkForAlias, PROD_PREFIX } = require('./utils/helpers');
 const { ALL_CLASSES, HELP_COMMANDS, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_BOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, WAIT_REPLIES, FOOTNOTES, COURSE_MATERIALS_REPLIES } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addBotAdmin, removeBotAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications, getForwardToUsers } = require('./models/misc');
 
@@ -24,6 +24,7 @@ let BOT_START_TIME = 0;
 const args = {};
 let isDoneReadingCommands = false;
 let isMention = false;
+let lastPrefixUsed = undefined;
 console.log("Current prefix:", current_prefix)
 
 
@@ -111,6 +112,7 @@ client.on('message', async (msg) => {
     // To handle list responses for certain commands
     if (msg.type === "list_response") {
         args.isListResponse = true;
+        args.lastPrefixUsed = lastPrefixUsed;
         const selectedRowId = msg.selectedRowId.split('-')[0];
 
         switch (selectedRowId) {
@@ -134,6 +136,8 @@ client.on('message', async (msg) => {
     const isValidCommand = possibleCommand.startsWith(current_prefix);
     isMention = msg.body.startsWith('@');
     if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax
+    lastPrefixUsed = possibleCommand[0];
+    //todo: Store production bot's status in DB so that if both are online, and there is a mention, development bot ignores it
 
     // Check if mention is for bot
     if (isMention) {

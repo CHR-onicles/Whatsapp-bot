@@ -1,12 +1,12 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus, getUsersToNotifyForClass } = require("../../models/misc");
 const { FOOTNOTES, DM_REPLIES } = require("../../utils/data");
-const { current_prefix, todayClassReply, pickRandomWeightedMessage, pickRandomReply, current_env } = require("../../utils/helpers");
+const { current_prefix, todayClassReply, pickRandomWeightedMessage, pickRandomReply, current_env, PROD_PREFIX } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
 
-    const { isListResponse } = args;
+    const { isListResponse, lastPrefixUsed } = args;
     // console.log('isListResponse From class:', isListResponse)
     const contact = await msg.getContact();
     const chat_from_contact = await contact.getChat();
@@ -43,9 +43,9 @@ const execute = async (client, msg, args) => {
         'See electives',
         [{
             title: 'Commands available to everyone', rows: [
-                { id: current_env === 'development' ? 'class-1_dev' : 'class-1_prod', title: 'Data Mining', description: 'For those offering Data Mining' },
-                { id: current_env === 'development' ? 'class-2_dev' : 'class-2_prod', title: 'Networking', description: "For those offering Networking" },
-                { id: current_env === 'development' ? 'class-3_dev' : 'class-3_prod', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                { id: lastPrefixUsed === PROD_PREFIX ? 'class-1_prod' : 'class-1_dev', title: 'Data Mining', description: 'For those offering Data Mining' },
+                { id: lastPrefixUsed === PROD_PREFIX ? 'class-2_prod' : 'class-2_dev', title: 'Networking', description: "For those offering Networking" },
+                { id: lastPrefixUsed === PROD_PREFIX ? 'class-3_prod' : 'class-3_dev', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
             ]
         }],
         'What elective do you offer?',
@@ -58,6 +58,7 @@ const execute = async (client, msg, args) => {
         let text = "";
         console.log('From class:', msg.selectedRowId);
         const selectedRowId = msg.selectedRowId.split('-')[1];
+        console.log('Split selected rowID:', selectedRowId);
 
         switch (selectedRowId) {
             case '1_dev':
