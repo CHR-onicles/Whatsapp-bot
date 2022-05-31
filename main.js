@@ -141,10 +141,12 @@ client.on('message', async (msg) => {
     isMention = msg.body.startsWith('@');
     if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax
     lastPrefixUsed = possibleCommand[0];
+
     //todo: Store production bot's status in DB so that if both are online, and there is a mention, development bot ignores it
 
     // Check if mention is for bot
     if (isMention) {
+        if (current_env === 'development') return; // To prevent 2 replies when the bot is mentioned while both environments are running simultaneously
         const first_word = msg.body.toLowerCase().split(' ').shift();
         if (!(first_word.slice(1) === process.env.BOT_NUMBER)) return; // Stop processing if the bot is not the one mentioned
         args.isMention = isMention;
@@ -291,40 +293,6 @@ client.on('message', async (msg) => {
 // ----------------------------------------------
 
 
-
-// Help users with commands (will contain extra arguments)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'help' && await getMutedStatus() === false) {
-//         const cur_chat = await msg.getChat();
-//         const contact = await msg.getContact();
-//         const chat_from_contact = await contact.getChat();
-//         const isBotAdmin = await isUserBotAdmin(contact);
-//         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
-
-//         if (cur_chat.isGroup) {
-//             await msg.reply(pickRandomReply(DM_REPLIES));
-//         }
-
-//         let temp_count = 0;
-//         HELP_COMMANDS.forEach((obj, index) => {
-//             if (!isBotAdmin) {
-//                 if (obj.availableTo === 'e') {
-//                     if ((temp_count > 0) && (temp_count % 5 === 0)) text += "\n"; // to space out commands and group them in fives.
-//                     text += "*" + obj.command + ":* " + obj.desc + "\n";
-//                     temp_count++;
-//                 }
-//             } else {
-//                 if ((index > 0) && (index % 5 === 0)) text += "\n"
-//                 text += "*" + obj.command + ":* " + obj.desc + "\n";
-//             }
-//         })
-
-//         if (isBotAdmin) {
-//             text += "\n\nPS:  You're a *bot admin*, so you have access to _special_ commands 🤫"
-//         }
-//         await chat_from_contact.sendMessage(text);
-//     }
-// })
 
 
 //Add user to notification list for class (may contain extra arguments)
@@ -587,10 +555,45 @@ client.on('message', async (msg) => {
 // })
 
 
+//! Tackle this last
+// Help users with commands (will contain extra arguments)
+// client.on('message', async (msg) => {
+//     if (extractCommand(msg) === current_prefix + 'help' && await getMutedStatus() === false) {
+//         const cur_chat = await msg.getChat();
+//         const contact = await msg.getContact();
+//         const chat_from_contact = await contact.getChat();
+//         const isBotAdmin = await isUserBotAdmin(contact);
+//         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
+
+//         if (cur_chat.isGroup) {
+//             await msg.reply(pickRandomReply(DM_REPLIES));
+//         }
+
+//         let temp_count = 0;
+//         HELP_COMMANDS.forEach((obj, index) => {
+//             if (!isBotAdmin) {
+//                 if (obj.availableTo === 'e') {
+//                     if ((temp_count > 0) && (temp_count % 5 === 0)) text += "\n"; // to space out commands and group them in fives.
+//                     text += "*" + obj.command + ":* " + obj.desc + "\n";
+//                     temp_count++;
+//                 }
+//             } else {
+//                 if ((index > 0) && (index % 5 === 0)) text += "\n"
+//                 text += "*" + obj.command + ":* " + obj.desc + "\n";
+//             }
+//         })
+
+//         if (isBotAdmin) {
+//             text += "\n\nPS:  You're a *bot admin*, so you have access to _special_ commands 🤫"
+//         }
+//         await chat_from_contact.sendMessage(text);
+//     }
+// })
 
 
 
-//! Schedule DM - could be turned into a custom reminder feature for users
+
+//! Schedule DM - Will be turned into a custom reminder feature for users like Tatsumaki on Discord
 /*client.on('message', async (msg) => {
 //     if (extractCommand(msg) === '!sdm' && await getMutedStatus() === false) {
 //         const contact = await msg.getContact();

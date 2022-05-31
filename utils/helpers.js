@@ -389,7 +389,8 @@ const sendSlides = async (msg, courseCode) => {
         console.log("Sent a slide")
         if (material === materials[materials.length - 1]) isDone = true;
     }
-    if (isDone) await msg.reply(`Done 👍🏽 from ${current_env}`);
+    // if (isDone) await msg.reply(`Done 👍🏽 from ${current_env}`);
+    if (isDone) await msg.reply(`Done 👍🏽`);
     console.log("Done sending slides")
 }
 
