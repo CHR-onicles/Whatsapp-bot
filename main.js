@@ -126,7 +126,11 @@ client.on('message', async (msg) => {
                 client.commands.get('classes').execute(client, msg, args);
                 break;
             default:
-                console.log(`Couldn't find the command related to ${selectedRowId}`);
+                const command = extractCommand(msg);
+                const isValidCommand = command.startsWith(current_prefix);
+                if (!isValidCommand) break;
+                args.isListResponse = false;
+                client.commands.get(command.slice(1)).execute(client, msg, args);
                 break;
         }
         return;

@@ -7,8 +7,6 @@ const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
 
     const { isListResponse, lastPrefixUsed } = args;
-    console.log('last prefix used from class:', lastPrefixUsed)
-    // console.log('isListResponse From class:', isListResponse)
     const contact = await msg.getContact();
     const chat_from_contact = await contact.getChat();
     const cur_chat = await msg.getChat();
@@ -45,9 +43,9 @@ const execute = async (client, msg, args) => {
         [{
             title: 'Commands available to everyone',
             rows: [
-                { id: lastPrefixUsed === PROD_PREFIX ? 'class-1_prod' : 'class-1_dev', title: 'Data Mining', description: 'For those offering Data Mining' },
-                { id: lastPrefixUsed === PROD_PREFIX ? 'class-2_prod' : 'class-2_dev', title: 'Networking', description: "For those offering Networking" },
-                { id: lastPrefixUsed === PROD_PREFIX ? 'class-3_prod' : 'class-3_dev', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-1_dev' : 'class-1_prod', title: 'Data Mining', description: 'For those offering Data Mining' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-2_dev' : 'class-2_prod', title: 'Networking', description: "For those offering Networking" },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-3_dev' : 'class-3_prod', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
             ]
         }],
         'What elective do you offer?',
@@ -66,7 +64,8 @@ const execute = async (client, msg, args) => {
         // helper function for prevent redundancy
         const helperFunc = async (elective) => {
             text += await todayClassReply(text, elective);
-            await msg.reply(text + `\nFrom ${current_env} env`);
+            // await msg.reply(text + `\nFrom ${current_env} env`);
+            await msg.reply(text);
             setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
         }
 

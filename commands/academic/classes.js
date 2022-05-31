@@ -1,13 +1,12 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus, getUsersToNotifyForClass } = require("../../models/misc");
 const { DM_REPLIES, FOOTNOTES, ALL_CLASSES } = require("../../utils/data");
-const { pickRandomReply, current_prefix, pickRandomWeightedMessage, allClassesReply } = require("../../utils/helpers");
+const { pickRandomReply, current_prefix, pickRandomWeightedMessage, allClassesReply, current_env } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
 
-    const { isListResponse } = args;
-    // console.log('isListResponse From classes:', isListResponse)
+    const { isListResponse, lastPrefixUsed } = args;
     const contact = await msg.getContact();
     const chat_from_contact = await contact.getChat();
     const cur_chat = await msg.getChat();
@@ -41,13 +40,13 @@ const execute = async (client, msg, args) => {
         '\nMake a choice from the list of electives',
         'See electives',
         [{
-            title: 'Commands available to everyone', rows: [
-                { id: 'classes-1', title: 'Data Mining', description: 'For those offering Data Mining' },
-                { id: 'classes-2', title: 'Networking', description: "For those offering Networking" },
-                { id: 'classes-3', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+            title: 'Commands available to everyone',
+            rows: [
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'classes-1_dev' : 'classes-1_prod', title: 'Data Mining', description: 'For those offering Data Mining' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'classes-2_dev' : 'classes-2_prod', title: 'Networking', description: "For those offering Networking" },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'classes-3_dev' : 'classes-3_prod', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
             ]
-        }
-        ],
+        }],
         'What elective do you offer?',
         'Powered by Ethereal bot'
     );
@@ -57,22 +56,50 @@ const execute = async (client, msg, args) => {
         let text = "";
         const selectedRowId = msg.selectedRowId.split('-')[1];
 
+
+        // helper function for prevent redundancy
+        const helperFunc = async (elective) => {
+            text += allClassesReply(ALL_CLASSES, elective, text);
+            // await msg.reply(text + `\nFrom ${current_env} env`);
+            await msg.reply(text);
+            setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
+        }
+
         switch (selectedRowId) {
-            case '1':
-                text += allClassesReply(ALL_CLASSES, 'D', text);
+            case '1_dev':
+                if (current_env !== 'development') break;
+                helperFunc('D');
                 break;
-            case '2':
-                text += allClassesReply(ALL_CLASSES, 'N', text);
+
+            case '1_prod':
+                if (current_env !== 'production') break;
+                helperFunc('D');
                 break;
-            case '3':
-                text += allClassesReply(ALL_CLASSES, 'S', text);
+
+            case '2_dev':
+                if (current_env !== 'development') break;
+                helperFunc('N');
                 break;
+
+            case '2_prod':
+                if (current_env !== 'production') break;
+                helperFunc('N');
+                break;
+
+            case '3_dev':
+                if (current_env !== 'development') break;
+                helperFunc('S');
+                break;
+
+            case '3_prod':
+                if (current_env !== 'production') break;
+                helperFunc('S');
+                break;
+
             default:
                 break;
         }
 
-        await msg.reply(text);
-        setTimeout(async () => await chat_from_contact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
         args.isListResponse = false; // to prevent evaluating list response when message type is text
     }
 }
