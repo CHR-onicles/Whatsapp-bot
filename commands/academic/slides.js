@@ -39,78 +39,91 @@ const execute = async (client, msg, args) => {
     // }
 
     if (isListResponse) {
-        await msg.reply(pickRandomReply(WAIT_REPLIES));
         const selectedRowId = msg.selectedRowId.split('-')[1];
         console.log(`Slides from ${current_env} env`)
 
         switch (selectedRowId) {
             case '415_dev':
                 if (current_env !== 'development') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES)); // have to repeat this to avoid it leaking when bot environments are running simultaneously
                 sendSlides(msg, 'CSCD 415');
                 break;
 
             case '415_prod':
                 if (current_env !== 'production') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 415');
                 break;
 
             case '417_dev':
                 if (current_env !== 'development') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 417');
                 break;
 
             case '417_prod':
                 if (current_env !== 'production') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 417');
                 break;
 
             case '419_dev':
                 if (current_env !== 'development') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 419');
                 break;
 
             case '419_prod':
                 if (current_env !== 'production') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 419');
                 break;
 
             case '421_dev':
                 if (current_env !== 'development') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 421');
                 break;
 
             case '421_prod':
                 if (current_env !== 'production') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 421');
                 break;
 
             case '409_dev':
                 if (current_env !== 'development') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 409');
                 break;
 
             case '409_prod':
                 if (current_env !== 'production') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 409');
                 break;
 
             case '423_dev':
                 if (current_env !== 'development') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 423');
                 break;
 
             case '423_prod':
                 if (current_env !== 'production') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 423');
                 break;
 
             case '427_dev':
                 if (current_env !== 'development') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 427');
                 break;
 
             case '427_prod':
                 if (current_env !== 'production') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 427');
                 break;
 
