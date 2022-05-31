@@ -41,6 +41,7 @@ const execute = async (client, msg, args) => {
     if (isListResponse) {
         await msg.reply(pickRandomReply(WAIT_REPLIES));
         const selectedRowId = msg.selectedRowId.split('-')[1];
+        console.log(`Slides from ${current_env} env`)
 
         switch (selectedRowId) {
             case '415_dev':
@@ -116,6 +117,8 @@ const execute = async (client, msg, args) => {
             default:
                 break;
         }
+
+        args.isListResponse = false;
     }
 }
 
