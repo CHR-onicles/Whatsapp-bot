@@ -20,13 +20,13 @@ const execute = async (client, msg, args) => {
         [{
             title: '',
             rows: [
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-415-dev' : 'slides-415-prod', title: 'Compilers', description: 'CSCD 415' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-417-dev' : 'slides-417-prod', title: 'Theory & Survey of Programming Languages', description: 'CSCD 417' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-419-dev' : 'slides-419-prod', title: 'Formal Methods', description: 'CSCD 419' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-421-dev' : 'slides-421-prod', title: 'Accounting', description: 'CSCD 421' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-423-dev' : 'slides-423-prod', title: 'Software Modelling & Simulation', description: 'CSCD 423' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-409-dev' : 'slides-409-prod', title: 'Data Mining', description: 'CSCD 409' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-427-dev' : 'slides-427-prod', title: 'Networking', description: 'CSCD 427' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-415_dev' : 'slides-415_prod', title: 'Compilers', description: 'CSCD 415' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-417_dev' : 'slides-417_prod', title: 'Theory & Survey of Programming Languages', description: 'CSCD 417' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-419_dev' : 'slides-419_prod', title: 'Formal Methods', description: 'CSCD 419' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-421_dev' : 'slides-421_prod', title: 'Accounting', description: 'CSCD 421' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-423_dev' : 'slides-423_prod', title: 'Software Modelling & Simulation', description: 'CSCD 423' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-409_dev' : 'slides-409_prod', title: 'Data Mining', description: 'CSCD 409' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-427_dev' : 'slides-427_prod', title: 'Networking', description: 'CSCD 427' },
             ]
         }],
         pickRandomReply(COURSE_MATERIALS_REPLIES),
