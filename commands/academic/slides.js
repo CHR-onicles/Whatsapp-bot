@@ -33,7 +33,7 @@ const execute = async (client, msg, args) => {
         'Powered by Ethereal bot'
     );
 
-    await chat_from_contact.sendMessage(list);
+    !isListResponse && await chat_from_contact.sendMessage(list);
     // } else {
     // await msg.reply("The bot is currently hosted locally, so this operation cannot be performed.\n\nThe Grandmaster's data is at stake🐦")
     // }
