@@ -284,9 +284,6 @@ client.on('message', async (msg) => {
 
 
 
-
-
-
 // ----------------------------------------------
 // OTHER COMMANDS TO BE DEALT WITH LATER
 // ----------------------------------------------
@@ -378,46 +375,6 @@ client.on('message', async (msg) => {
 //             await startNotificationCalculation(client);
 //         } else {
 //             await msg.reply("You weren't subscribed in the first place 🤔");
-//         }
-//     }
-// })
-
-
-// Enable all notifications for the day (contains extra arguments)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'notify' &&
-//         extractCommandArgs(msg, 1) === 'enable' &&
-//         extractCommandArgs(msg, 2) === 'all' &&
-//         await getMutedStatus() === false) {
-//         const contact = await msg.getContact();
-//         const isBotAdmin = await isUserBotAdmin(contact);
-//         if (isBotAdmin) {
-//             await enableAllNotifications();
-//             startNotificationCalculation(client);
-//             await msg.reply("All notifications have been turned *ON* for today.")
-//         } else {
-//             await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-//             return;
-//         }
-//     }
-// })
-
-
-// Disable all notifications for the day (contains extra arguments)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'notify' &&
-//         extractCommandArgs(msg, 1) === 'disable' &&
-//         extractCommandArgs(msg, 2) === 'all' &&
-//         await getMutedStatus() === false) {
-//         const contact = await msg.getContact();
-//         const isBotAdmin = await isUserBotAdmin(contact);
-//         if (isBotAdmin) {
-//             await disableAllNotifications();
-//             stopOngoingNotifications();
-//             await msg.reply("All notifications have been turned *OFF* for today.")
-//         } else {
-//             await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-//             return;
 //         }
 //     }
 // })
