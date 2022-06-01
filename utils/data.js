@@ -198,17 +198,17 @@ exports.HELP_COMMANDS = [
     },
     {
         availableTo: 'a',
-        command: `${current_prefix}notify status`,
+        command: `${current_prefix}notifs status`,
         desc: "Get class notifications status 📄"
     },
     {
         availableTo: 'a',
-        command: `${current_prefix}notify enable all`,
+        command: `${current_prefix}notifs enable all`,
         desc: "Enable all class notifications for the day ✔"
     },
     {
         availableTo: 'a',
-        command: `${current_prefix}notify disable all`,
+        command: `${current_prefix}notifs disable all`,
         desc: "Disable all class notifications for the day ❌"
     },
     {

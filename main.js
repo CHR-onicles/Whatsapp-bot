@@ -142,7 +142,6 @@ client.on('message', async (msg) => {
     if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax
     lastPrefixUsed = possibleCommand[0];
 
-    //todo: Store production bot's status in DB so that if both are online, and there is a mention, development bot ignores it
 
     // Check if mention is for bot
     if (isMention) {
@@ -292,71 +291,69 @@ client.on('message', async (msg) => {
 // OTHER COMMANDS TO BE DEALT WITH LATER
 // ----------------------------------------------
 
-
-
-
 //Add user to notification list for class (may contain extra arguments)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'notify' &&
-//         extractCommandArgs(msg) !== 'stop' &&
-//         extractCommandArgs(msg) !== 'disable' &&
-//         extractCommandArgs(msg) !== 'enable' &&
-//         extractCommandArgs(msg) !== 'status' &&
-//         await getMutedStatus() === false) {
-//         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-//         const total_users = [...dataMining, ...networking, ...softModelling];
-//         const contact = await msg.getContact();
+/* client.on('message', async (msg) => {
+    if (extractCommand(msg) === current_prefix + 'notify' &&
+        extractCommandArgs(msg) !== 'stop' &&
+        extractCommandArgs(msg) !== 'disable' &&
+        extractCommandArgs(msg) !== 'enable' &&
+        extractCommandArgs(msg) !== 'status' &&
+        await getMutedStatus() === false) {
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        const total_users = [...dataMining, ...networking, ...softModelling];
+        const contact = await msg.getContact();
 
-//         if (total_users.includes(contact.id.user)) {
-//             await msg.reply("You are already being notified for class🐦");
-//             console.log('Already subscribed')
-//             return;
-//         }
+        if (total_users.includes(contact.id.user)) {
+            await msg.reply("You are already being notified for class🐦");
+            console.log('Already subscribed')
+            return;
+        }
 
-//         const list = new List(
-//             '\nMake a choice from the list of electives',
-//             'See electives',
-//             [{
-//                 title: 'Commands available to everyone', rows: [
-//                     { id: '31', title: 'Data Mining', description: 'For those offering Data Mining' },
-//                     { id: '32', title: 'Networking', description: 'For those offering Networking' },
-//                     { id: '33', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
-//                 ]
-//             }
-//             ],
-//             'Which elective do you offer?',
-//             'Powered by Ethereal bot'
-//         );
-//         await msg.reply(list);
-//     }
+        const list = new List(
+            '\nMake a choice from the list of electives',
+            'See electives',
+            [{
+                title: 'Commands available to everyone', rows: [
+                    { id: '31', title: 'Data Mining', description: 'For those offering Data Mining' },
+                    { id: '32', title: 'Networking', description: 'For those offering Networking' },
+                    { id: '33', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                ]
+            }
+            ],
+            'Which elective do you offer?',
+            'Powered by Ethereal bot'
+        );
+        await msg.reply(list);
+    }
 
-//     if (msg.type === 'list_response' && await getMutedStatus() === false) {
-//         const cur_chat = await msg.getChat();
-//         const contact = await msg.getContact();
-//         const chat_from_contact = await contact.getChat();
+    if (msg.type === 'list_response' && await getMutedStatus() === false) {
+        const cur_chat = await msg.getChat();
+        const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
 
-//         if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
-//         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-//         const total_users = [...dataMining, ...networking, ...softModelling];
+        if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
+        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+        const total_users = [...dataMining, ...networking, ...softModelling];
 
-//         if (total_users.includes(contact.id.user)) {
-//             await msg.reply("You are already being notified for class🐦");
-//             console.log('Already subscribed')
-//             return;
-//         }
-//         // can't refactor repeated code outside the if statement, because every command
-//         // will execute this piece of code.
+        if (total_users.includes(contact.id.user)) {
+            await msg.reply("You are already being notified for class🐦");
+            console.log('Already subscribed')
+            return;
+        }
+        // can't refactor repeated code outside the if statement, because every command
+        // will execute this piece of code.
 
-//         if (cur_chat.isGroup) {
-//             msg.reply(pickRandomReply(DM_REPLIES));
-//         }
+        if (cur_chat.isGroup) {
+            msg.reply(pickRandomReply(DM_REPLIES));
+        }
 
-//         await chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${msg.selectedRowId === '31' ? 'Data Mining' : (msg.selectedRowId === '32' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
-//         await addUserToBeNotified(contact.id.user, msg.selectedRowId);
-//         stopOngoingNotifications();
-//         await startNotificationCalculation(client);
-//     }
-// })
+        await chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${msg.selectedRowId === '31' ? 'Data Mining' : (msg.selectedRowId === '32' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
+        await addUserToBeNotified(contact.id.user, msg.selectedRowId);
+        stopOngoingNotifications();
+        await startNotificationCalculation(client);
+    }
+})
+*/
 
 
 // Stop notifying user for class (contains extra arguments)
@@ -381,135 +378,6 @@ client.on('message', async (msg) => {
 //             await startNotificationCalculation(client);
 //         } else {
 //             await msg.reply("You weren't subscribed in the first place 🤔");
-//         }
-//     }
-// })
-
-
-// Check notifications status (contains extra arguments)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'notify' &&
-//         extractCommandArgs(msg) === 'status' &&
-//         await getMutedStatus() === false) {
-//         const contact = await msg.getContact();
-//         const isBotAdmin = await isUserBotAdmin(contact);
-//         if (isBotAdmin) {
-//             const notifs_status = await getNotificationStatus();
-//             await msg.reply(`All notifications for today's classes are *${notifs_status ? 'ON ✅' : 'OFF ❌'}*`);
-//         } else {
-//             await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-//             return;
-//         }
-//     }
-// })
-
-
-// Promote a user to be a bot admin (contains extra arguments)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'promote' && await getMutedStatus() === false) {
-//         const user_to_promote = extractCommandArgs(msg);
-//         const cur_chat = await msg.getChat();
-//         const contact = await msg.getContact();
-//         const isBotAdmin = await isUserBotAdmin(contact);
-
-//         // Don't do anything if run by a user who is not a bot admin.
-//         if (!isBotAdmin) {
-//             await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-//             return;
-//         }
-
-//         // Make sure the user is using this command in a group chat in order 
-//         // to be able to ping another user.
-//         if (!cur_chat.isGroup) {
-//             await msg.reply("Sorry can't do this in a chat that is not a group.")
-//             return;
-//         }
-
-//         // Make sure the user is pinging someone
-//         if (user_to_promote[0] !== '@') {
-//             await msg.reply("Please make sure to ping a valid user");
-//             return;
-//         }
-
-//         const found_user = cur_chat.participants.find((user) => user.id.user === user_to_promote.slice(1));
-
-//         if (found_user) {
-//             // The bot shouldn't be promoted lol.
-//             if (found_user.id.user === BOT_NUMBER) {
-//                 await msg.reply(pickRandomReply(PROMOTE_BOT_REPLIES));
-//                 return;
-//             } else if (found_user.id.user === GRANDMASTER) {
-//                 const isGMAdmin = await isUserBotAdmin(found_user);
-//                 if (isGMAdmin) {
-//                     await msg.reply(pickRandomReply(PROMOTE_GRANDMASTER_REPLIES));
-//                     return;
-//                 }
-//             }
-//             const is_found_user_bot_admin = await isUserBotAdmin(found_user);
-//             if (is_found_user_bot_admin) {
-//                 await msg.reply('This user is already a bot admin 😕'); // todo: Add more replies for this later
-//                 return;
-//             } else {
-//                 await addBotAdmin(found_user.id.user);
-//                 await msg.reply('Admin successfully added! ✅'); //todo: Add more replies for this later
-//             }
-//         } else {
-//             await msg.reply("Sorry, I couldn't find that user ☹")
-//             return;
-//         }
-//     }
-// })
-
-
-// Dismiss a bot admin (contains extra arguments)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'demote' && await getMutedStatus() === false) {
-//         const user_to_demote = extractCommandArgs(msg);
-//         const cur_chat = await msg.getChat();
-//         const contact = await msg.getContact();
-//         const isBotAdmin = await isUserBotAdmin(contact);
-
-//         // Don't do anything if run by a user who is not a bot admin.
-//         if (!isBotAdmin) {
-//             await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-//             return;
-//         }
-
-//         // Make sure the user is using this command in a group chat in order 
-//         // to be able to ping another user.
-//         if (!cur_chat.isGroup) {
-//             await msg.reply("Sorry can't do this in a chat that is not a group.");
-//             return;
-//         }
-
-//         // Make sure the user is pinging someone
-//         if (user_to_demote[0] !== '@') {
-//             await msg.reply("Please make sure to ping a valid user");
-//             return;
-//         }
-
-//         const found_user = cur_chat.participants.find((user) => user.id.user === user_to_demote.slice(1));
-
-//         if (found_user) {
-//             // The bot shouldn't be demoted.
-//             if (found_user.id.user === BOT_NUMBER) {
-//                 await msg.reply(pickRandomReply(DEMOTE_BOT_REPLIES));
-//                 return;
-//             } else if (found_user.id.user === GRANDMASTER) {
-//                 await msg.reply(pickRandomReply(DEMOTE_GRANDMASTER_REPLIES));
-//                 return;
-//             }
-//             const is_found_user_bot_admin = await isUserBotAdmin(found_user);
-//             if (is_found_user_bot_admin) {
-//                 await removeBotAdmin(found_user.id.user);
-//                 await msg.reply('Bot admin dismissed successfully! ✅'); //todo: Add more replies for this later
-//                 return;
-//             } else {
-//                 await msg.reply('This user is not a bot admin 🤦🏽‍♂️'); // todo: Add more replies for this later
-//             }
-//         } else {
-//             await msg.reply("Sorry, I couldn't find that user ☹");
-//             return;
 //         }
 //     }
 // })
@@ -556,39 +424,40 @@ client.on('message', async (msg) => {
 
 
 //! Tackle this last
-// Help users with commands (will contain extra arguments)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'help' && await getMutedStatus() === false) {
-//         const cur_chat = await msg.getChat();
-//         const contact = await msg.getContact();
-//         const chat_from_contact = await contact.getChat();
-//         const isBotAdmin = await isUserBotAdmin(contact);
-//         let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
+/* Help users with commands (will contain extra arguments)
+client.on('message', async (msg) => {
+    if (extractCommand(msg) === current_prefix + 'help' && await getMutedStatus() === false) {
+        const cur_chat = await msg.getChat();
+        const contact = await msg.getContact();
+        const chat_from_contact = await contact.getChat();
+        const isBotAdmin = await isUserBotAdmin(contact);
+        let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
 
-//         if (cur_chat.isGroup) {
-//             await msg.reply(pickRandomReply(DM_REPLIES));
-//         }
+        if (cur_chat.isGroup) {
+            await msg.reply(pickRandomReply(DM_REPLIES));
+        }
 
-//         let temp_count = 0;
-//         HELP_COMMANDS.forEach((obj, index) => {
-//             if (!isBotAdmin) {
-//                 if (obj.availableTo === 'e') {
-//                     if ((temp_count > 0) && (temp_count % 5 === 0)) text += "\n"; // to space out commands and group them in fives.
-//                     text += "*" + obj.command + ":* " + obj.desc + "\n";
-//                     temp_count++;
-//                 }
-//             } else {
-//                 if ((index > 0) && (index % 5 === 0)) text += "\n"
-//                 text += "*" + obj.command + ":* " + obj.desc + "\n";
-//             }
-//         })
+        let temp_count = 0;
+        HELP_COMMANDS.forEach((obj, index) => {
+            if (!isBotAdmin) {
+                if (obj.availableTo === 'e') {
+                    if ((temp_count > 0) && (temp_count % 5 === 0)) text += "\n"; // to space out commands and group them in fives.
+                    text += "*" + obj.command + ":* " + obj.desc + "\n";
+                    temp_count++;
+                }
+            } else {
+                if ((index > 0) && (index % 5 === 0)) text += "\n"
+                text += "*" + obj.command + ":* " + obj.desc + "\n";
+            }
+        })
 
-//         if (isBotAdmin) {
-//             text += "\n\nPS:  You're a *bot admin*, so you have access to _special_ commands 🤫"
-//         }
-//         await chat_from_contact.sendMessage(text);
-//     }
-// })
+        if (isBotAdmin) {
+            text += "\n\nPS:  You're a *bot admin*, so you have access to _special_ commands 🤫"
+        }
+        await chat_from_contact.sendMessage(text);
+    }
+}) 
+*/
 
 
 
