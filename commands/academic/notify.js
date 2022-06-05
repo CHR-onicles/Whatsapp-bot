@@ -26,43 +26,50 @@ const execute = async (client, msg, args) => {
         }
 
         const selectedRowId = msg.selectedRowId.split('-')[1];
-        console.log('selected row id:', selectedRowId)
+        // console.log('selected row id:', selectedRowId)
 
-        await chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${selectedRowId[0] === '1' ? 'Data Mining' : (selectedRowId[0] === '2' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
+        // Helper function to solely for refactoring
+        const helper = async () => {
+            await chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${selectedRowId[0] === '1' ? 'Data Mining' : (selectedRowId[0] === '2' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
+            await addUserToBeNotified(contact.id.user, selectedRowId[0]);
+            stopOngoingNotifications();
+            await startNotificationCalculation(client);
+        }
+
         switch (selectedRowId) {
             case '1_dev':
                 if (current_env !== 'development') break;
-                await addUserToBeNotified(contact.id.user, selectedRowId[0]);
+                helper();
                 console.log('add user to be notified from 1_dev')
                 break;
 
             case '1_prod':
                 if (current_env !== 'production') break;
-                await addUserToBeNotified(contact.id.user, selectedRowId[0]);
+                helper();
                 console.log('add user to be notified from 1_prod')
                 break;
 
             case '2_dev':
                 if (current_env !== 'development') break;
-                await addUserToBeNotified(contact.id.user, selectedRowId[0]);
+                helper();
                 console.log('add user to be notified from 2_dev')
                 break;
 
             case '2_prod':
                 if (current_env !== 'production') break;
-                await addUserToBeNotified(contact.id.user, selectedRowId[0]);
+                helper();
                 console.log('add user to be notified from 2_prod')
                 break;
 
             case '3_dev':
                 if (current_env !== 'development') break;
-                await addUserToBeNotified(contact.id.user, selectedRowId[0]);
+                helper();
                 console.log('add user to be notified from 3_dev')
                 break;
 
             case '3_prod':
                 if (current_env !== 'production') break;
-                await addUserToBeNotified(contact.id.user, selectedRowId[0]);
+                helper();
                 console.log('add user to be notified from 3_prod')
                 break;
 
@@ -70,14 +77,12 @@ const execute = async (client, msg, args) => {
                 break;
         }
 
-        stopOngoingNotifications();
-        await startNotificationCalculation(client);
         args.isListResponse = false;
         return;
     }
 
 
-    // console.log('msg args:', msg_args);
+    console.log('msg args:', msg_args);
     switch (msg_args) {
         case 'enable':
         case '-e':
