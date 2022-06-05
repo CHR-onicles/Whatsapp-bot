@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 require('./utils/db');
-const { current_env, current_prefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias } = require('./utils/helpers');
+const { current_env, current_prefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
 
