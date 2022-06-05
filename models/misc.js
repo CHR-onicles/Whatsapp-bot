@@ -269,15 +269,15 @@ exports.getUsersToNotifyForClass = async () => {
 exports.addUserToBeNotified = async (newUser, rowId) => {
     try {
         let res = null;
-        if (rowId === '31') {
+        if (rowId === '1') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveDataMining: newUser } });
-        } else if (rowId === '32') {
+        } else if (rowId === '2') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveNetworking: newUser } });
-        } else if (rowId === '33') {
+        } else if (rowId === '3') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveSoftModelling: newUser } });
         }
         // console.log(res);
-        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '31' ? 'Data Mining' : (rowId === '32' ? 'Networking' : 'Software Modelling') + ' as elective');
+        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '1' ? 'Data Mining' : (rowId === '2' ? 'Networking' : 'Software Modelling') + ' as elective');
 
     } catch (error) {
         console.log(error)

@@ -9,9 +9,9 @@ const path = require('path');
 const fs = require('fs');
 
 require('./utils/db');
-const { current_env, current_prefix, pickRandomReply, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual, sleep, checkForAlias, PROD_PREFIX } = require('./utils/helpers');
-const { ALL_CLASSES, HELP_COMMANDS, DM_REPLIES, LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST, NOT_BOT_ADMIN_REPLIES, PROMOTE_BOT_REPLIES, DEMOTE_BOT_REPLIES, DEMOTE_GRANDMASTER_REPLIES, PROMOTE_GRANDMASTER_REPLIES, WAIT_REPLIES, FOOTNOTES, COURSE_MATERIALS_REPLIES } = require('./utils/data');
-const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, addUserToBeNotified, removeUserToBeNotified, getUsersToNotifyForClass, addBotAdmin, removeBotAdmin, getNotificationStatus, disableAllNotifications, enableAllNotifications, getForwardToUsers } = require('./models/misc');
+const { current_env, current_prefix, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, PROD_PREFIX } = require('./utils/helpers');
+const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
+const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers } = require('./models/misc');
 
 
 // --------------------------------------------------
@@ -61,7 +61,8 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 
 // Bot initialization
 client.on('ready', async () => {
-    console.log('Client is ready!');
+    console.log('Client is ready!')
+    console.log(current_env === 'development' && '\n');
     BOT_START_TIME = new Date();
     args.BOT_START_TIME = BOT_START_TIME;
     await startNotificationCalculation(client);
@@ -125,6 +126,9 @@ client.on('message', async (msg) => {
             case 'classes':
                 client.commands.get('classes').execute(client, msg, args);
                 break;
+            case 'notify':
+                client.commands.get('notify').execute(client, msg, args);
+                break;
             default:
                 const command = extractCommand(msg);
                 const isValidCommand = command.startsWith(current_prefix);
@@ -141,6 +145,7 @@ client.on('message', async (msg) => {
     isMention = msg.body.startsWith('@');
     if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax
     lastPrefixUsed = possibleCommand[0];
+    args.lastPrefixUsed = lastPrefixUsed;
 
 
     // Check if mention is for bot
@@ -288,98 +293,6 @@ client.on('message', async (msg) => {
 // OTHER COMMANDS TO BE DEALT WITH LATER
 // ----------------------------------------------
 
-//Add user to notification list for class (may contain extra arguments)
-/* client.on('message', async (msg) => {
-    if (extractCommand(msg) === current_prefix + 'notify' &&
-        extractCommandArgs(msg) !== 'stop' &&
-        extractCommandArgs(msg) !== 'disable' &&
-        extractCommandArgs(msg) !== 'enable' &&
-        extractCommandArgs(msg) !== 'status' &&
-        await getMutedStatus() === false) {
-        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-        const total_users = [...dataMining, ...networking, ...softModelling];
-        const contact = await msg.getContact();
-
-        if (total_users.includes(contact.id.user)) {
-            await msg.reply("You are already being notified for class🐦");
-            console.log('Already subscribed')
-            return;
-        }
-
-        const list = new List(
-            '\nMake a choice from the list of electives',
-            'See electives',
-            [{
-                title: 'Commands available to everyone', rows: [
-                    { id: '31', title: 'Data Mining', description: 'For those offering Data Mining' },
-                    { id: '32', title: 'Networking', description: 'For those offering Networking' },
-                    { id: '33', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
-                ]
-            }
-            ],
-            'Which elective do you offer?',
-            'Powered by Ethereal bot'
-        );
-        await msg.reply(list);
-    }
-
-    if (msg.type === 'list_response' && await getMutedStatus() === false) {
-        const cur_chat = await msg.getChat();
-        const contact = await msg.getContact();
-        const chat_from_contact = await contact.getChat();
-
-        if (parseInt(msg.selectedRowId) < 31 || parseInt(msg.selectedRowId) > 33) return;
-        const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-        const total_users = [...dataMining, ...networking, ...softModelling];
-
-        if (total_users.includes(contact.id.user)) {
-            await msg.reply("You are already being notified for class🐦");
-            console.log('Already subscribed')
-            return;
-        }
-        // can't refactor repeated code outside the if statement, because every command
-        // will execute this piece of code.
-
-        if (cur_chat.isGroup) {
-            msg.reply(pickRandomReply(DM_REPLIES));
-        }
-
-        await chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${msg.selectedRowId === '31' ? 'Data Mining' : (msg.selectedRowId === '32' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
-        await addUserToBeNotified(contact.id.user, msg.selectedRowId);
-        stopOngoingNotifications();
-        await startNotificationCalculation(client);
-    }
-})
-*/
-
-
-// Stop notifying user for class (contains extra arguments)
-// client.on('message', async (msg) => {
-//     if (extractCommand(msg) === current_prefix + 'notify' &&
-//         extractCommandArgs(msg) === 'stop' &&
-//         await getMutedStatus() === false) {
-//         const contact = await msg.getContact();
-//         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-//         const total_users = [...dataMining, ...networking, ...softModelling]
-
-//         if (total_users.includes(contact.id.user)) {
-//             if (dataMining.includes(contact.id.user)) {
-//                 await removeUserToBeNotified(contact.id.user, 'D');
-//             } else if (networking.includes(contact.id.user)) {
-//                 await removeUserToBeNotified(contact.id.user, 'N');
-//             } else if (softModelling.includes(contact.id.user)) {
-//                 await removeUserToBeNotified(contact.id.user, 'S');
-//             }
-//             msg.reply("I won't remind you to go to class anymore ✅");
-//             stopOngoingNotifications();
-//             await startNotificationCalculation(client);
-//         } else {
-//             await msg.reply("You weren't subscribed in the first place 🤔");
-//         }
-//     }
-// })
-
-
 //! Tackle this last
 /* Help users with commands (will contain extra arguments)
 client.on('message', async (msg) => {
@@ -418,8 +331,7 @@ client.on('message', async (msg) => {
 
 
 
-
-//! Schedule DM - Will be turned into a custom reminder feature for users like Tatsumaki on Discord
+//? Schedule DM - Will be turned into a custom reminder feature for users like Tatsumaki on Discord
 /*client.on('message', async (msg) => {
 //     if (extractCommand(msg) === '!sdm' && await getMutedStatus() === false) {
 //         const contact = await msg.getContact();

@@ -158,12 +158,12 @@ exports.HELP_COMMANDS = [
     },
     {
         availableTo: 'e',
-        command: `${current_prefix}notify`,
+        command: `${current_prefix}notify enable`,
         desc: "Get notified for class 🔔"
     },
     {
         availableTo: 'e',
-        command: `${current_prefix}notify stop`,
+        command: `${current_prefix}notify disable`,
         desc: "Stop getting notified for class 🔕"
     },
     {
@@ -173,12 +173,12 @@ exports.HELP_COMMANDS = [
     },
     {
         availableTo: 'e',
-        command: `${current_prefix}commands`,
+        command: `${current_prefix}menu`,
         desc: "Get bot's commands in a list style in your DMs 🥂"
     },
     {
         availableTo: 'a', // maybe change later to everyone
-        command: `${current_prefix}admins`,
+        command: `${current_prefix}botadmins`,
         desc: "Get all bot admins 👮🏽‍♂️👮🏽‍♀️"
     },
     {
