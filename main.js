@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 require('./utils/db');
-const { current_env, current_prefix, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, PROD_PREFIX } = require('./utils/helpers');
+const { current_env, current_prefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
 
@@ -92,11 +92,8 @@ fs.readdir('./commands', (err, folders) => {
         }
     })
 
-    // console.log(client.commands.has('everyone'));
     console.log('Number of commands read successfully:', client.commands.size);
     isDoneReadingCommands = true;
-
-    // console.log(client.commands.get(checkForAlias(client.commands, 'all')));
 })
 
 
@@ -138,7 +135,7 @@ client.on('message', async (msg) => {
         return;
     }
 
-    if (msg.type === 'chat') {
+    if (msg.type === 'chat') { // no longer "text" as stated in the library's docs
         args.isListResponse = false;
         const possibleCommand = extractCommand(msg);
         const isValidCommand = possibleCommand.startsWith(current_prefix);
