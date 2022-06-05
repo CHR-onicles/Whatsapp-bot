@@ -25,7 +25,6 @@ Project Description
 
 ### In Progress
 
-- [ ] ⚠️Fix trim bug with extractCommandArgs function  
 
 ### Done ✓
 

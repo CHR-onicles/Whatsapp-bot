@@ -206,7 +206,6 @@ exports.NOT_BOT_ADMIN_REPLIES = [
     "No please 🐦, you are not a *bot admin* unfortunately.",
     "No can do 🐦, you don't have sufficient privileges.",
     "You are not a *bot admin*",
-    "Task successfully failed ❎, command reserved for *bot admins*.",
     "Nope🐦, you don't have the required permissions.",
     "Only *bot admins* can do this 🙂",
     // "Only *bot admins* can use this, so that it is not abused.",
@@ -230,7 +229,6 @@ exports.PROMOTE_BOT_REPLIES = [
     "Must've done something great to deserve this promotion huh🐦"
 ]
 
-
 /**
  * Array containing replies to admins attempting to demote the bot.
  */
@@ -248,8 +246,6 @@ exports.DEMOTE_BOT_REPLIES = [
     "Only the Grandmaster can demote me🐦",
     "🤣aye good luck",
     "Got any other better thing doing?🐦",
-    "🤦🏽‍♂️",
-    "👎🏽",
     "Why would you do that, I've literally been a good bot🐦",
 ]
 
@@ -273,10 +269,8 @@ exports.PROMOTE_GRANDMASTER_REPLIES = [
  */
 exports.DEMOTE_GRANDMASTER_REPLIES = [
     "Interesting🐦",
-    "👎🏽",
     "❌",
     "🙄",
-    "🤦🏽‍♂️",
     "Think it through first 👍🏽",
     "We don't do that here 🙄",
     "I'll think about it🐦",
@@ -336,9 +330,9 @@ exports.FOOTNOTES = new Map([
     ["Don't forget to DO MORE 👍🏽", 0.5],
     ["Keep on keeping on👍🏽", 0.5],
     ["Have you tried !𝒉𝒆𝒍𝒑 ?", 3],
-    ["Checked out !𝕔𝕠𝕞𝕞𝕒𝕟𝕕𝕤 ?", 2],
+    ["Checked out !𝕞𝕖𝕟𝕦 ?", 2],
     ["Checkout the *!help* command to see other commands you can use", 4],
-    ["Use *!commands* to see all the commands available to you in a list style", 4],
+    ["Use *!menu* to see all the commands available to you", 4],
     ["Did you know you could ping me in a group to see all the commands? 😮", 4],
     // ["Use *!notify* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 3],
     ["Glad I could be of help 😁", 2],

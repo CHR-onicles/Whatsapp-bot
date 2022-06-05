@@ -23,7 +23,7 @@ let BOT_START_TIME = 0;
 const args = {};
 let isDoneReadingCommands = false;
 let isMention = false;
-let lastPrefixUsed = undefined;
+let lastPrefixUsed = null;
 console.log("Current prefix:", current_prefix)
 
 
