@@ -15,21 +15,22 @@ const execute = async (client, msg, args) => {
     const total_users = [...dataMining, ...networking, ...softModelling]
 
     if (isListResponse) {
-        if (total_users.includes(contact.id.user)) {
-            await msg.reply("You are already being notified for class🐦");
-            console.log('Already subscribed, from List Response')
-            return;
-        }
-
-        if (cur_chat.isGroup) {
-            msg.reply(pickRandomReply(DM_REPLIES));
-        }
 
         const selectedRowId = msg.selectedRowId.split('-')[1];
         // console.log('selected row id:', selectedRowId)
 
         // Helper function to solely for refactoring
         const helper = async () => {
+            if (total_users.includes(contact.id.user)) {
+                await msg.reply("You are already being notified for class🐦");
+                console.log('Already subscribed, from List Response')
+                return;
+            }
+
+            if (cur_chat.isGroup) {
+                msg.reply(pickRandomReply(DM_REPLIES));
+            }
+
             await chat_from_contact.sendMessage(`🔔 You will now be notified periodically for class, using *${selectedRowId[0] === '1' ? 'Data Mining' : (selectedRowId[0] === '2' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
             await addUserToBeNotified(contact.id.user, selectedRowId[0]);
             stopOngoingNotifications();
