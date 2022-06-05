@@ -139,36 +139,39 @@ client.on('message', async (msg) => {
         return;
     }
 
-    const possibleCommand = extractCommand(msg);
-    const isValidCommand = possibleCommand.startsWith(current_prefix);
-    isMention = msg.body.startsWith('@');
-    if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax
-    lastPrefixUsed = possibleCommand[0];
-    args.lastPrefixUsed = lastPrefixUsed;
+    if (msg.type === 'chat') {
+        args.isListResponse = false;
+        const possibleCommand = extractCommand(msg);
+        const isValidCommand = possibleCommand.startsWith(current_prefix);
+        isMention = msg.body.startsWith('@');
+        if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax or a mention
+        lastPrefixUsed = possibleCommand[0];
+        args.lastPrefixUsed = lastPrefixUsed;
 
+        // Check if mention is for bot
+        if (isMention) {
+            if (current_env === 'development') return; // To prevent 2 replies when the bot is mentioned while both environments are running simultaneously
+            const first_word = msg.body.toLowerCase().split(' ').shift();
+            if (!(first_word.slice(1) === process.env.BOT_NUMBER)) return; // Stop processing if the bot is not the one mentioned
+            args.isMention = isMention;
+            try {
+                client.commands.get('menu').execute(client, msg, args);
+            } catch (error) {
+                console.error(error);
+            }
+            return;
+        }
 
-    // Check if mention is for bot
-    if (isMention) {
-        if (current_env === 'development') return; // To prevent 2 replies when the bot is mentioned while both environments are running simultaneously
-        const first_word = msg.body.toLowerCase().split(' ').shift();
-        if (!(first_word.slice(1) === process.env.BOT_NUMBER)) return; // Stop processing if the bot is not the one mentioned
-        args.isMention = isMention;
+        // Execute command called
+        const cmd = client.commands.get(possibleCommand.slice(1)) || client.commands.get(checkForAlias(client.commands, possibleCommand.slice(1)));
+        console.log('\nPossible cmd:', possibleCommand, '\nCmd:', cmd, '\nArgs:', args);
+        if (!cmd) return;
+
         try {
-            client.commands.get('menu').execute(client, msg, args);
+            cmd.execute(client, msg, args);
         } catch (error) {
             console.error(error);
         }
-        return;
-    }
-
-    const cmd = client.commands.get(possibleCommand.slice(1)) || client.commands.get(checkForAlias(client.commands, possibleCommand.slice(1)));
-    console.log('\nPossible cmd:', possibleCommand, '\nCmd:', cmd, '\nArgs:', args);
-    if (!cmd) return;
-
-    try {
-        cmd.execute(client, msg, args);
-    } catch (error) {
-        console.error(error);
     }
 })
 
