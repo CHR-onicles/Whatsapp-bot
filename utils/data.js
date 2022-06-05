@@ -3,8 +3,6 @@
 // bot to function correctly
 // --------------------------------------------------
 
-const current_prefix = process.env.NODE_ENV === 'production' ? '!' : process.env.DEV_PREFIX; // doing this instead of importing to avoid circular dependency
-
 
 /**
  * Source code for the bot, hosted on Github.
@@ -113,135 +111,43 @@ exports.EXAM_TIMETABLE = [
 ]
 
 /**
- * Array containing all commands, roles they are available to, and their descriptions.
+ * Object containing arrays of replies for both bot admins and everyone.
  */
-exports.HELP_COMMANDS = [
-    {
-        availableTo: 'e', // everyone
-        command: `${current_prefix}ping`,
-        desc: "Check if I'm available 🙋🏽‍♂️"
-    },
-    {
-        // availableTo: 'e',
-        // command: `${current_prefix}uptime`,
-        // desc: "See how long I've been awake 🟢"
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}help`,
-        desc: "Get commands that can be used with me 💡"
-    },
-    {
-        availableTo: 'a', // admins
-        command: `${current_prefix}mute`,
-        desc: "Get me to be quiet 😅"
-    },
-    {
-        availableTo: 'a',
-        command: `${current_prefix}unmute`,
-        desc: "Allow me to talk 🙂"
-    },
-    {
-        availableTo: 'a',
-        command: `${current_prefix}everyone`,
-        desc: "Ping everyone in the group 😮"
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}classes`,
-        desc: "Get all the classes you have this week 📚"
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}class`,
-        desc: "Get today's classes 📕"
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}notify`,
-        desc: "Get notified for class 🔔"
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}notify stop`,
-        desc: "Stop getting notified for class 🔕"
-    },
-    {
-        availableTo: 'a',
-        command: `${current_prefix}subs`,
-        desc: "Get users who want to be notified for class 👯‍♂️"
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}commands`,
-        desc: "Get bot's commands in a list style in your DMs 🥂"
-    },
-    {
-        availableTo: 'a', // maybe change later to everyone
-        command: `${current_prefix}admins`,
-        desc: "Get all bot admins 👮🏽‍♂️👮🏽‍♀️"
-    },
-    {
-        availableTo: 'a',
-        command: `${current_prefix}promote _<user>_`,
-        desc: "Make user an admin 👮🏽‍♂️"
-    },
-    {
-        availableTo: 'a',
-        command: `${current_prefix}demote _<user>_`,
-        desc: "Dismiss an admin 💀"
-    },
-    {
-        availableTo: 'a',
-        command: `${current_prefix}env`,
-        desc: "Check the current environment of the bot"
-    },
-    {
-        availableTo: 'a',
-        command: `${current_prefix}notify status`,
-        desc: "Get class notifications status 📄"
-    },
-    {
-        availableTo: 'a',
-        command: `${current_prefix}notify enable all`,
-        desc: "Enable all class notifications for the day ✔"
-    },
-    {
-        availableTo: 'a',
-        command: `${current_prefix}notify disable all`,
-        desc: "Disable all class notifications for the day ❌"
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}exams`,
-        desc: "Get the current exams timetable 📝"
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}slides`,
-        desc: "Get course materials for all courses 📚"
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}grouplink`,
-        desc: "Get current group link 📱 "
-    },
-    {
-        availableTo: 'e',
-        command: `${current_prefix}sc`,
-        desc: "Get bot's source code 💻 "
-    },
-    // {
-    //     availableTo: 'a',
-    //     command: `${current_prefix}ignore <user>`,
-    //     desc: "Ignore a specific user 💀"
-    // },
-    // {
-    //     availableTo: 'a',
-    //     command: `${current_prefix}acknowledge <user>`,
-    //     desc: "Respond to a specific user 😄"
-    // },
-]
+exports.PING_REPLIES = {
+    botAdmin: [
+        "Need me sir?",
+        "Sir",
+        "Boss",
+        "I'm here sir 🐦",
+        "Alive and well sir 🐦",
+        "Speak forth sir 🐦",
+        "Greetings boss 🐦"
+    ],
+    everyone: [
+        "Fam 🐦",
+        "Uhuh? 🐦",
+        "Hello there🐦",
+        "I'm here fam 🐦",
+        "Alive and well fam 🐦",
+        "Speak forth fam 🐦",
+        "Up and running 🐦",
+        "Listening in 🐦",
+        "Greetings 🐦",
+        "The bot is fine, thanks for not asking 🙄",
+        `Great ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours() < 17 ? 'afternoon' : 'evening')} 🥳`,
+        "🙋🏽‍♂️",
+        "👋🏽",
+        "🐦",
+        "👀",
+        "🤖",
+        "👊🏽",
+        "Adey 🐦",
+        "Yo 🐦",
+        "Sup 🐦",
+        "Hola 🙋🏽‍♂️",
+        "👁👃🏽👁",
+    ]
+}
 
 /**
  * Array containing replies to the `!mute` command.
@@ -294,16 +200,15 @@ exports.DM_REPLIES = [
 ]
 
 /**
- * Array containing replies for users who try to perform administrative functions on the bot.
+ * Array containing replies for users who try to perform administrative functions on the bot but are not bot admins.
  */
-exports.NOT_ADMIN_REPLIES = [
+exports.NOT_BOT_ADMIN_REPLIES = [
     "No please 🐦, you are not a *bot admin* unfortunately.",
     "No can do 🐦, you don't have sufficient privileges.",
     "You are not a *bot admin*",
-    "Task successfully failed ❎, command reserved for *bot admins*.",
     "Nope🐦, you don't have the required permissions.",
     "Only *bot admins* can do this 🙂",
-    "Only *bot admins* can use this, so that it is not abused.",
+    // "Only *bot admins* can use this, so that it is not abused.",
     "Sorry, this command is not available to you.",
     "Not happening😗, you're not a *bot admin*.",
 ]
@@ -324,7 +229,6 @@ exports.PROMOTE_BOT_REPLIES = [
     "Must've done something great to deserve this promotion huh🐦"
 ]
 
-
 /**
  * Array containing replies to admins attempting to demote the bot.
  */
@@ -342,8 +246,6 @@ exports.DEMOTE_BOT_REPLIES = [
     "Only the Grandmaster can demote me🐦",
     "🤣aye good luck",
     "Got any other better thing doing?🐦",
-    "🤦🏽‍♂️",
-    "👎🏽",
     "Why would you do that, I've literally been a good bot🐦",
 ]
 
@@ -367,10 +269,8 @@ exports.PROMOTE_GRANDMASTER_REPLIES = [
  */
 exports.DEMOTE_GRANDMASTER_REPLIES = [
     "Interesting🐦",
-    "👎🏽",
     "❌",
     "🙄",
-    "🤦🏽‍♂️",
     "Think it through first 👍🏽",
     "We don't do that here 🙄",
     "I'll think about it🐦",
@@ -430,9 +330,9 @@ exports.FOOTNOTES = new Map([
     ["Don't forget to DO MORE 👍🏽", 0.5],
     ["Keep on keeping on👍🏽", 0.5],
     ["Have you tried !𝒉𝒆𝒍𝒑 ?", 3],
-    ["Checked out !𝕔𝕠𝕞𝕞𝕒𝕟𝕕𝕤 ?", 2],
+    ["Checked out !𝕞𝕖𝕟𝕦 ?", 2],
     ["Checkout the *!help* command to see other commands you can use", 4],
-    ["Use *!commands* to see all the commands available to you in a list style", 4],
+    ["Use *!menu* to see all the commands available to you", 4],
     ["Did you know you could ping me in a group to see all the commands? 😮", 4],
     // ["Use *!notify* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 3],
     ["Glad I could be of help 😁", 2],

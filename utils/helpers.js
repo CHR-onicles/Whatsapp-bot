@@ -3,7 +3,7 @@
 // --------------------------------------------------
 const WAWebJS = require("whatsapp-web.js");
 const { MessageMedia } = require("whatsapp-web.js");
-const { getUsersToNotifyForClass, getNotificationStatus, getAllSuperAdmins } = require("../models/misc");
+const { getUsersToNotifyForClass, getNotificationStatus, getAllBotAdmins } = require("../models/misc");
 const { ALL_CLASSES, MIME_TYPES } = require("./data");
 const { getResource } = require('../models/resources');
 
@@ -14,8 +14,11 @@ const { getResource } = require('../models/resources');
  * Counter to keep track of dynamically created variables  later used in `eval` statements.
  */
 var VARIABLES_COUNTER = 0;
+
 const current_env = process.env.NODE_ENV;
-const current_prefix = current_env === 'production' ? '!' : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
+const PROD_PREFIX = '!';
+const current_prefix = current_env === 'production' ? PROD_PREFIX : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
+const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 
 
 // FUNCTIONS ----------------------------------------
@@ -56,22 +59,27 @@ const extractCommand = (msg) => {
     const first_word = split.shift();
     // console.log(first_word)
     if (first_word.startsWith(current_prefix)) return first_word;
+    return '';
 }
 
 /**
  * Extracts the arguments/flags to supplement a command.
  * @param {WAWebJS.Message} msg Message object from whatsapp .
- * @param {number} index Index of specific extra arguments to supplement a command. Default is 1 because 0 is the actual command.
- * @returns {string} Empty string if no arguments are attached to command or the argument at the provided index if arguments are present.
+ * @returns {Array<string>} Empty array if no arguments are attached to command or an array of arguments.
  */
-const extractCommandArgs = (msg, index = 1) => {
+const extractCommandArgs = (msg) => {
     // If there's a newline ignore everything after the new line
-    const args = msg.body.toLowerCase().split('\n')[0]; // enforce arguments being separated from commands strictly by space(s)
+    const args = msg.body.toLowerCase().split(/\n+/)[0]; // enforce arguments being separated from commands strictly by space(s)
 
     // Now split's the group of words by a space... these should be the valid args
-    const valid_args = args.split(' ');
+    let valid_args = args.split(/\s+/);
     // console.log(valid_args);
-    return valid_args[index] || '';
+
+    if (valid_args.length) {
+        valid_args = valid_args.map(arg => arg.trim());
+        return valid_args.slice(1);
+    }
+    else return [];
 }
 
 /**
@@ -382,7 +390,8 @@ const sendSlides = async (msg, courseCode) => {
         console.log("Sent a slide")
         if (material === materials[materials.length - 1]) isDone = true;
     }
-    if (isDone) await msg.reply("Done 👍🏽");
+    // if (isDone) await msg.reply(`Done 👍🏽 from ${current_env}`);
+    if (isDone) await msg.reply(`Done 👍🏽`);
     console.log("Done sending slides")
 }
 
@@ -393,14 +402,14 @@ const sendSlides = async (msg, courseCode) => {
  * @returns **True** if contact is a bot admin, **False** otherwise.
  */
 const isUserBotAdmin = async (contact) => {
-    const admins = await getAllSuperAdmins();
+    const admins = await getAllBotAdmins();
     // console.log(admins, admins.includes(contact.id.user));
     return admins.includes(contact.id.user);
 }
 
 /**
  * Gets a random item from a map using weighted probability.
- * @param {Map<string, number>} map Map object containing a message and its weight.
+ * @param {Map<string, number>} map Map containing a message and its weight.
  * @returns Random item from a map.
  */
 const pickRandomWeightedMessage = (map) => {
@@ -428,5 +437,52 @@ const pickRandomWeightedMessage = (map) => {
  */
 const areAllItemsEqual = arr => arr.every(item => item === arr[0]);
 
+/**
+ * Sleeps the bot for some time.
+ * @param {number} milliseconds Represents the amount of time to sleep in milliseconds
+ */
+const sleep = async (milliseconds = 500) => {
+    await new Promise(resolve => setTimeout(resolve, milliseconds));
+}
 
-module.exports = { current_env, current_prefix, pickRandomReply, extractTime, extractCommand, extractCommandArgs, msToDHMS, notificationTimeCalc, startNotificationCalculation, stopOngoingNotifications, allClassesReply, todayClassReply, sendSlides, isUserBotAdmin, pickRandomWeightedMessage, areAllItemsEqual }
+/**
+ * 
+ * @param {Map<String, Object>} map Map containing commands and their relevant information.
+ * @param {string} keyword String representing the keyword to search for.
+ * @returns {string} String representing key from map.
+ */
+const checkForAlias = (map, keyword) => {
+    for (const entry of map) {
+        const aliases = entry[1].alias;
+        // console.log(aliases);
+
+        if (aliases.includes(keyword)) {
+            // console.log(entry[0]);
+            return entry[0];
+        }
+    }
+}
+
+
+
+module.exports = {
+    current_env,
+    current_prefix,
+    PROD_PREFIX,
+    BOT_PUSHNAME,
+    pickRandomReply,
+    extractTime,
+    extractCommand,
+    extractCommandArgs,
+    msToDHMS, notificationTimeCalc,
+    startNotificationCalculation,
+    stopOngoingNotifications,
+    allClassesReply,
+    todayClassReply,
+    sendSlides,
+    isUserBotAdmin,
+    pickRandomWeightedMessage,
+    areAllItemsEqual,
+    sleep,
+    checkForAlias
+}

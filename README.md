@@ -2,7 +2,7 @@
 
 <br>
 
-This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs)) to make academic life a tiny bit easier. It uses a [Whatsapp web library](https://github.com/pedroslopez/whatsapp-web.js) and acts just like a regular user. It was built alongside a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. Since I'm using a free Heroku dyno, I use cron-jobs to keep the dyno from idling and also to perform some _interesting_ calculations at specific times. The bot often interacts with a MongoDB cloud database to supplement its functionalities.
+This is a whatsapp bot created initially for EPiC Devs ([wait who?](#who-are-epic-devs)) but now widely used by '22 L400 Computer Science members  to make academic life a tiny bit easier. It uses a [Whatsapp web library](https://github.com/pedroslopez/whatsapp-web.js) and acts just like a regular user. It was built alongside a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. Since I'm using a free Heroku dyno, I use cron-jobs to keep the dyno from idling. The bot often interacts with a MongoDB cloud database to supplement its functionalities.
 
 <br>
 
@@ -23,7 +23,7 @@ This is a whatsapp bot I created for EPiC Devs ([wait who?](#who-are-epic-devs))
 
 ### The problem
 
-Timetables are always a pain to memorize, going through hundreds of messages from class group chats to filter out important information is equally painful. But worst of them all is trooping all the way to class just to find out it was cancelled a few minutes/hours prior. I'm also sure we've all been through that moment where almost everyone forgets what exactly the assignment given was about or the exact deadline. I'm not even going to talk about the number of times resources for a particular course can be requested in a single day 😭
+Timetables are always a pain to memorize, going through hundreds of messages from class group chats to filter out important information is equally tiresome. But worst of them all is trooping all the way to class just to find out it was cancelled a few minutes/hours prior. I'm also sure we've all been through that moment where almost everyone forgets what exactly the assignment given was about or the exact deadline. I'm not even going to talk about the number of times resources for a particular course can be requested in a single day 😭
 
 <p style="font-size: 25px">But...</p>
 <img src="./assets/wait-for-it-barney-stinson.gif" width=400 alt="Wait for it">
@@ -48,9 +48,9 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 
 ### My solution
 
-<span style="font-size: 18px">Ethereal</span> seeks to make life easier for [EPiC Devs](#epic-devs) by:
+<span style="font-size: 18px">Ethereal</span> seeks to make life easier for L400 Computer Science students by:
 
-- Forwarding important **announcements** and **links** from class groups to our private whatsapp group.
+- Forwarding important **announcements** and **links** from class groups to our dms.
 - Reminding us individually about the times we have class.
 - Getting our timetable for the week, and for the current day depending on the elective each of us offers in as little as 4 quick interactions (_< 20secs_) or by typing 1 command (_< 10secs_); As opposed to annoyingly asking someone else who may or may not be available at that moment.
 - Sending all course materials (PDFs, powerpoints etc) for any course as and when requested.
@@ -74,27 +74,27 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 
 | Command | Description | Role (to use command) |
 | ---------- | ---------- | ---- |
-| `!admins` | Get all current bot admins| admin |
+| `!botadmins` | Get all current bot admins| botadmin |
 | `!class` | Get the current day's classes, depending on user's elective| - |
 | `!classes` | Get the classes for the week, depending on user's elective | - |
-| `!commands` | Get commands available to a user sent to their DM in a _whatsapp list_ | - |
-| `!env` | Check the _environment_ the bot is running in _(Production/Development)_ | admin |
-| `!everyone` | Ping everyone in a group | admin |
+| `!menu` | Get commands available to a user sent to their DM in a _whatsapp list_ | - |
+| `!env` | Check the _environment_ the bot is running in _(Production/Development)_ | botadmin |
+| `!everyone` | Ping everyone in a group | botadmin |
 | `!exams` | Get the current exams timetable | - |
-| `!grouplink` \| `!gl` | Get the current group's invite link | - |
-| `!help` | Get commands available to a user per their role | - |
-| `!mute` | Mute the bot | admin |
-| `!unmute` \| `!speak` | Unmute the bot | admin |
-| `!notify` | Subscribe to get notified for class | - |
-| `!notify stop` | Unsubscribe from getting notified for class | - |
-| `!notify status` | Get class notifications status | admin |
-| `!notify enable all` | Enable all class notifications for the day | admin |
-| `!notify disable all` | Disable all class notifications for the day | admin |
-| `!ping` | Check if bot is active | - |
+| `!grouplink` | Get the current group's invite link | - |
+| `!help <cmd>` | Get more information about a specific command | - |
+| `!mute` | Mute the bot | botadmin |
+| `!unmute`  | Unmute the bot | botadmin |
+| `!notify enable` | Subscribe to get notified for class | - |
+| `!notify disable` | Unsubscribe from getting notified for class | - |
+| `!notifs status` | Get class notifications status | botadmin |
+| `!notifs enable all` | Enable all class notifications for the day | botadmin |
+| `!notifs disable all` | Disable all class notifications for the day | botadmin |
+| `!ping` | Check bot's response time in ms | - |
 | `!sc` | Get the bot's source code | - |
 | `!slides` | Get all courses materials (slides, books etc.) | - |
-| `!status` | Get the bot's diagnostics | admin |
-| `!subs` | Get all users who have subscribed to be notified for class | admin |
+| `!status` | Get the bot's diagnostics | botadmin |
+| `!subs` | Get all users who have subscribed to be notified for class | botadmin |
 
 <br>
 
@@ -111,10 +111,10 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 
 <img src="./assets/EPiC Devs README intro.png" alt="EPiC Devs introduction">
 <br>
-<sub>This was <i>painfully</i> done in a README last year when we coined the name for our project :)</sub><br>
+<sub>This was <i>painfully</i> done in a README in 2021 when we coined the name for our project :)</sub><br>
 <sub>I definitely didn't take too much time on this :)))</sub>
 <br><br>
-We are a group of exquisitely talented, focused and diligent individuals who consistently exceed expectations. Credits to both of my colleagues for inspiring features for the bot.
+We are a group of exquisitely talented, focused and diligent individuals who consistently exceed expectations. Credits to both of my colleagues for inspiring some of the features of the bot.
 
 Check us out!:
 

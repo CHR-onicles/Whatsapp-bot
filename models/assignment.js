@@ -14,12 +14,12 @@ const AssignmentSchema = new Schema({
     desc: { type: String, required: true },
     dateAdded: { type: Date, default: Date.now },
     dueDate: Date,
-    done: { type: Boolean, default: false }
+    expired: { type: Boolean, default: false }
 });
 
 const AssignmentModel = model("Assignment", AssignmentSchema);
 
-// const ass1 = new Assignment({ course: "CSCD 415", desc: "Compilers Assignment", dueDate: new Date(), done: false });
+// const ass1 = new Assignment({ course: "CSCD 415", desc: "Compilers Assignment", dueDate: new Date(), expired: false });
 // (async () => { await ass1.save() })();
 // console.log(ass1.course);
 

@@ -14,9 +14,10 @@ const MiscellaneousSchema = new Schema({
     _id: { type: Number, default: 1 },
     isMuted: { type: Boolean, default: false },
     isNotifsOn: { type: Boolean, default: true },
+    isForwardingOn: { type: Boolean, default: false }, // temporary
     allLinks: [String],
     allAnnouncements: [String],
-    superAdmins: [String],
+    botAdmins: [String],
     forwardToUsers: [String],
     electiveDataMining: [String],
     electiveSoftModelling: [String],
@@ -40,7 +41,7 @@ const initCollection = async () => {
     const count = await MiscellaneousModel.countDocuments({});
     // console.log(count);
     if (!count) {
-        const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, superAdmins: [process.env.GRANDMASTER], electiveSoftModelling: [process.env.GRANDMASTER] });
+        const misc = new MiscellaneousModel({ _id: 1, botAdmins: [process.env.GRANDMASTER] });
         // const misc = new MiscellaneousModel();
         try {
             await misc.save();
@@ -132,6 +133,45 @@ exports.disableAllNotifications = async () => {
 }
 
 /**
+ * Gets status of forwarding important messages. (temporary)
+ * @async
+ * @returns {Promise<boolean>} **True** if forwarding important messages is on, **false** otherwise.
+ */
+exports.getForwardingStatus = async () => {
+    const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isForwardingOn: 1 });
+    // console.log(status);
+    return status.isForwardingOn;
+}
+
+/**
+ * Turns on forwarding of important messages. (temporary)
+ * @async
+ */
+exports.enableForwarding = async () => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: true } });
+        // console.log(res);
+        console.log("Forwarding of important messages have been turned ON")
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+/**
+ * Turns off forwarding of important messages. (temporary)
+ * @async
+ */
+exports.disableForwarding = async () => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: false } });
+        // console.log(res)
+        console.log("Forwarding of important messages have been turned OFF")
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+/**
  * Retrieves all the links from the database.
  * @async
  * @returns {Array<string>} An array with all links in the database.
@@ -205,30 +245,31 @@ exports.removeAllAnnouncements = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { allAnnouncements: [] } });
         // console.log(res);
+        console.log("Cleared all announcements");
     } catch (error) {
         console.log(error);
     }
 }
 
 /**
- * Gets all super admins from the database.
+ * Gets all bot admins from the database.
  * @async
- * @returns {Array<string>} An array containing super admins.
+ * @returns {Array<string>} An array containing bot admins.
  */
-exports.getAllSuperAdmins = async () => {
-    const superAdmins = await MiscellaneousModel.distinct("superAdmins");
-    // console.log(superAdmins);
-    return superAdmins;
+exports.getAllBotAdmins = async () => {
+    const botAdmins = await MiscellaneousModel.distinct("botAdmins");
+    // console.log(botAdmins);
+    return botAdmins;
 }
 
 /**
- * Adds a user as a super admin of the bot.
- * @param {string} newAdmin A string containing the user to be made a super admin.
+ * Adds a user as a bot admin.
+ * @param {string} newAdmin A string containing the user to be made a bot admin.
  * @async
  */
-exports.addSuperAdmin = async (newAdmin) => {
+exports.addBotAdmin = async (newAdmin) => {
     try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { superAdmins: newAdmin } });
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { botAdmins: newAdmin } });
         // console.log(res);
     } catch (error) {
         console.log(error)
@@ -236,13 +277,13 @@ exports.addSuperAdmin = async (newAdmin) => {
 }
 
 /**
- * Demotes a user from being a super admin of the bot.
+ * Demotes a user from being a bot admin.
  * @param {string} admin A string containing a whatsapp user's number.
  * @async
  */
-exports.removeSuperAdmin = async (admin) => {
+exports.removeBotAdmin = async (admin) => {
     try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { superAdmins: admin } });
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { botAdmins: admin } });
         // console.log(res);
     } catch (error) {
         console.log(error);
@@ -269,15 +310,15 @@ exports.getUsersToNotifyForClass = async () => {
 exports.addUserToBeNotified = async (newUser, rowId) => {
     try {
         let res = null;
-        if (rowId === '31') {
+        if (rowId === '1') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveDataMining: newUser } });
-        } else if (rowId === '32') {
+        } else if (rowId === '2') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveNetworking: newUser } });
-        } else if (rowId === '33') {
+        } else if (rowId === '3') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveSoftModelling: newUser } });
         }
         // console.log(res);
-        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '31' ? 'Data Mining' : (rowId === '32' ? 'Networking' : 'Software Modelling') + ' as elective');
+        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '1' ? 'Data Mining' : (rowId === '2' ? 'Networking' : 'Software Modelling') + ' as elective');
 
     } catch (error) {
         console.log(error)
