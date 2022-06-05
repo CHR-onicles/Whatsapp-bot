@@ -26,6 +26,6 @@ module.exports = {
     description: "Unmute the bot 🙂",
     alias: ["speak", "talk"],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}unmute`,
+    help: `To use this command, type:\n*${current_prefix}unmute*`,
     execute,
 }

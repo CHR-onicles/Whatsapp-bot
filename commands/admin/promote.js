@@ -63,6 +63,6 @@ module.exports = {
     description: "Promote a user to be a bot admin 👮🏽‍♂️",
     alias: ["prom"],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}promote <user>`,
+    help: `To use this command, type:\n*${current_prefix}promote <user>*`,
     execute,
 }

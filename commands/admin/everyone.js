@@ -44,6 +44,6 @@ module.exports = {
     description: "Ping everyone 🔊",
     alias: ["all", "every", "e"],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}everyone`,
+    help: `To use this command, type:\n*${current_prefix}everyone*`,
     execute,
 }

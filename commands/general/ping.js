@@ -17,6 +17,6 @@ module.exports = {
     description: "Get response time of the bot in milliseconds 🙋🏽‍♂️",
     alias: ["p"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type: ${current_prefix}ping`,
+    help: `To use this command, type:\n*${current_prefix}ping*`,
     execute,
 }

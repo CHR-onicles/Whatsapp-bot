@@ -114,6 +114,6 @@ module.exports = {
     description: "Get today's classes depending on your elective 📕",
     alias: [],
     category: "everyone", // admin | everyone
-    help: `To use this command, type: ${current_prefix}class, then select an elective`,
+    help: `To use this command, type:\n*${current_prefix}class*, then select an elective`,
     execute,
 }

@@ -31,6 +31,6 @@ module.exports = {
     description: "Get all bot admins 👮🏽‍♂️👮🏽‍♀️",
     alias: ["badmins", "badmin", "botadmin"],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}botadmins`,
+    help: `To use this command, type:\n${current_prefix}botadmins*`,
     execute,
 }

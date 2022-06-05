@@ -21,6 +21,6 @@ module.exports = {
     description: "Mute the bot 🤐",
     alias: ["silence", "quiet"],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}mute`,
+    help: `To use this command, type:\n*${current_prefix}mute*`,
     execute,
 }

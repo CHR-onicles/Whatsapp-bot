@@ -137,9 +137,9 @@ const execute = async (client, msg, args) => {
 
 module.exports = {
     name: "notify",
-    description: "Turn on/off subscription for notification for class 🔔",
+    description: "Turn on/off reminders for class 🔔",
     alias: [],
     category: "everyone", // admin | everyone
-    help: `To use this command, type: ${current_prefix}notify (enable | disable)`,
+    help: `To use this command, type:\n*${current_prefix}notify (enable | disable)*`,
     execute,
 }

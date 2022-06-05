@@ -47,6 +47,6 @@ module.exports = {
     description: "Get status or turn on/off class notifications 🔈",
     alias: [],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}notifs (status | enable all | disable all)`,
+    help: `To use this command, type:\n*${current_prefix}notifs (status | enable all | disable all)*`,
     execute,
 }

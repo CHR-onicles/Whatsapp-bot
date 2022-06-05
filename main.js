@@ -18,7 +18,6 @@ const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLi
 // Global variables
 // --------------------------------------------------
 const GRANDMASTER = process.env.GRANDMASTER; // Owner of the bot
-const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
 const args = {};
@@ -288,52 +287,6 @@ client.on('message', async (msg) => {
 })
 
 
-
-
-
-
-// ----------------------------------------------
-// OTHER COMMANDS TO BE DEALT WITH LATER
-// ----------------------------------------------
-
-//! Tackle this last
-/* Help users with commands (will contain extra arguments)
-client.on('message', async (msg) => {
-    if (extractCommand(msg) === current_prefix + 'help' && await getMutedStatus() === false) {
-        const cur_chat = await msg.getChat();
-        const contact = await msg.getContact();
-        const chat_from_contact = await contact.getChat();
-        const isBotAdmin = await isUserBotAdmin(contact);
-        let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
-
-        if (cur_chat.isGroup) {
-            await msg.reply(pickRandomReply(DM_REPLIES));
-        }
-
-        let temp_count = 0;
-        HELP_COMMANDS.forEach((obj, index) => {
-            if (!isBotAdmin) {
-                if (obj.availableTo === 'e') {
-                    if ((temp_count > 0) && (temp_count % 5 === 0)) text += "\n"; // to space out commands and group them in fives.
-                    text += "*" + obj.command + ":* " + obj.desc + "\n";
-                    temp_count++;
-                }
-            } else {
-                if ((index > 0) && (index % 5 === 0)) text += "\n"
-                text += "*" + obj.command + ":* " + obj.desc + "\n";
-            }
-        })
-
-        if (isBotAdmin) {
-            text += "\n\nPS:  You're a *bot admin*, so you have access to _special_ commands 🤫"
-        }
-        await chat_from_contact.sendMessage(text);
-    }
-}) 
-*/
-
-
-
 //? Schedule DM - Will be turned into a custom reminder feature for users like Tatsumaki on Discord
 /*client.on('message', async (msg) => {
 //     if (extractCommand(msg) === '!sdm' && await getMutedStatus() === false) {
@@ -392,7 +345,6 @@ app.get('/reset-notif-calc', async (req, res) => {
 app.all("*", (req, res) => {
     res.status(404).send("<h1>Sorry, this page does not exist!</h1><br><a href='/'>Back to Home</a>")
 })
-
 
 // Start bot
 client.initialize();

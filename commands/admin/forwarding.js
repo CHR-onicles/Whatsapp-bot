@@ -48,6 +48,6 @@ module.exports = {
     description: "Turn on/off forwarding of announcements and links 📲",
     alias: ["fwd"],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}forwarding (status | enable | disable)`,
+    help: `To use this command, type:\n*${current_prefix}forwarding (status | enable | disable)*`,
     execute,
 }

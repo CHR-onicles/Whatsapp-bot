@@ -13,6 +13,6 @@ module.exports = {
     description: "Get the bot's source code 💻",
     alias: ["sc", "source"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type: ${current_prefix}sourcecode`,
+    help: `To use this command, type:\n*${current_prefix}sourcecode*`,
     execute,
 }

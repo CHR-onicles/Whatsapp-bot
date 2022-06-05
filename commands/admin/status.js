@@ -43,6 +43,6 @@ module.exports = {
     description: "Check bot's overall status/diagnostics 🩺",
     alias: ["stats", "stat"],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}status`,
+    help: `To use this command, type:\n*${current_prefix}status*`,
     execute,
 }

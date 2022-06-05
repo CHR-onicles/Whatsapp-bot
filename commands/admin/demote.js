@@ -60,6 +60,6 @@ module.exports = {
     description: "Demote a bot admin 👮🏽‍♂️❌",
     alias: ["dem"],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}demote <user>`,
+    help: `To use this command, type:\n*${current_prefix}demote <user>*`,
     execute,
 }

@@ -141,6 +141,6 @@ module.exports = {
     description: "Get course materials for all courses 📚",
     alias: ["slide", "res", "resources"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type: ${current_prefix}slides, then choose a course from the list provided`,
+    help: `To use this command, type:\n*${current_prefix}slides*, then choose a course from the list provided`,
     execute,
 }

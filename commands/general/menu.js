@@ -1,6 +1,6 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus } = require("../../models/misc");
-const { HELP_COMMANDS, DM_REPLIES, PING_REPLIES } = require("../../utils/data");
+const { DM_REPLIES, PING_REPLIES } = require("../../utils/data");
 const { isUserBotAdmin, pickRandomReply, current_prefix } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
@@ -21,23 +21,25 @@ const execute = async (client, msg, args) => {
 
     let startID = 0; // dynamic ID to be used for whatsapp list
     const temp_rows = [];
-    for (const com of HELP_COMMANDS) {
-        const { availableTo, command, desc } = com;
-        ++startID;
-        if (!isBotAdmin && availableTo === 'e') {
-            temp_rows.push({ id: `menu-${startID}`, title: command, description: desc });
+
+    client.commands.forEach((value, key) => {
+        startID++;
+        if (!isBotAdmin && value.category === 'everyone') {
+            temp_rows.push({ id: `menu-${startID}`, title: current_prefix + value.name, description: value.description });
         } else if (isBotAdmin) {
-            if (!command.includes('<')) // avoiding commands that would involve extra user input for now
-                temp_rows.push({ id: `menu-${startID}`, title: command, description: desc });
-            else continue;
+            temp_rows.push({ id: `menu-${startID}`, title: current_prefix + value.name, description: value.description });
         }
-    }
-    // console.log(temp_rows);
+    })
+
+    temp_rows.sort((a, b) => a.title.localeCompare(b.title));
 
     const list = new List(
-        '\nThis is a list of commands the bot can perform',
+        '\nThis is a list of commands the bot can execute',
         'See commands',
-        [{ title: `Commands available to ${isBotAdmin ? 'admins' : 'everyone'}`, rows: temp_rows }],
+        [{
+            title: `Commands available to ${isBotAdmin ? 'admins' : 'everyone'}`,
+            rows: temp_rows
+        }],
         isBotAdmin ? pickRandomReply(PING_REPLIES.botAdmin.concat(PING_REPLIES.everyone)) : pickRandomReply(PING_REPLIES.everyone),
         'Powered by Ethereal bot'
     );
@@ -55,6 +57,6 @@ module.exports = {
     description: "Get list of commands ⚙",
     alias: ["commands", "command", "coms", "comms", "menus"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type: ${current_prefix}menu or ping the bot in a group chat`,
+    help: `To use this command, type:\n*${current_prefix}menu* or ping the bot in a group chat`,
     execute,
 }

@@ -28,6 +28,6 @@ module.exports = {
     description: "Get the current group's invite link 📱",
     alias: ["gl", "glink"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type: ${current_prefix}grouplink`,
+    help: `To use this command, type:\n*${current_prefix}grouplink*`,
     execute,
 }

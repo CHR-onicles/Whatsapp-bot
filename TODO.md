@@ -9,7 +9,6 @@ Project Description
 - [ ] ⭐❔Add remindme feature like with tatsumaki on discord...use commented code at the bottom of main.js  
 - [ ] ⭐❔ Log response time after any command is run in order to give average response time in status  
 - [ ] 👍🏽 Re-record demo vid showing moderator view and normal view  
-- [ ] ⭐ Add command to tell bot to forward messages(announcements & links) to user => !forward; and !forward stop to stop forwarding messages  
 - [ ] ⚠️ Prevent people from calling the bot with whatsapp call  
 - [ ] ⭐❔ Reply to incorrect commands in **dms**? Basically any word starting with "!" but doesn't execute any actual command  
 - [ ] ⭐❔ Add feature where bot automatically deletes some admin command replies after carrying them out...like promotion or demotion  

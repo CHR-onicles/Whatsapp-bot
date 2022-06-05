@@ -21,6 +21,6 @@ module.exports = {
     description: "Get the environment the bot is running in currently 🦺",
     alias: [],
     category: "admin", // admin | everyone
-    help: `To use this command, type: ${current_prefix}env`,
+    help: `To use this command, type:\n*${current_prefix}env*`,
     execute,
 }

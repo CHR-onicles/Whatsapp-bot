@@ -14,9 +14,11 @@ const { getResource } = require('../models/resources');
  * Counter to keep track of dynamically created variables  later used in `eval` statements.
  */
 var VARIABLES_COUNTER = 0;
+
 const current_env = process.env.NODE_ENV;
 const PROD_PREFIX = '!';
 const current_prefix = current_env === 'production' ? PROD_PREFIX : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
+const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 
 
 // FUNCTIONS ----------------------------------------
@@ -468,6 +470,7 @@ module.exports = {
     current_env,
     current_prefix,
     PROD_PREFIX,
+    BOT_PUSHNAME,
     pickRandomReply,
     extractTime,
     extractCommand,
