@@ -17,7 +17,7 @@ const execute = async (client, msg, args) => {
     if (isListResponse) {
         if (total_users.includes(contact.id.user)) {
             await msg.reply("You are already being notified for class🐦");
-            // console.log('Already subscribed, from List Response')
+            console.log('Already subscribed, from List Response')
             return;
         }
 
@@ -40,37 +40,37 @@ const execute = async (client, msg, args) => {
             case '1_dev':
                 if (current_env !== 'development') break;
                 helper();
-                console.log('add user to be notified from 1_dev')
+                console.log('add user to be notified from 1_dev');
                 break;
 
             case '1_prod':
                 if (current_env !== 'production') break;
                 helper();
-                console.log('add user to be notified from 1_prod')
+                console.log('add user to be notified from 1_prod');
                 break;
 
             case '2_dev':
                 if (current_env !== 'development') break;
                 helper();
-                console.log('add user to be notified from 2_dev')
+                console.log('add user to be notified from 2_dev');
                 break;
 
             case '2_prod':
                 if (current_env !== 'production') break;
                 helper();
-                console.log('add user to be notified from 2_prod')
+                console.log('add user to be notified from 2_prod');
                 break;
 
             case '3_dev':
                 if (current_env !== 'development') break;
                 helper();
-                console.log('add user to be notified from 3_dev')
+                console.log('add user to be notified from 3_dev');
                 break;
 
             case '3_prod':
                 if (current_env !== 'production') break;
                 helper();
-                console.log('add user to be notified from 3_prod')
+                console.log('add user to be notified from 3_prod');
                 break;
 
             default:
@@ -88,7 +88,7 @@ const execute = async (client, msg, args) => {
         case '-e':
             if (total_users.includes(contact.id.user)) {
                 await msg.reply("You are already being notified for class🐦");
-                console.log('Already subscribed')
+                console.log('Already subscribed from case enable')
                 return;
             }
 
