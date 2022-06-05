@@ -69,10 +69,10 @@ const extractCommand = (msg) => {
  */
 const extractCommandArgs = (msg) => {
     // If there's a newline ignore everything after the new line
-    const args = msg.body.toLowerCase().split('\n')[0]; // enforce arguments being separated from commands strictly by space(s)
+    const args = msg.body.toLowerCase().split(/\n+/)[0]; // enforce arguments being separated from commands strictly by space(s)
 
     // Now split's the group of words by a space... these should be the valid args
-    let valid_args = args.split(' ');
+    let valid_args = args.split(/\s+/);
     // console.log(valid_args);
 
     if (valid_args.length) {
@@ -80,7 +80,6 @@ const extractCommandArgs = (msg) => {
         return valid_args.slice(1);
     }
     else return [];
-
 }
 
 /**
