@@ -2,7 +2,7 @@
 // main.js contains the primary bot logic
 // --------------------------------------------------
 const app = require('express')();
-const { Client, LocalAuth, List } = require('whatsapp-web.js');
+const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 const path = require('path');
@@ -11,7 +11,7 @@ const fs = require('fs');
 require('./utils/db');
 const { current_env, current_prefix, extractCommand, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, PROD_PREFIX } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
-const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers } = require('./models/misc');
+const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
 
 
 // --------------------------------------------------
@@ -180,6 +180,7 @@ client.on('message', async (msg) => {
 // Not a command so needs to be here
 client.on('message', async (msg) => {
     if (await getMutedStatus() === true) return;
+    if (await getForwardingStatus() === false) return;
 
     // local helper function to initialize stuff
     const helperForInit = async (msg) => {

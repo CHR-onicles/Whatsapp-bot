@@ -1,4 +1,4 @@
-const { getMutedStatus } = require("../../models/misc");
+const { getMutedStatus, getAllAnnouncements, getAllLinks } = require("../../models/misc");
 const { msToDHMS, current_prefix } = require("../../utils/helpers");
 const { totalmem } = require('os');
 
@@ -16,6 +16,8 @@ const execute = async (client, msg, args) => {
         else chats.private_chats += 1;
         return chats;
     }, { group_chats: 0, private_chats: 0 });
+    const all_anns = await getAllAnnouncements();
+    const all_links = await getAllLinks();
 
     const current_time = new Date();
     const { days, hours, minutes, seconds } = msToDHMS(current_time - BOT_START_TIME);
@@ -29,6 +31,8 @@ const execute = async (client, msg, args) => {
     reply.push(`[🔰] *Group chats:* ${group_chats}`);
     reply.push(`[🔰] *Private chats:* ${private_chats}`);
     reply.push(`[🔰] *Blocked chats:* ${blocked_chats.length}`);
+    reply.push(`[🔰] *Announcements stored:* ${all_anns.length}`);
+    reply.push(`[🔰] *Links stored:* ${all_links.length}`);
 
     await msg.reply(reply.join('\n'));
 }

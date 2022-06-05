@@ -9,47 +9,35 @@ const execute = async (client, msg) => {
     const contact = await msg.getContact();
     const isBotAdmin = await isUserBotAdmin(contact);
 
-    switch (args.join(' ').trim()) {
-        case 'status':
-        case 'stats':
-        case '-s':
-            if (isBotAdmin) {
+    if (isBotAdmin) {
+        switch (args.join(' ').trim()) {
+            case 'status':
+            case 'stats':
+            case '-s':
                 const notifs_status = await getNotificationStatus();
                 await msg.reply(`All notifications for today's classes are *${notifs_status ? 'ON ✅' : 'OFF ❌'}*`);
-            } else {
-                await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-            }
-            break;
+                break;
 
-        case 'enable all':
-        case '-e -a':
-            if (isBotAdmin) {
+            case 'enable all':
+            case '-e -a':
                 await enableAllNotifications();
                 startNotificationCalculation(client);
                 await msg.reply("All notifications have been turned *ON* for today.");
-            } else {
-                await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-            }
-            break;
+                break;
 
-        case 'disable all':
-        case '-d -a':
-            if (isBotAdmin) {
+            case 'disable all':
+            case '-d -a':
                 await disableAllNotifications();
                 stopOngoingNotifications();
                 await msg.reply("All notifications have been turned *OFF* for today.");
-            } else {
-                await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-            }
-            break;
+                break;
 
-        default:
-            if (isBotAdmin) {
+            default:
                 await msg.reply("Please add valid arguments: \nstatus | enable all | disable all");
-            } else {
-                await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-            }
-            break;
+                break;
+        }
+    } else {
+        await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
     }
 }
 

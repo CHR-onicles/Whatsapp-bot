@@ -14,6 +14,7 @@ const MiscellaneousSchema = new Schema({
     _id: { type: Number, default: 1 },
     isMuted: { type: Boolean, default: false },
     isNotifsOn: { type: Boolean, default: true },
+    isForwardingOn: { type: Boolean, default: false }, // temporary
     allLinks: [String],
     allAnnouncements: [String],
     botAdmins: [String],
@@ -40,7 +41,7 @@ const initCollection = async () => {
     const count = await MiscellaneousModel.countDocuments({});
     // console.log(count);
     if (!count) {
-        const misc = new MiscellaneousModel({ _id: 1, numOfCommands: 0, botAdmins: [process.env.GRANDMASTER], electiveSoftModelling: [process.env.GRANDMASTER] });
+        const misc = new MiscellaneousModel({ _id: 1, botAdmins: [process.env.GRANDMASTER] });
         // const misc = new MiscellaneousModel();
         try {
             await misc.save();
@@ -132,6 +133,45 @@ exports.disableAllNotifications = async () => {
 }
 
 /**
+ * Gets status of forwarding important messages. (temporary)
+ * @async
+ * @returns {Promise<boolean>} **True** if forwarding important messages is on, **false** otherwise.
+ */
+exports.getForwardingStatus = async () => {
+    const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isForwardingOn: 1 });
+    // console.log(status);
+    return status.isForwardingOn;
+}
+
+/**
+ * Turns on forwarding of important messages. (temporary)
+ * @async
+ */
+exports.enableForwarding = async () => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: true } });
+        // console.log(res);
+        console.log("Forwarding of important messages have been turned ON")
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+/**
+ * Turns off forwarding of important messages. (temporary)
+ * @async
+ */
+exports.disableForwarding = async () => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: false } });
+        // console.log(res)
+        console.log("Forwarding of important messages have been turned OFF")
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+/**
  * Retrieves all the links from the database.
  * @async
  * @returns {Array<string>} An array with all links in the database.
@@ -205,6 +245,7 @@ exports.removeAllAnnouncements = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { allAnnouncements: [] } });
         // console.log(res);
+        console.log("Cleared all announcements");
     } catch (error) {
         console.log(error);
     }
