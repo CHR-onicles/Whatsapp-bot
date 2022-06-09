@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 require('./utils/db');
-const { current_env, current_prefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME } = require('./utils/helpers');
+const { current_env, current_prefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addCooldown } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
 
@@ -55,7 +55,7 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 
 
 // --------------------------------------------------
-// ACTUAL BOT LOGIC FROM HERE DOWN
+// BOT LOGIC
 // --------------------------------------------------
 
 // Bot initialization
@@ -69,6 +69,9 @@ client.on('ready', async () => {
         const chats = await client.getChats();
         const grandmaster_chat = chats.find(chat => chat.id.user === GRANDMASTER);
         const _23_hours_in_ms = 82_800_000; // using numeric separator for readability
+
+        // Reminder to restart the bot before Heroku does that for us without our knowledge
+        // Will be fixed by RemoteAuth soon
         setTimeout(async () => {
             await grandmaster_chat.sendMessage("Reminder to restart the bot after 23 hours!");
         }, _23_hours_in_ms);
@@ -77,7 +80,10 @@ client.on('ready', async () => {
 });
 
 
+// Using the client object since it's available to *almost* all parts of the codebase
+// especially the command files...trying to avoid using a global variable. 👍🏽
 client.commands = new Map();
+client.usedCommandRecently = new Set();
 
 // Read commands into memory
 const root_dir = path.join(__dirname, './commands');
@@ -97,16 +103,22 @@ fs.readdir('./commands', (err, folders) => {
 })
 
 
-// Handle message event
+// Handle all message events
+// todo: Transfer to separate file later
 client.on('message', async (msg) => {
-    await sleep(500);
+    await sleep(500); // Might help with performance slightly maybe?
     if (!isDoneReadingCommands) {
         console.log("Not done reading commands");
         return;
     }
+    const contact = await msg.getContact();
 
-    // To handle list responses for certain commands
+    // Handle list responses for certain commands
     if (msg.type === "list_response") {
+        if (client.usedCommandRecently.has(contact.id.user)) {
+            console.log("Still in cooldown");
+            return;
+        }
         args.isListResponse = true;
         args.lastPrefixUsed = lastPrefixUsed;
         const selectedRowId = msg.selectedRowId.split('-')[0];
@@ -132,15 +144,21 @@ client.on('message', async (msg) => {
                 client.commands.get(command.slice(1)).execute(client, msg, args);
                 break;
         }
+        addCooldown(client, contact.id.user);
         return;
     }
 
+    // Handle text messages for commands
     if (msg.type === 'chat') { // no longer "text" as stated in the library's docs
         args.isListResponse = false;
         const possibleCommand = extractCommand(msg);
         const isValidCommand = possibleCommand.startsWith(current_prefix);
         isMention = msg.body.startsWith('@');
         if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax or a mention
+        if (client.usedCommandRecently.has(contact.id.user)) {
+            console.log("Still in cooldown");
+            return;
+        }
         lastPrefixUsed = possibleCommand[0];
         args.lastPrefixUsed = lastPrefixUsed;
 
@@ -165,6 +183,7 @@ client.on('message', async (msg) => {
 
         try {
             cmd.execute(client, msg, args);
+            addCooldown(client, contact.id.user);
         } catch (error) {
             console.error(error);
         }
@@ -234,7 +253,7 @@ client.on('message', async (msg) => {
     else if (msg.links.length) {
         const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
 
-        // Dont forward links from chats which receive forwarded links
+        // Don't forward links from chats which receive forwarded links
         for (const user of forwardToUsers) {
             if (current_chat.id.user === user) {
                 console.log("Link from forwardedUsers, so do nothing")
@@ -243,7 +262,7 @@ client.on('message', async (msg) => {
         }
 
         const links = msg.links;
-        // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol" and "hey.me" 
+        // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol",  "hey.me" 
         // and insecure links from leaking through
         for (const single_link of links) {
             if (!single_link.link.includes('https')) return;
@@ -335,7 +354,7 @@ client.on('message', async (msg) => {
 app.get('/reset-notif-calc', async (req, res) => {
     stopOngoingNotifications();
     await startNotificationCalculation(client);
-    res.send('<h1>Restarting the class notification calculation function.</h1>');
+    res.send('<h1>Restarting the class notification calculation function...</h1>');
 })
 
 // All other pages should be returned as error pages

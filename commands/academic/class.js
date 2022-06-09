@@ -51,14 +51,14 @@ const execute = async (client, msg, args) => {
         'What elective do you offer?',
         'Powered by Ethereal bot'
     );
-    console.log("After creating list, lastPrefixedUsed:", lastPrefixUsed)
+    // console.log("After creating list, lastPrefixedUsed:", lastPrefixUsed)
 
     !isListResponse && await chat_from_contact.sendMessage(list);
 
     if (isListResponse) {
         let text = "";
-        console.log('From class:', msg.selectedRowId);
-        console.log('Last prefix used in LR:', lastPrefixUsed)
+        // console.log('From class:', msg.selectedRowId);
+        // console.log('Last prefix used in LR:', lastPrefixUsed)
         const selectedRowId = msg.selectedRowId.split('-')[1];
 
         // helper function for prevent redundancy

@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] 👍🏽 Categorize console logs like so: console.log("[CLIENT INFO] other info here ") for logs, not random debugging  
 - [ ] ⭐❔Add remindme feature like with tatsumaki on discord...use commented code at the bottom of main.js  
 - [ ] ⭐❔ Log response time after any command is run in order to give average response time in status  
 - [ ] 👍🏽 Re-record demo vid showing moderator view and normal view  
