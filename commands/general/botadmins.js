@@ -21,7 +21,7 @@ const execute = async (client, msg) => {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
         return;
     }
-    await msg.reply("〘✪ 𝔹𝕠𝕥 𝕒𝕕𝕞𝕚𝕟𝕤 ✪〙\n\n" + foundBotAdmins.map(admin =>`✪ ${admin.number} ~ ${admin?.pushname || ''}\n`).join(''));
+    await msg.reply("〘✪ 𝔹𝕠𝕥 𝕒𝕕𝕞𝕚𝕟𝕤 ✪〙\n\n" + foundBotAdmins.map(admin =>`➣ ${admin.number} ~ ${admin?.pushname || ''}\n`).join(''));
 
 }
 

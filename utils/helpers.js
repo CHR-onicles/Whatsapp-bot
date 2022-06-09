@@ -446,7 +446,7 @@ const sleep = async (milliseconds = 500) => {
 }
 
 /**
- * 
+ * Checks and returns commands for aliases used.
  * @param {Map<String, Object>} map Map containing commands and their relevant information.
  * @param {string} keyword String representing the keyword to search for.
  * @returns {string} String representing key from map.
@@ -461,6 +461,19 @@ const checkForAlias = (map, keyword) => {
             return entry[0];
         }
     }
+}
+
+/**
+ * Adds a cooldown to each user after using a command.
+ * @param {WAWebJS.Client} client 
+ * @param {string} user String representing a user.
+ */
+// todo: Change name as it could be misleading
+const addCooldown = (client, user) => {
+    client.usedCommandRecently.add(user);
+    setTimeout(() => {
+        return client.usedCommandRecently.delete(user)
+    }, 5000)
 }
 
 
@@ -484,5 +497,6 @@ module.exports = {
     pickRandomWeightedMessage,
     areAllItemsEqual,
     sleep,
-    checkForAlias
+    checkForAlias,
+    addCooldown
 }

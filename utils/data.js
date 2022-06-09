@@ -322,7 +322,7 @@ exports.COURSE_MATERIALS_REPLIES = [
  * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.
  */
 exports.FOOTNOTES = new Map([
-    ["", 70], // send "nothing" more often, to avoid annoying users with multiple tips
+    ["", 66], // send "nothing" more often, to avoid annoying users with multiple tips
     ["Hope you are having a great day 🥳", 1],
     ["Have a great day fam 🤍", 1],
     ["Have a wonderful day 👍🏽", 1],
@@ -333,12 +333,13 @@ exports.FOOTNOTES = new Map([
     ["Checked out !𝕞𝕖𝕟𝕦 ?", 2],
     ["Checkout the *!help* command to see other commands you can use", 4],
     ["Use *!menu* to see all the commands available to you", 4],
-    ["Did you know you could ping me in a group to see all the commands? 😮", 4],
-    // ["Use *!notify* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 3],
+    ["Did you know you could ping me in a group to see all the commands? 😮", 3],
+    // ["Use *!notify enable* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 3],
     ["Glad I could be of help 😁", 2],
     ["I hope this was helpful🙂", 2],
     ["Happy to help ☺", 2],
-    // ["Run *!updates* to see the bot's latest updates", 10],
+    ["🆕 There are now *cooldowns* after using a command to prevent overloading the bot.\n\nThis simply means after using a command, you'll have to wait for a few seconds before using another command.", 5]
+    // ["Run *!updates* to see the bot's latest updates", 0],
 ])
 
 /**
