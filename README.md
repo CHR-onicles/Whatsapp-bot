@@ -75,42 +75,48 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 
 ## ✨ Features
 
+- Get timetable for the day (depending on elective) ✅
+- Get timetable for the week (depending on elective) ✅
 - Get course materials (ppt, docs, pdfs), etc ✅
 - Get exams timetable ✅
-- Get timetable for the week (depending on elective) ✅
-- Get timetable for the day (depending on elective) ✅
 - Receive reminders for classes daily (depending on elective) ✅
 - Forward important announcements and links from class groups ✅
+- Anti-spam  ✅
+- Blacklist users  ✅
 - Get current assignments and their details (depending on courses) 🚧 [WIP]
 
 <br>
 
 ## ⚡ Commands
 
-| Command               | Description                                                              | Role (to use command) |
-| --------------------- | ------------------------------------------------------------------------ | --------------------- |
-| `!botadmins`          | Get all current bot admins                                               | botadmin              |
-| `!class`              | Get the current day's classes, depending on user's elective              | -                     |
-| `!classes`            | Get the classes for the week, depending on user's elective               | -                     |
-| `!menu`               | Get commands available to a user sent to their DM in a _whatsapp list_   | -                     |
-| `!env`                | Check the _environment_ the bot is running in _(Production/Development)_ | botadmin              |
-| `!everyone`           | Ping everyone in a group                                                 | botadmin              |
-| `!exams`              | Get the current exams timetable                                          | -                     |
-| `!grouplink`          | Get the current group's invite link                                      | -                     |
-| `!help <cmd>`         | Get more information about a specific command                            | -                     |
-| `!mute`               | Mute the bot                                                             | botadmin              |
-| `!unmute`             | Unmute the bot                                                           | botadmin              |
-| `!notify enable`      | Subscribe to get notified for class                                      | -                     |
-| `!notify disable`     | Unsubscribe from getting notified for class                              | -                     |
-| `!notifs status`      | Get class notifications status                                           | botadmin              |
-| `!notifs enable all`  | Enable all class notifications for the day                               | botadmin              |
-| `!notifs disable all` | Disable all class notifications for the day                              | botadmin              |
-| `!ping`               | Check bot's response time in ms                                          | -                     |
-| `!sc`                 | Get the bot's source code                                                | -                     |
-| `!slides`             | Get all courses materials (slides, books etc.)                           | -                     |
-| `!status`             | Get the bot's diagnostics                                                | botadmin              |
-| `!subs`               | Get all users who have subscribed to be notified for class               | botadmin              |
+| Command | Description  |
+| ----------|------------|
+| `!acknowledge` 💎| Remove users from blacklist |
+| `!blacklist` 💎| Get users who have been blacklisted |
+| `!botadmins` | Get current bot admins |
+| `!class` | Get the classes for the day, depending on user's elective |
+| `!classes` | Get the classes for the week, depending on user's elective |
+| `!demote`💎 | Demote a bot admin |
+| `!env`💎 | Check the _environment_ the bot is running in _(Production/Development)_ |
+| `!everyone`💎 | Ping everyone in a group |
+| `!exams` | Get the current exams timetable |
+| `!grouplink` | Get the current group's invite link |
+| `!help <cmd>` | Get more info on specific commands |
+| `!ignore`💎 | Blacklist a user |
+| `!menu` | Get commands available to a user sent to their DM in a _whatsapp list_ |
+| `!mute`💎 | Mute the bot |
+| `!notifs status`💎 | Get class notifications status |
+| `!notifs (enable all \| disable all)`💎  | Enable/Disable all class notifications for the day  |
+| `!notify (enable \| disable)` | Turn on/off class notifications |
+| `!ping` | Check bot's response time in ms |
+| `!promote`💎 | Promote a user to be a bot admin |
+| `!slides` | Get all courses materials (slides, books etc.) |
+| `!sourcecode` | Get the bot's source code |
+| `!status`💎 | Get the bot's diagnostics |
+| `!subs`💎 | Get all users who have subscribed to be notified for class |
+| `!unmute`💎 | Unmute the bot |
 
+💎 = Commands that can only be used when you are a **bot admin**.
 <br>
 
 ## 🧰 Built with

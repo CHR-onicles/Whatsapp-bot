@@ -19,6 +19,8 @@ const current_env = process.env.NODE_ENV;
 const PROD_PREFIX = '!';
 const current_prefix = current_env === 'production' ? PROD_PREFIX : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
+const COOLDOWN_IN_SECS = 5;
+const SOFT_BAN_DURATION_IN_MINS = 10;
 
 
 // FUNCTIONS ----------------------------------------
@@ -396,15 +398,20 @@ const sendSlides = async (msg, courseCode) => {
 }
 
 /**
- * Checks whether a user is a bot admin.
+ * Checks whether a user is a bot admin. User passed can be a whatsapp contact or a whatsapp number as a String.
  * @param {WAWebJS.Contact} contact Object that represents a contact on whatsapp.
  * @async
  * @returns **True** if contact is a bot admin, **False** otherwise.
  */
 const isUserBotAdmin = async (contact) => {
-    const admins = await getAllBotAdmins();
-    // console.log(admins, admins.includes(contact.id.user));
-    return admins.includes(contact.id.user);
+    const admins = new Set(await getAllBotAdmins());
+    
+    // Probably a bad practice but mehh
+    // If a whatsapp number as a string is passed, do this...
+    if (typeof contact !== 'object') {
+        return admins.has(contact);
+    }
+    return admins.has(contact.id.user);
 }
 
 /**
@@ -465,15 +472,83 @@ const checkForAlias = (map, keyword) => {
 
 /**
  * Adds a cooldown to each user after using a command.
- * @param {WAWebJS.Client} client 
+ * @param {WAWebJS.Client} client Client instance from WWebjs library.
  * @param {string} user String representing a user.
  */
-// todo: Change name as it could be misleading
-const addCooldown = (client, user) => {
+const addToUsedCommandRecently = (client, user) => {
+    //todo: reduce cooldown for bot admin to 3secs
     client.usedCommandRecently.add(user);
     setTimeout(() => {
-        return client.usedCommandRecently.delete(user)
-    }, 5000)
+        client.usedCommandRecently.delete(user);
+    }, COOLDOWN_IN_SECS * 1000);
+}
+
+/**
+ * Gets amount of time left in seconds for setTimeout instance to execute.
+ * @param {Object} timeout Object representing a setTimeout instance.
+ * @returns {number} Number indicating the amount of time left in seconds for the setTimeout instance to execute.
+ */
+const getTimeLeftForSetTimeout = (timeout) => {
+    return Math.ceil((timeout._idleStart + timeout._idleTimeout) / 1000 - process.uptime());
+}
+
+/**
+ * Checks messages for spam and executes appropriate action.
+ * @param {WAWebJS.Client} client Client instance from WWebjs lirbary.
+ * @param {WAWebJS.Contact} contact Object representing a whatsapp contact.
+ * @param {WAWebJS.Chat} chatFromContact Object representing a whatsapp chat.
+ * @param {WAWebJS.Message} msg Object representing a whatsapp message. 
+ * @async
+ * @returns {boolean} Returns **True** if spam intent is detected, **False** otherwise.
+ */
+const checkForSpam = async (client, contact, chatFromContact, msg) => {
+    let currentUserObj = client.potentialSoftBanUsers.get(contact.id.user);
+
+    // What happens during cooldown
+    if (client.usedCommandRecently.has(contact.id.user)) {
+
+        if (!currentUserObj.hasSentWarningMessage) {
+            await msg.reply(`Please wait for *${COOLDOWN_IN_SECS}secs* before sending another command.\n\nAll commands issued within the *${COOLDOWN_IN_SECS}secs* period will be ignored 👍🏽`) //todo: Add more replies for this later
+            client.potentialSoftBanUsers.set(contact.id.user, { ...currentUserObj, hasSentWarningMessage: true });
+            currentUserObj = client.potentialSoftBanUsers.get(contact.id.user); // to get the most recent version of the object after update
+        }
+
+        if (currentUserObj.numOfCommandsUsed > 2) {
+            // user can now be considered to be spamming
+            client.potentialSoftBanUsers.set(contact.id.user, {
+                ...currentUserObj,
+                isQualifiedForSoftBan: true,
+                timeout: setTimeout(async () => {
+                    client.potentialSoftBanUsers.delete(contact.id.user);
+                    console.log(`User ${contact.id.user}'s soft ban has been lifted`);
+                    await contact.unblock();
+                    chatFromContact.sendMessage("🔊 Your temporary ban has been lifted.\n\nYou can now use bot commands.")
+                }, SOFT_BAN_DURATION_IN_MINS * 60 * 1000)
+            });
+            console.log(`User ${contact.id.user} is now qualified to be soft banned`);
+            await chatFromContact.sendMessage(`🔇You have been banned for a duration of ${SOFT_BAN_DURATION_IN_MINS}mins for spamming.\n\nThe bot will no longer respond to your commands.`)
+            await contact.block();
+            // Log to DB - implement if need be later
+            // const curTime = new Date();
+            // curTime.setMinutes(curTime.getMinutes() + 10);
+            // const curTimePlus10Mins = new Date(curTime);
+            // await addSoftBannedUser(contact.id.user, curTimePlus10Mins);
+            return true;
+        }
+        client.potentialSoftBanUsers.set(contact.id.user, { ...currentUserObj, numOfCommandsUsed: currentUserObj.numOfCommandsUsed + 1 });
+        return true;
+    }
+
+    // Check if user issues a command while being soft banned
+    if (client.potentialSoftBanUsers.has(contact.id.user) && currentUserObj.isQualifiedForSoftBan) {
+        try {
+            console.log(`User ${contact.id.user} is still in soft ban, time left: ${getTimeLeftForSetTimeout(client.potentialSoftBanUsers.get(contact.id.user).timeout)} secs`);
+        } catch (error) {
+            console.error(error);
+        }
+        return true;
+    }
+    return false;
 }
 
 
@@ -483,6 +558,7 @@ module.exports = {
     current_prefix,
     PROD_PREFIX,
     BOT_PUSHNAME,
+    COOLDOWN_IN_SECS,
     pickRandomReply,
     extractTime,
     extractCommand,
@@ -498,5 +574,7 @@ module.exports = {
     areAllItemsEqual,
     sleep,
     checkForAlias,
-    addCooldown
+    addToUsedCommandRecently,
+    getTimeLeftForSetTimeout,
+    checkForSpam,
 }

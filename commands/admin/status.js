@@ -1,5 +1,5 @@
 const { getMutedStatus, getAllAnnouncements, getAllLinks } = require("../../models/misc");
-const { msToDHMS, current_prefix } = require("../../utils/helpers");
+const { msToDHMS, current_prefix, current_env } = require("../../utils/helpers");
 const { totalmem } = require('os');
 
 
@@ -23,6 +23,7 @@ const execute = async (client, msg, args) => {
     const { days, hours, minutes, seconds } = msToDHMS(current_time - BOT_START_TIME);
     let reply = ['▄▀▄▀  𝔹𝕆𝕋 𝕊𝕋𝔸𝕋𝕌𝕊  ▀▄▀▄\n'];
 
+    reply.push(`[🔰] *Environment:* ${current_env}`);
     reply.push(`[🔰] *Platform:* ${process.platform}`);
     reply.push(`[🔰] *Response time:* ${Math.abs(new Date() - new Date(msg.timestamp * 1000))}ms`);
     reply.push(`[🔰] *Uptime:*${days ? ' ' + days : ''}${days ? (days === 1 ? 'day' : 'days') : ''}${hours ? ' ' + hours : ''}${hours ? (hours === 1 ? 'hr' : 'hrs') : ''}${minutes ? ' ' + minutes : ' 0mins'}${minutes ? (minutes === 1 ? 'min' : 'mins') : ''} ${seconds ? seconds : 0}secs`);
