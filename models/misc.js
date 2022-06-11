@@ -13,7 +13,7 @@ const { Schema, model } = require('mongoose');
 const MiscellaneousSchema = new Schema({
     _id: { type: Number, default: 1 },
     isMuted: { type: Boolean, default: false },
-    isNotifsOn: { type: Boolean, default: true },
+    isNotifsOn: { type: Boolean, default: false },
     isForwardingOn: { type: Boolean, default: false }, // temporary
     allLinks: [String],
     allAnnouncements: [String],
@@ -357,4 +357,43 @@ exports.getForwardToUsers = async () => {
     const users = await MiscellaneousModel.findOne(DEFAULT_ID, { forwardToUsers: 1 });
     // console.log(users.forwardToUsers);
     return users.forwardToUsers;
+}
+
+/**
+ * Gets users who have been blacklisted.
+ * @async
+ * @returns List of users who have been blacklisted.
+ */
+exports.getBlacklistedUsers = async () => {
+    const users = await MiscellaneousModel.findOne(DEFAULT_ID, { blacklistedUsers: 1 });
+    // console.log(users);
+    return users.blacklistedUsers;
+}
+
+/**
+ * Adds a user to be blacklisted.
+ * @param {string} user String representing a whatsapp number.
+ * @async
+ */
+exports.addBlacklistedUser = async (user) => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { blacklistedUsers: user } });
+        // console.log(res);
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+/**
+ * Removes a blacklisted user.
+ * @param {string} user String representing a whatsapp number.
+ * @async
+ */
+exports.removeBlacklistedUser = async (user) => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { blacklistedUsers: user } });
+        // console.log(res);
+    } catch (error) {
+        console.error(error)
+    }
 }

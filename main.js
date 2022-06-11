@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 require('./utils/db');
-const { current_env, current_prefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addCooldown } = require('./utils/helpers');
+const { current_env, current_prefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, getTimeLeftForSetTimeout, checkForSpam } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
 
@@ -24,7 +24,8 @@ const args = {};
 let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed = null;
-console.log("Current prefix:", current_prefix)
+console.log("Current prefix:", current_prefix);
+
 
 
 // --------------------------------------------------
@@ -84,6 +85,7 @@ client.on('ready', async () => {
 // especially the command files...trying to avoid using a global variable. 👍🏽
 client.commands = new Map();
 client.usedCommandRecently = new Set();
+client.potentialSoftBanUsers = new Map();
 
 // Read commands into memory
 const root_dir = path.join(__dirname, './commands');
@@ -103,7 +105,7 @@ fs.readdir('./commands', (err, folders) => {
 })
 
 
-// Handle all message events
+//* Handle all message events
 // todo: Transfer to separate file later
 client.on('message', async (msg) => {
     await sleep(500); // Might help with performance slightly maybe?
@@ -112,13 +114,11 @@ client.on('message', async (msg) => {
         return;
     }
     const contact = await msg.getContact();
+    const chatFromContact = await contact.getChat();
 
     // Handle list responses for certain commands
     if (msg.type === "list_response") {
-        if (client.usedCommandRecently.has(contact.id.user)) {
-            console.log("Still in cooldown");
-            return;
-        }
+        if (await checkForSpam(client, contact, chatFromContact, msg) === true) return;
         args.isListResponse = true;
         args.lastPrefixUsed = lastPrefixUsed;
         const selectedRowId = msg.selectedRowId.split('-')[0];
@@ -144,21 +144,19 @@ client.on('message', async (msg) => {
                 client.commands.get(command.slice(1)).execute(client, msg, args);
                 break;
         }
-        addCooldown(client, contact.id.user);
+        addToUsedCommandRecently(client, contact.id.user);
+        client.potentialSoftBanUsers.set(contact.id.user, { isQualifiedForSoftBan: false, numOfCommandsUsed: 0, hasSentWarningMessage: false, timeout: null });
         return;
     }
 
-    // Handle text messages for commands
-    if (msg.type === 'chat') { // no longer "text" as stated in the library's docs
+    //* Handle text messages for commands
+    if (msg.type === 'chat') { // Message type is no longer "text" as stated in the library's docs
         args.isListResponse = false;
         const possibleCommand = extractCommand(msg);
         const isValidCommand = possibleCommand.startsWith(current_prefix);
         isMention = msg.body.startsWith('@');
         if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax or a mention
-        if (client.usedCommandRecently.has(contact.id.user)) {
-            console.log("Still in cooldown");
-            return;
-        }
+        if (await checkForSpam(client, contact, chatFromContact, msg) === true) return;
         lastPrefixUsed = possibleCommand[0];
         args.lastPrefixUsed = lastPrefixUsed;
 
@@ -183,7 +181,8 @@ client.on('message', async (msg) => {
 
         try {
             cmd.execute(client, msg, args);
-            addCooldown(client, contact.id.user);
+            addToUsedCommandRecently(client, contact.id.user);
+            client.potentialSoftBanUsers.set(contact.id.user, { isQualifiedForSoftBan: false, numOfCommandsUsed: 0, hasSentWarningMessage: false, timeout: null });
         } catch (error) {
             console.error(error);
         }

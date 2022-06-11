@@ -6,6 +6,8 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐❔ Log number of times user gets soft banned to database to increase duration of next soft ban by a factor of 2.  
+- [ ] 👍🏽 Convert all snake_case variables to   camelCase for consistency  
 - [ ] 👍🏽 Categorize console logs like so: console.log("[CLIENT INFO] other info here ") for logs, not random debugging  
 - [ ] ⭐❔Add remindme feature like with tatsumaki on discord...use commented code at the bottom of main.js  
 - [ ] ⭐❔ Log response time after any command is run in order to give average response time in status  
