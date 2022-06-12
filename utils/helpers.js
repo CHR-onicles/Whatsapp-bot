@@ -20,7 +20,7 @@ const PROD_PREFIX = '!';
 const currentPrefix = currentEnv === 'production' ? PROD_PREFIX : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 const COOLDOWN_IN_SECS = 5;
-const SOFT_BAN_DURATION_IN_MINS = 10;
+const SOFT_BAN_DURATION_IN_MINS = 15;
 
 
 // FUNCTIONS ----------------------------------------
@@ -405,7 +405,7 @@ const sendSlides = async (msg, courseCode) => {
  */
 const isUserBotAdmin = async (contact) => {
     const admins = new Set(await getAllBotAdmins());
-    
+
     // Probably a bad practice but mehh
     // If a whatsapp number as a string is passed, do this...
     if (typeof contact !== 'object') {
@@ -476,7 +476,6 @@ const checkForAlias = (map, keyword) => {
  * @param {string} user String representing a user.
  */
 const addToUsedCommandRecently = (client, user) => {
-    //todo: reduce cooldown for bot admin to 3secs
     client.usedCommandRecently.add(user);
     setTimeout(() => {
         client.usedCommandRecently.delete(user);
@@ -503,6 +502,7 @@ const getTimeLeftForSetTimeout = (timeout) => {
  */
 const checkForSpam = async (client, contact, chatFromContact, msg) => {
     if (await getMutedStatus() === true) return; // Don't check for spam and potentially send a message if bot is muted
+    if (contact.id.user === process.env.GRANDMASTER) return; // Don't check for spam for owner of the bot hehe
     let currentUserObj = client.potentialSoftBanUsers.get(contact.id.user);
 
     // What happens during cooldown

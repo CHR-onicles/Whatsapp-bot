@@ -23,10 +23,10 @@ Project Description
 - [ ] ⚠️Refactor extracting course name into function  
 - [ ] ⚠️Refactor repeated variable setters to global variables  
 - [ ] ⚠️Refactor code which extracts time from the courses object  
-- [ ] ⚠️Implement command to stop notifications for a particular course. => !notifs enable <course> || !notifs disable <course>  
 
 ### In Progress
 
+- [ ] ⚠️Implement command to stop notifications for a particular course. => !notifs enable <course> || !notifs disable <course>  
 
 ### Done ✓
 
