@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 require('./utils/db');
-const { current_env, current_prefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, getTimeLeftForSetTimeout, checkForSpam } = require('./utils/helpers');
+const { currentEnv, currentPrefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, getTimeLeftForSetTimeout, checkForSpam } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
 
@@ -24,7 +24,7 @@ const args = {};
 let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed = null;
-console.log("Current prefix:", current_prefix);
+console.log("Current prefix:", currentPrefix);
 
 
 
@@ -61,21 +61,21 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 
 // Bot initialization
 client.on('ready', async () => {
-    console.log('Client is ready!', current_env === 'development' ? '\n' : '');
+    console.log('Client is ready!', currentEnv === 'development' ? '\n' : '');
     BOT_START_TIME = new Date();
     args.BOT_START_TIME = BOT_START_TIME;
     await startNotificationCalculation(client);
 
-    if (current_env === 'production') {
+    if (currentEnv === 'production') {
         const chats = await client.getChats();
-        const grandmaster_chat = chats.find(chat => chat.id.user === GRANDMASTER);
-        const _23_hours_in_ms = 82_800_000; // using numeric separator for readability
+        const grandmasterChat = chats.find(chat => chat.id.user === GRANDMASTER);
+        const twentyThreeHrsInMs = 82_800_000; // using numeric separator for readability
 
         // Reminder to restart the bot before Heroku does that for us without our knowledge
         // Will be fixed by RemoteAuth soon
         setTimeout(async () => {
-            await grandmaster_chat.sendMessage("Reminder to restart the bot after 23 hours!");
-        }, _23_hours_in_ms);
+            await grandmasterChat.sendMessage("Reminder to restart the bot after 23 hours!");
+        }, twentyThreeHrsInMs);
         console.log("Preparing to send bot restart reminder in 23 hours\n");
     }
 });
@@ -88,13 +88,13 @@ client.usedCommandRecently = new Set();
 client.potentialSoftBanUsers = new Map();
 
 // Read commands into memory
-const root_dir = path.join(__dirname, './commands');
+const rootDir = path.join(__dirname, './commands');
 fs.readdir('./commands', (err, folders) => {
     if (err) return console.error(err);
     folders.forEach(folder => {
-        const commands = fs.readdirSync(`${root_dir}/${folder}`).filter((file) => file.endsWith(".js"));
+        const commands = fs.readdirSync(`${rootDir}/${folder}`).filter((file) => file.endsWith(".js"));
         for (let file of commands) {
-            const command = require(`${root_dir}/${folder}/${file}`);
+            const command = require(`${rootDir}/${folder}/${file}`);
             client.commands.set(command.name, command);
             // console.log('done')
         }
@@ -138,7 +138,7 @@ client.on('message', async (msg) => {
                 break;
             default:
                 const command = extractCommand(msg);
-                const isValidCommand = command.startsWith(current_prefix);
+                const isValidCommand = command.startsWith(currentPrefix);
                 if (!isValidCommand) break;
                 args.isListResponse = false;
                 client.commands.get(command.slice(1)).execute(client, msg, args);
@@ -153,7 +153,7 @@ client.on('message', async (msg) => {
     if (msg.type === 'chat') { // Message type is no longer "text" as stated in the library's docs
         args.isListResponse = false;
         const possibleCommand = extractCommand(msg);
-        const isValidCommand = possibleCommand.startsWith(current_prefix);
+        const isValidCommand = possibleCommand.startsWith(currentPrefix);
         isMention = msg.body.startsWith('@');
         if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax or a mention
         if (await checkForSpam(client, contact, chatFromContact, msg) === true) return;
@@ -162,9 +162,9 @@ client.on('message', async (msg) => {
 
         // Check if mention is for bot
         if (isMention) {
-            if (current_env === 'development') return; // To prevent 2 replies when the bot is mentioned while both environments are running simultaneously
-            const first_word = msg.body.toLowerCase().split(' ').shift();
-            if (!(first_word.slice(1) === process.env.BOT_NUMBER)) return; // Stop processing if the bot is not the one mentioned
+            if (currentEnv === 'development') return; // To prevent 2 replies when the bot is mentioned while both environments are running simultaneously
+            const firstWord = msg.body.toLowerCase().split(' ').shift();
+            if (!(firstWord.slice(1) === process.env.BOT_NUMBER)) return; // Stop processing if the bot is not the one mentioned
             args.isMention = isMention;
             try {
                 client.commands.get('menu').execute(client, msg, args);
@@ -198,17 +198,17 @@ client.on('message', async (msg) => {
 
     // local helper function to initialize stuff
     const helperForInit = async (msg) => {
-        const current_chat = await msg.getChat();
+        const currentChat = await msg.getChat();
         const chats = await client.getChats();
         const forwardToUsers = await getForwardToUsers();
-        const target_chats = [];
+        const targetChats = [];
 
         for (const chat of chats) {
             for (const ftu of forwardToUsers) {
-                if (chat.id.user === ftu) target_chats.push(chat);
+                if (chat.id.user === ftu) targetChats.push(chat);
             }
         }
-        return { current_chat, forwardToUsers, target_chats };
+        return { currentChat, forwardToUsers, targetChats };
     }
 
     //* For Announcements
@@ -221,27 +221,27 @@ client.on('message', async (msg) => {
             if (areAllItemsEqual([...msg.body])) return;
         }
 
-        const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
-        let quoted_msg = null;
+        const { currentChat, forwardToUsers, targetChats } = await helperForInit(msg);
+        let quotedMsg = null;
 
         // Dont forward announcements from chats which receive forwarded announcements
         for (const user of forwardToUsers) {
-            if (current_chat.id.user === user) {
+            if (currentChat.id.user === user) {
                 console.log("Announcement from forwardedUsers, so do nothing")
                 return;
             }
         }
-        const current_forwarded_announcements = await getAllAnnouncements();
+        const currentForwardedAnnouncements = await getAllAnnouncements();
         // console.log('Recognized an announcement');
 
-        if (!current_forwarded_announcements.includes(msg.body)) {
+        if (!currentForwardedAnnouncements.includes(msg.body)) {
             await addAnnouncement(msg.body);
             if (msg.hasQuotedMsg) {
-                quoted_msg = await msg.getQuotedMessage();
-                target_chats.forEach(async (chat) => await quoted_msg.forward(chat));
+                quotedMsg = await msg.getQuotedMessage();
+                targetChats.forEach(async (chat) => await quotedMsg.forward(chat));
             }
-            target_chats.forEach(async (chat) => await msg.forward(chat));
-            target_chats.forEach(async (chat) => await chat.sendMessage(`Forwarded announcement from *${current_chat.name}*`));
+            targetChats.forEach(async (chat) => await msg.forward(chat));
+            targetChats.forEach(async (chat) => await chat.sendMessage(`Forwarded announcement from *${currentChat.name}*`));
         } else {
             console.log('Repeated announcement');
         }
@@ -250,11 +250,11 @@ client.on('message', async (msg) => {
 
     //* For links
     else if (msg.links.length) {
-        const { current_chat, forwardToUsers, target_chats } = await helperForInit(msg);
+        const { currentChat, forwardToUsers, targetChats } = await helperForInit(msg);
 
         // Don't forward links from chats which receive forwarded links
         for (const user of forwardToUsers) {
-            if (current_chat.id.user === user) {
+            if (currentChat.id.user === user) {
                 console.log("Link from forwardedUsers, so do nothing")
                 return;
             }
@@ -263,27 +263,27 @@ client.on('message', async (msg) => {
         const links = msg.links;
         // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol",  "hey.me" 
         // and insecure links from leaking through
-        for (const single_link of links) {
-            if (!single_link.link.includes('https')) return;
+        for (const singleLink of links) {
+            if (!singleLink.link.includes('https')) return;
         }
         // console.log(links);
-        let current_forwarded_links = await getAllLinks();
-        current_forwarded_links = current_forwarded_links.map(link => link.toLowerCase());
-        // console.log(current_forwarded_links)
-        const blacklisted_stuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
+        let currentForwardedLinks = await getAllLinks();
+        currentForwardedLinks = currentForwardedLinks.map(link => link.toLowerCase());
+        // console.log(currentForwardedLinks)
+        const blacklistedStuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
 
         // Checking if whatsapp has flagged the link as suspicious
-        for (const single_link of links) {
-            if (single_link.isSuspicious) {
-                console.log("Whatsapp flags this link as suspicious:", single_link.link);
+        for (const singleLink of links) {
+            if (singleLink.isSuspicious) {
+                console.log("Whatsapp flags this link as suspicious:", singleLink.link);
                 return;
             }
         }
 
         // Using this style of for-loop for performance and in order to "return" and break from this event 
-        for (const single_link of links) {
-            for (const item of blacklisted_stuff) {
-                if (single_link.link.includes(item)) {
+        for (const singleLink of links) {
+            for (const item of blacklistedStuff) {
+                if (singleLink.link.includes(item)) {
                     console.log("Link contains a blacklisted item:", item);
                     return;
                 }
@@ -291,10 +291,10 @@ client.on('message', async (msg) => {
         }
 
         // console.log('recognized a link');
-        if (!current_forwarded_links.includes(msg.body.toLowerCase())) {
+        if (!currentForwardedLinks.includes(msg.body.toLowerCase())) {
             await addLink(msg.body);
-            target_chats.forEach(async (chat) => await msg.forward(chat));
-            target_chats.forEach(async (chat) => await chat.sendMessage(`Forwarded link from *${current_chat.name}*`));
+            targetChats.forEach(async (chat) => await msg.forward(chat));
+            targetChats.forEach(async (chat) => await chat.sendMessage(`Forwarded link from *${currentChat.name}*`));
         } else {
             console.log("Repeated link");
         }
@@ -306,7 +306,7 @@ client.on('message', async (msg) => {
 /*client.on('message', async (msg) => {
 //     if (extractCommand(msg) === '!sdm' && await getMutedStatus() === false) {
 //         const contact = await msg.getContact();
-//         const chat_from_contact = await contact.getChat();
+//         const chatFromContact = await contact.getChat();
 //         const pattern = /!sdm\s+[1-9](h|m|s)\s+("|')[\w\s]+("|')/
 //         if (!pattern.test(msg.body)) {
 //             await msg.reply(`❌ Wrong format\n\n✅ The correct format is:\n*!sdm (1-9)(h|m|s) ("message")*\n\nExample: !sdm 5m "How are you?"\n\nThis sends the message: 'How are you?' in 5 minutes`)
@@ -314,8 +314,8 @@ client.on('message', async (msg) => {
 //             await msg.reply("✅");
 
 //             const time = msg.body.split(' ')[1];
-//             const time_value = +time[0];
-//             const time_unit = time[1].toLowerCase();
+//             const timeValue = +time[0];
+//             const timeUnit = time[1].toLowerCase();
 //             let message = null;
 
 //             if (msg.body.includes(`"`)) {
@@ -325,19 +325,19 @@ client.on('message', async (msg) => {
 //             }
 //             let timeout = null;
 
-//             switch (time_unit) {
+//             switch (timeUnit) {
 //                 case 's':
-//                     timeout = time_value * 1000;
+//                     timeout = timeValue * 1000;
 //                     break;
 //                 case 'm':
-//                     timeout = time_value * 60 * 1000;
+//                     timeout = timeValue * 60 * 1000;
 //                     break;
 //                 default:
 //                     break;
 //             }
 
 //             setTimeout(async () => {
-//                 await chat_from_contact.sendMessage(message);
+//                 await chatFromContact.sendMessage(message);
 //             }, timeout);
 //         }
 //     }

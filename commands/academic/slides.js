@@ -1,18 +1,18 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus } = require("../../models/misc");
 const { COURSE_MATERIALS_REPLIES, WAIT_REPLIES, DM_REPLIES } = require("../../utils/data");
-const { current_env, pickRandomReply, current_prefix, sendSlides } = require("../../utils/helpers");
+const { currentEnv, pickRandomReply, currentPrefix, sendSlides } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
 
     const { isListResponse, lastPrefixUsed } = args;
-    // if (current_env === 'production') {
+    // if (currentEnv === 'production') {
     const contact = await msg.getContact();
-    const cur_chat = await msg.getChat();
-    const chat_from_contact = await contact.getChat();
+    const curChat = await msg.getChat();
+    const chatFromContact = await contact.getChat();
 
-    if (cur_chat.isGroup) await msg.reply(pickRandomReply(DM_REPLIES));
+    if (curChat.isGroup) await msg.reply(pickRandomReply(DM_REPLIES));
 
     const list = new List(
         '\nThis is a list of courses with available materials',
@@ -33,96 +33,96 @@ const execute = async (client, msg, args) => {
         'Powered by Ethereal bot'
     );
 
-    !isListResponse && await chat_from_contact.sendMessage(list);
+    !isListResponse && await chatFromContact.sendMessage(list);
     // } else {
     // await msg.reply("The bot is currently hosted locally, so this operation cannot be performed.\n\nThe Grandmaster's data is at stake🐦")
     // }
 
     if (isListResponse) {
         const selectedRowId = msg.selectedRowId.split('-')[1];
-        console.log(`Slides from ${current_env} env`)
+        console.log(`Slides from ${currentEnv} env`)
 
         switch (selectedRowId) {
             case '415_dev':
-                if (current_env !== 'development') break;
+                if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES)); // have to repeat this to avoid it leaking when bot environments are running simultaneously
                 sendSlides(msg, 'CSCD 415');
                 break;
 
             case '415_prod':
-                if (current_env !== 'production') break;
+                if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 415');
                 break;
 
             case '417_dev':
-                if (current_env !== 'development') break;
+                if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 417');
                 break;
 
             case '417_prod':
-                if (current_env !== 'production') break;
+                if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 417');
                 break;
 
             case '419_dev':
-                if (current_env !== 'development') break;
+                if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 419');
                 break;
 
             case '419_prod':
-                if (current_env !== 'production') break;
+                if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 419');
                 break;
 
             case '421_dev':
-                if (current_env !== 'development') break;
+                if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 421');
                 break;
 
             case '421_prod':
-                if (current_env !== 'production') break;
+                if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 421');
                 break;
 
             case '409_dev':
-                if (current_env !== 'development') break;
+                if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 409');
                 break;
 
             case '409_prod':
-                if (current_env !== 'production') break;
+                if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 409');
                 break;
 
             case '423_dev':
-                if (current_env !== 'development') break;
+                if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 423');
                 break;
 
             case '423_prod':
-                if (current_env !== 'production') break;
+                if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 423');
                 break;
 
             case '427_dev':
-                if (current_env !== 'development') break;
+                if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 427');
                 break;
 
             case '427_prod':
-                if (current_env !== 'production') break;
+                if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
                 sendSlides(msg, 'CSCD 427');
                 break;
@@ -141,6 +141,6 @@ module.exports = {
     description: "Get course materials for all courses 📚",
     alias: ["slide", "res", "resources"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type:\n*${current_prefix}slides*, then choose a course from the list provided`,
+    help: `To use this command, type:\n*${currentPrefix}slides*, then choose a course from the list provided`,
     execute,
 }

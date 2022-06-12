@@ -1,6 +1,6 @@
 const { getMutedStatus, unmuteBot } = require("../../models/misc");
 const { NOT_BOT_ADMIN_REPLIES, UNMUTE_REPLIES } = require("../../utils/data");
-const { pickRandomReply, isUserBotAdmin, current_prefix } = require("../../utils/helpers");
+const { pickRandomReply, isUserBotAdmin, currentPrefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     const contact = await msg.getContact();
@@ -26,6 +26,6 @@ module.exports = {
     description: "Unmute the bot 🙂",
     alias: ["speak", "talk"],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${current_prefix}unmute*`,
+    help: `To use this command, type:\n*${currentPrefix}unmute*`,
     execute,
 }

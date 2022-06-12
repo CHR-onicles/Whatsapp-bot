@@ -1,17 +1,17 @@
 const { getMutedStatus, getUsersToNotifyForClass } = require("../../models/misc");
 const { NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
-const { isUserBotAdmin, pickRandomReply, current_prefix } = require("../../utils/helpers");
+const { isUserBotAdmin, pickRandomReply, currentPrefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
 
-    const all_contacts = await client.getContacts();
+    const allContacts = await client.getContacts();
     const contact = await msg.getContact();
     const isAdmin = await isUserBotAdmin(contact);
     if (isAdmin) {
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         const [dataMiningContacts, networkingContacts, softModellingContacts] = [[], [], []];
-        for (const con of all_contacts) {
+        for (const con of allContacts) {
             for (const sub of dataMining) {
                 if (con.number === sub) dataMiningContacts.push(con);
             }
@@ -38,6 +38,6 @@ module.exports = {
     description: "Get users subscribed for class notifications 👯‍♂️",
     alias: ["sub"],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${current_prefix}subs*`,
+    help: `To use this command, type:\n*${currentPrefix}subs*`,
     execute,
 }

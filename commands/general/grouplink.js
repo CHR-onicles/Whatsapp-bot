@@ -1,24 +1,24 @@
 const { getMutedStatus } = require("../../models/misc");
-const { current_prefix } = require("../../utils/helpers");
+const { currentPrefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
 
-    const group_chat = await msg.getChat();
-    // console.log(group_chat.participants);
+    const groupChat = await msg.getChat();
+    // console.log(groupChat.participants);
 
-    if (!group_chat.isGroup) {
+    if (!groupChat.isGroup) {
         await msg.reply('This is not a group chat!');
         return;
     }
 
-    const bot_chat_obj = group_chat.participants.find(chat_obj => chat_obj.id.user === process.env.BOT_NUMBER);
-    if (!bot_chat_obj.isAdmin) {
+    const botChatObj = groupChat.participants.find(chat_obj => chat_obj.id.user === process.env.BOT_NUMBER);
+    if (!botChatObj.isAdmin) {
         await msg.reply("I am not an admin in this group, so I can't do this");
         return;
     }
 
-    const invite = 'https://chat.whatsapp.com/' + await group_chat.getInviteCode();
+    const invite = 'https://chat.whatsapp.com/' + await groupChat.getInviteCode();
     await msg.reply(invite, '', { linkPreview: true }); // link preview is not supported on Multi-Device...whatsapp fault, not whatsapp-web.js library
 }
 
@@ -28,6 +28,6 @@ module.exports = {
     description: "Get the current group's invite link 📱",
     alias: ["gl", "glink"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type:\n*${current_prefix}grouplink*`,
+    help: `To use this command, type:\n*${currentPrefix}grouplink*`,
     execute,
 }

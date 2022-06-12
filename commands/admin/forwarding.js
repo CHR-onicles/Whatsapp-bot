@@ -1,24 +1,24 @@
 const { getMutedStatus, getForwardingStatus, enableForwarding, disableForwarding } = require("../../models/misc");
 const { NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
-const { isUserBotAdmin, current_env, pickRandomReply, current_prefix, extractCommandArgs } = require("../../utils/helpers");
+const { isUserBotAdmin, currentEnv, pickRandomReply, currentPrefix, extractCommandArgs } = require("../../utils/helpers");
 
 //! THIS COMMAND IS TEMPORARY AND WILL BE REMOVED ONCE 
 //! THE LOGIC IS FLESHED OUT PROPERLY FOR USERS
 
 const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
-    const msg_args = extractCommandArgs(msg)[0];
+    const msgArgs = extractCommandArgs(msg)[0];
 
     const contact = await msg.getContact();
     const isAdmin = await isUserBotAdmin(contact);
-    const current_forwarding_status = await getForwardingStatus();
+    const curForwardingStatus = await getForwardingStatus();
 
     if (isAdmin) {
-        switch (msg_args) {
+        switch (msgArgs) {
             case 'status':
             case 'stats':
             case '-s':
-                await msg.reply(`Forwarding of important messages is ${current_forwarding_status ? 'ON ✅' : 'OFF ❌'}`);
+                await msg.reply(`Forwarding of important messages is ${curForwardingStatus ? 'ON ✅' : 'OFF ❌'}`);
                 break;
 
             case 'enable':
@@ -48,6 +48,6 @@ module.exports = {
     description: "Turn on/off forwarding of announcements and links 📲",
     alias: ["fwd"],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${current_prefix}forwarding (status | enable | disable)*`,
+    help: `To use this command, type:\n*${currentPrefix}forwarding (status | enable | disable)*`,
     execute,
 }

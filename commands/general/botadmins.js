@@ -1,17 +1,17 @@
 const { getMutedStatus, getAllBotAdmins } = require("../../models/misc");
 const { NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
-const { pickRandomReply, isUserBotAdmin, current_prefix } = require("../../utils/helpers");
+const { pickRandomReply, isUserBotAdmin, currentPrefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
 
-    const all_contacts = await client.getContacts();
+    const allContacts = await client.getContacts();
     const contact = await msg.getContact();
     const isAdmin = await isUserBotAdmin(contact);
     const allBotAdmins = await getAllBotAdmins();
 
     const foundBotAdmins = [];
-    for (const con of all_contacts) {
+    for (const con of allContacts) {
         for (const bot_admin of allBotAdmins) {
             if (con.number === bot_admin) foundBotAdmins.push(con);
         }
@@ -29,6 +29,6 @@ module.exports = {
     description: "Get all bot admins 👮🏽‍♂️👮🏽‍♀️",
     alias: ["badmins", "badmin", "botadmin"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type:\n${current_prefix}botadmins*`,
+    help: `To use this command, type:\n${currentPrefix}botadmins*`,
     execute,
 }
