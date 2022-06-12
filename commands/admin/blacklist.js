@@ -1,11 +1,11 @@
 const { getMutedStatus, getBlacklistedUsers } = require("../../models/misc");
 const { NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
-const { isUserBotAdmin, pickRandomReply, current_prefix } = require("../../utils/helpers");
+const { isUserBotAdmin, pickRandomReply, currentPrefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
 
-    const all_contacts = await client.getContacts();
+    const allContacts = await client.getContacts();
     const contact = await msg.getContact();
     const isAdmin = await isUserBotAdmin(contact);
     const blacklistedUsers = await getBlacklistedUsers();
@@ -16,7 +16,7 @@ const execute = async (client, msg) => {
     }
 
     const foundBlacklistedUsers = [];
-    for (const con of all_contacts) {
+    for (const con of allContacts) {
         for (const black of blacklistedUsers) {
             if (con.number === black) foundBlacklistedUsers.push(con);
         }
@@ -35,6 +35,6 @@ module.exports = {
     description: "Get users who have been blacklisted ☠☠",
     alias: ["black", "bl"],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${current_prefix}blacklist*`,
+    help: `To use this command, type:\n*${currentPrefix}blacklist*`,
     execute,
 }

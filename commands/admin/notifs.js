@@ -1,6 +1,6 @@
 const { getMutedStatus, getNotificationStatus, enableAllNotifications, disableAllNotifications } = require("../../models/misc");
 const { NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
-const { isUserBotAdmin, current_env, pickRandomReply, current_prefix, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications } = require("../../utils/helpers");
+const { isUserBotAdmin, currentEnv, pickRandomReply, currentPrefix, extractCommandArgs, startNotificationCalculation, stopOngoingNotifications } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
@@ -14,8 +14,8 @@ const execute = async (client, msg) => {
             case 'status':
             case 'stats':
             case '-s':
-                const notifs_status = await getNotificationStatus();
-                await msg.reply(`All notifications for today's classes are *${notifs_status ? 'ON ✅' : 'OFF ❌'}*`);
+                const notifsStatus = await getNotificationStatus();
+                await msg.reply(`All notifications for today's classes are *${notifsStatus ? 'ON ✅' : 'OFF ❌'}*`);
                 break;
 
             case 'enable all':
@@ -47,6 +47,6 @@ module.exports = {
     description: "Get status or turn on/off class notifications 🔈",
     alias: [],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${current_prefix}notifs (status | enable all | disable all)*`,
+    help: `To use this command, type:\n*${currentPrefix}notifs (status | enable all | disable all)*`,
     execute,
 }

@@ -117,6 +117,7 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 | `!unmute`💎 | Unmute the bot |
 
 💎 = Commands that can only be used when you are a **bot admin**.
+
 <br>
 
 ## 🧰 Built with

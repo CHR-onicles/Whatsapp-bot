@@ -3,8 +3,8 @@
 // --------------------------------------------------
 const WAWebJS = require("whatsapp-web.js");
 const { MessageMedia } = require("whatsapp-web.js");
-const { getUsersToNotifyForClass, getNotificationStatus, getAllBotAdmins } = require("../models/misc");
-const { ALL_CLASSES, MIME_TYPES } = require("./data");
+const { getUsersToNotifyForClass, getNotificationStatus, getAllBotAdmins, getMutedStatus } = require("../models/misc");
+const { allClasses, MIME_TYPES } = require("./data");
 const { getResource } = require('../models/resources');
 
 
@@ -15,9 +15,9 @@ const { getResource } = require('../models/resources');
  */
 var VARIABLES_COUNTER = 0;
 
-const current_env = process.env.NODE_ENV;
+const currentEnv = process.env.NODE_ENV;
 const PROD_PREFIX = '!';
-const current_prefix = current_env === 'production' ? PROD_PREFIX : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
+const currentPrefix = currentEnv === 'production' ? PROD_PREFIX : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 const COOLDOWN_IN_SECS = 5;
 const SOFT_BAN_DURATION_IN_MINS = 10;
@@ -34,21 +34,21 @@ const pickRandomReply = (replies) => {
 }
 
 /**
- * Extract time for a course from the `ALL_CLASSES` array.
+ * Extract time for a course from the `allClasses` array.
  * @param {string} course_name A string containing name, time and venue of class.
  * @returns {string} A string containing the time for a course in the format HH:MM.
  */
 const extractTime = (course_name) => {
-    const time_portion = course_name.split('|')[1].trim();
-    const raw_time = time_portion.slice(1);
-    let new_raw_time = null;
+    const timePortion = course_name.split('|')[1].trim();
+    const rawTime = timePortion.slice(1);
+    let newRawTime = null;
 
-    if (raw_time.includes('p') && !raw_time.includes('12')) {
-        const hour_24_format = +raw_time.split(':')[0] + 12;
-        new_raw_time = String(hour_24_format) + ':' + raw_time.split(':')[1];
+    if (rawTime.includes('p') && !rawTime.includes('12')) {
+        const hoursIn24HrFormat = +rawTime.split(':')[0] + 12;
+        newRawTime = String(hoursIn24HrFormat) + ':' + rawTime.split(':')[1];
     }
-    // console.log(new_raw_time, raw_time);
-    return new_raw_time || raw_time;
+    // console.log(newRawTime, rawTime);
+    return newRawTime || rawTime;
 }
 
 /**
@@ -58,9 +58,9 @@ const extractTime = (course_name) => {
  */
 const extractCommand = (msg) => {
     const split = msg?.body.toLowerCase().split(/(\s+|\n+)/);
-    const first_word = split.shift();
-    // console.log(first_word)
-    if (first_word.startsWith(current_prefix)) return first_word;
+    const firstWord = split.shift();
+    // console.log(firstWord)
+    if (firstWord.startsWith(currentPrefix)) return firstWord;
     return '';
 }
 
@@ -74,12 +74,12 @@ const extractCommandArgs = (msg) => {
     const args = msg.body.toLowerCase().split(/\n+/)[0]; // enforce arguments being separated from commands strictly by space(s)
 
     // Now split's the group of words by a space... these should be the valid args
-    let valid_args = args.split(/\s+/);
-    // console.log(valid_args);
+    let validArgs = args.split(/\s+/);
+    // console.log(validArgs);
 
-    if (valid_args.length) {
-        valid_args = valid_args.map(arg => arg.trim());
-        return valid_args.slice(1);
+    if (validArgs.length) {
+        validArgs = validArgs.map(arg => arg.trim());
+        return validArgs.slice(1);
     }
     else return [];
 }
@@ -114,43 +114,43 @@ const msToDHMS = (duration) => {
  */
 const notificationTimeCalc = (course) => {
     // Constants for notification intervals
-    const two_hrs_ms = 120 * 60 * 1000;
-    const one_hr_ms = 60 * 60 * 1000;
-    const thirty_mins_ms = 30 * 60 * 1000;
+    const twoHrsInMs = 120 * 60 * 1000;
+    const oneHrInMs = 60 * 60 * 1000;
+    const thirtyMinsInMs = 30 * 60 * 1000;
 
     // Timeouts for the 3 reminder intervals
-    let timeout_two_hrs = 0;
-    let timeout_one_hr = 0;
-    let timeout_thirty_mins = 0;
+    let timeoutTwoHrs = 0;
+    let timeoutOneHr = 0;
+    let timeoutThirtyMins = 0;
 
-    const class_time = extractTime(course.name);
-    const class_time_hrs = +class_time.split(':')[0];
-    const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+    const classTime = extractTime(course.name);
+    const classTimeHrs = +classTime.split(':')[0];
+    const classTimeMins = +classTime.split(':')[1].slice(0, classTime.split(':')[1].length - 2);
 
-    const cur_time = new Date();
-    const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
-    const time_left_in_ms = new_class_time - cur_time;
+    const curTime = new Date();
+    const newClassTime = new Date(curTime.getFullYear(), curTime.getMonth(), curTime.getDate(), classTimeHrs, classTimeMins, 0);
+    const timeLeftInMs = newClassTime - curTime;
 
-    if (two_hrs_ms > time_left_in_ms) {
+    if (twoHrsInMs > timeLeftInMs) {
         console.log("Less than 2hrs left to remind for", course.name.split('|')[0]);
     } else {
-        timeout_two_hrs = time_left_in_ms - two_hrs_ms;
+        timeoutTwoHrs = timeLeftInMs - twoHrsInMs;
     }
 
-    if (one_hr_ms > time_left_in_ms) {
+    if (oneHrInMs > timeLeftInMs) {
         console.log("Less than 1 hr left to remind for", course.name.split('|')[0]);
     } else {
-        timeout_one_hr = time_left_in_ms - one_hr_ms;
+        timeoutOneHr = timeLeftInMs - oneHrInMs;
     }
 
-    if (thirty_mins_ms > time_left_in_ms) {
+    if (thirtyMinsInMs > timeLeftInMs) {
         console.log("Less than 30 mins left to remind for", course.name.split('|')[0]);
     } else {
-        timeout_thirty_mins = time_left_in_ms - thirty_mins_ms;
+        timeoutThirtyMins = timeLeftInMs - thirtyMinsInMs;
     }
 
-    // console.log(timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
-    return { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins };
+    // console.log(timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
+    return { timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins };
 }
 
 /**
@@ -158,44 +158,44 @@ const notificationTimeCalc = (course) => {
  * @param {WAWebJS.Client} client Client object from wweb.js library.
  */
 const startNotificationCalculation = async (client) => {
-    const today_day = new Date().toString().split(' ')[0];
+    const todayDay = new Date().toString().split(' ')[0];
     const { dataMining, softModelling, networking } = await getUsersToNotifyForClass();
 
-    const total_users = [...dataMining, ...softModelling, ...networking];
+    const totalUsers = [...dataMining, ...softModelling, ...networking];
     const chats = await client.getChats();
-    const notifs_status = await getNotificationStatus();
+    const notifsStatus = await getNotificationStatus();
 
-    if (!notifs_status) return;
+    if (!notifsStatus) return;
 
-    if (!total_users.length) return; // if there are no subscribed users, stop
+    if (!totalUsers.length) return; // if there are no subscribed users, stop
 
-    if (today_day === 'Sat' || today_day === 'Sun') {
+    if (todayDay === 'Sat' || todayDay === 'Sun') {
         console.log("No courses to be notified for during the weekend!");
         return;
     }
 
-    const { courses } = ALL_CLASSES.find(class_obj => {
-        if (class_obj.day.slice(0, 3) === today_day) {
-            return class_obj;
+    const { courses } = allClasses.find(classObj => {
+        if (classObj.day.slice(0, 3) === todayDay) {
+            return classObj;
         }
     });
     // console.log(courses);
 
     for (const course of courses) {
-        const class_time = extractTime(course.name);
-        const class_time_hrs = +class_time.split(':')[0];
-        const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
-        const { timeout_two_hrs, timeout_one_hr, timeout_thirty_mins } = notificationTimeCalc(course);
+        const classTime = extractTime(course.name);
+        const classTimeHrs = +classTime.split(':')[0];
+        const classTimeMins = +classTime.split(':')[1].slice(0, classTime.split(':')[1].length - 2);
+        const { timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins } = notificationTimeCalc(course);
 
-        const cur_time = new Date();
-        const new_class_time = new Date(cur_time.getFullYear(), cur_time.getMonth(), cur_time.getDate(), class_time_hrs, class_time_mins, 0);
-        const time_left_in_ms = new_class_time - cur_time;
-        if (time_left_in_ms < 0) continue; // if the time for a course is past, skip to next course
+        const curTime = new Date();
+        const newClassTime = new Date(curTime.getFullYear(), curTime.getMonth(), curTime.getDate(), classTimeHrs, classTimeMins, 0);
+        const timeLeftInMs = newClassTime - curTime;
+        if (timeLeftInMs < 0) continue; // if the time for a course is past, skip to next course
 
         if (course.name.includes('Data Mining')) {
             if (dataMining.length) {
                 dataMining.forEach(student => {
-                    generateTimeoutIntervals(student, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                    generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
                     console.log('Student:', student, ' course:', course)
                 })
                 console.log('\n');
@@ -203,7 +203,7 @@ const startNotificationCalculation = async (client) => {
         } else if (course.name.includes('Networking')) {
             if (networking.length) {
                 networking.forEach(student => {
-                    generateTimeoutIntervals(student, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                    generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
                     console.log('Student:', student, ' course:', course)
                 })
                 console.log('\n');
@@ -211,14 +211,14 @@ const startNotificationCalculation = async (client) => {
         } else if (course.name.includes('Soft. Modelling')) {
             if (softModelling.length) {
                 softModelling.forEach(student => {
-                    generateTimeoutIntervals(student, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+                    generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
                     console.log('Student:', student, ' course:', course)
                 })
                 console.log('\n');
             }
         } else {
-            total_users.forEach(student => {
-                generateTimeoutIntervals(student, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins);
+            totalUsers.forEach(student => {
+                generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
                 console.log('Student:', student, ' course:', course)
             })
             console.log('\n');
@@ -231,28 +231,28 @@ const startNotificationCalculation = async (client) => {
  * @param {string} user A string that represents a user, usually by a phone number.
  * @param {{name: string, duration: number}} course Object containing course `name` and `duration`.
  * @param {WAWebJS.Chat} chats All chats the bot is participating in.
- * @param {number} timeout_two_hrs Value in milliseconds left to send the 2 hour notification.
- * @param {number} timeout_one_hr Value in milliseconds left to send the 1 hour notification.
- * @param {number} timeout_thirty_mins Value in milliseconds left to send the 30 minutes notification.
+ * @param {number} timeoutTwoHrs Value in milliseconds left to send the 2 hour notification.
+ * @param {number} timeoutOneHr Value in milliseconds left to send the 1 hour notification.
+ * @param {number} timeoutThirtyMins Value in milliseconds left to send the 30 minutes notification.
  */
-const generateTimeoutIntervals = (user, course, chats, timeout_two_hrs, timeout_one_hr, timeout_thirty_mins) => {
+const generateTimeoutIntervals = (user, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins) => {
     const chat_from_user = chats.find(chat => chat.id.user === user); // used in the eval statement
 
     // Create dynamic variables to assign the timeouts to. The dynamic variables are needed in order to clear the timeouts
     // in case the user opts out or there's a recalculation of notification intervals.
-    if (timeout_two_hrs > 0) {
+    if (timeoutTwoHrs > 0) {
         VARIABLES_COUNTER++;
-        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours'); console.log('SENT 2hr notif for' + course.name.split('|')[0] + ' to ', + user, ' => t' + VARIABLES_COUNTER)}, timeout_two_hrs)")
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours'); console.log('SENT 2hr notif for' + course.name.split('|')[0] + ' to ', + user, ' => t' + VARIABLES_COUNTER)}, timeoutTwoHrs)")
         console.log('Sending 2hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
-    if (timeout_one_hr > 0) {
+    if (timeoutOneHr > 0) {
         VARIABLES_COUNTER++;
-        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour'); console.log('SENT 1hr notif for' + course.name.split('|')[0] + ' to ', + user, ' => t' + VARIABLES_COUNTER)}, timeout_one_hr)")
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour'); console.log('SENT 1hr notif for' + course.name.split('|')[0] + ' to ', + user, ' => t' + VARIABLES_COUNTER)}, timeoutOneHr)")
         console.log('Sending 1hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
-    if (timeout_thirty_mins > 0) {
+    if (timeoutThirtyMins > 0) {
         VARIABLES_COUNTER++;
-        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!'); console.log('SENT 30min notif for' + course.name.split('|')[0] + ' to ', + user, ' => t' + VARIABLES_COUNTER)}, timeout_thirty_mins)")
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!'); console.log('SENT 30min notif for' + course.name.split('|')[0] + ' to ', + user, ' => t' + VARIABLES_COUNTER)}, timeoutThirtyMins)")
         console.log('Sending 30min notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
 }
@@ -271,30 +271,30 @@ const stopOngoingNotifications = () => {
 
 /**
  * Generates reply to `!classes` command based on elective being offered.
- * @param {Array<{day: string, courses: Array<{name: string, duration: number}>}>} all_classes An array containing the full timetable for Level 400 Computer Science students.
+ * @param {Array<{day: string, courses: Array<{name: string, duration: number}>}>} allClasses An array containing the full timetable for Level 400 Computer Science students.
  * @param {string} elective Character identifying the elective being offered.
  * @param {string} text Reply that would be sent by the bot.
  * @returns Modified `text` as bot's response.
  */
-const allClassesReply = (all_classes, elective, text) => {
+const allClassesReply = (allClasses, elective, text) => {
     let filtered_courses = null;
     if (elective === "D") {
         text += "Timetable for students offering *Data Mining* as elective: 📅\n\n"
-        all_classes.forEach(class_obj => {
-            filtered_courses = class_obj.courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
-            text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+        allClasses.forEach(classObj => {
+            filtered_courses = classObj.courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
+            text += "*" + classObj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
         })
     } else if (elective === "N") {
         text += "Timetable for students offering *Networking* as elective: 📅\n\n"
-        all_classes.forEach(class_obj => {
-            filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"))
-            text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+        allClasses.forEach(classObj => {
+            filtered_courses = classObj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"))
+            text += "*" + classObj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
         })
     } else if (elective === "S") {
         text += "Timetable for students offering *Software Modelling* as elective: 📅\n\n"
-        all_classes.forEach(class_obj => {
-            filtered_courses = class_obj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"))
-            text += "*" + class_obj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+        allClasses.forEach(classObj => {
+            filtered_courses = classObj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"))
+            text += "*" + classObj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
         })
     }
     return text;
@@ -308,23 +308,23 @@ const allClassesReply = (all_classes, elective, text) => {
  * @returns Modified `text` as bot's response.
  */
 const todayClassReply = async (text, elective) => {
-    const today_day = new Date().toString().split(' ')[0]; // to get day
+    const todayDay = new Date().toString().split(' ')[0]; // to get day of today
 
-    if (today_day === 'Sat' || today_day === 'Sun') {
+    if (todayDay === 'Sat' || todayDay === 'Sun') {
         text += 'Its the weekend! No classes today🥳\n\n_PS:_ You can type *!classes* to know your classes for the week.';
         return text;
     }
 
-    let { courses } = ALL_CLASSES.find(class_obj => {
-        if (class_obj.day.slice(0, 3) === today_day) {
-            return class_obj;
+    let { courses } = allClasses.find(classObj => {
+        if (classObj.day.slice(0, 3) === todayDay) {
+            return classObj;
         }
     });
 
-    const cur_time = new Date();
-    const done_array = [];
-    const in_session_array = [];
-    const upcoming_array = [];
+    const curTime = new Date();
+    const doneArray = [];
+    const inSessionArray = [];
+    const upcomingArray = [];
 
     if (elective === 'D') {
         text += "Today's classes for students offering *Data Mining*: ☀\n\n"
@@ -338,35 +338,35 @@ const todayClassReply = async (text, elective) => {
     }
 
     courses.forEach(course => {
-        const class_time = extractTime(course.name);
-        const class_time_hrs = +class_time.split(':')[0]
-        const class_time_mins = +class_time.split(':')[1].slice(0, class_time.split(':')[1].length - 2);
+        const classTime = extractTime(course.name);
+        const classTimeHrs = +classTime.split(':')[0]
+        const classTimeMins = +classTime.split(':')[1].slice(0, classTime.split(':')[1].length - 2);
 
-        if ((cur_time.getHours() < class_time_hrs) || (cur_time.getHours() === class_time_hrs && cur_time.getMinutes() < class_time_mins)) {
+        if ((curTime.getHours() < classTimeHrs) || (curTime.getHours() === classTimeHrs && curTime.getMinutes() < classTimeMins)) {
             // console.log('Not time yet')
-            upcoming_array.push(course);
+            upcomingArray.push(course);
         }
-        else if ((cur_time.getHours() === class_time_hrs) || (cur_time.getHours() < class_time_hrs + course.duration) || ((cur_time.getHours() <= class_time_hrs + course.duration) && cur_time.getMinutes() < class_time_mins)) {
+        else if ((curTime.getHours() === classTimeHrs) || (curTime.getHours() < classTimeHrs + course.duration) || ((curTime.getHours() <= classTimeHrs + course.duration) && curTime.getMinutes() < classTimeMins)) {
             // console.log('In session')
-            in_session_array.push(course);
+            inSessionArray.push(course);
         }
-        else if ((cur_time.getHours() > (class_time_hrs + course.duration)) || (cur_time.getHours() >= (class_time_hrs + course.duration) && (cur_time.getMinutes() > class_time_mins))) {
+        else if ((curTime.getHours() > (classTimeHrs + course.duration)) || (curTime.getHours() >= (classTimeHrs + course.duration) && (curTime.getMinutes() > classTimeMins))) {
             // console.log('Past time')
-            done_array.push(course);
+            doneArray.push(course);
         }
     })
 
     text += "✅ *Done*:\n" +
         function () {
-            return !done_array.length ? '🚫 None\n' : done_array.map(({ name }) => `~${name}~\n`).join('')
+            return !doneArray.length ? '🚫 None\n' : doneArray.map(({ name }) => `~${name}~\n`).join('')
         }()
         + "\n" + "⏳ *In session*:\n" +
         function () {
-            return !in_session_array.length ? '🚫 None\n' : in_session_array.map(({ name }) => `${name}\n`).join('')
+            return !inSessionArray.length ? '🚫 None\n' : inSessionArray.map(({ name }) => `${name}\n`).join('')
         }()
         + "\n" + "💡 *Upcoming*:\n" +
         function () {
-            return !upcoming_array.length ? '🚫 None\n' : upcoming_array.map(({ name }) => `${name}\n`).join('')
+            return !upcomingArray.length ? '🚫 None\n' : upcomingArray.map(({ name }) => `${name}\n`).join('')
         }();
     return text;
 }
@@ -384,15 +384,15 @@ const sendSlides = async (msg, courseCode) => {
     if (materials.length) console.log("Got slides")
     else console.log("No slides received from DB");
     for (const material of materials) {
-        const cur_material = material;
-        const file_extension = cur_material.title.split(".")[cur_material.title.split(".").length - 1]; // always extract the last "." and what comes after
+        const curMaterial = material;
+        const file_extension = curMaterial.title.split(".")[curMaterial.title.split(".").length - 1]; // always extract the last "." and what comes after
         const { mime_type } = MIME_TYPES.find(obj => obj.fileExtension === file_extension);
-        const slide = new MessageMedia(mime_type, cur_material.binData, cur_material.title);
+        const slide = new MessageMedia(mime_type, curMaterial.binData, curMaterial.title);
         await msg.reply(slide);
         console.log("Sent a slide")
         if (material === materials[materials.length - 1]) isDone = true;
     }
-    // if (isDone) await msg.reply(`Done 👍🏽 from ${current_env}`);
+    // if (isDone) await msg.reply(`Done 👍🏽 from ${currentEnv}`);
     if (isDone) await msg.reply(`Done 👍🏽`);
     console.log("Done sending slides")
 }
@@ -429,11 +429,11 @@ const pickRandomWeightedMessage = (map) => {
         console.log("Sum:", sum)
         throw new Error("Sum is NOT EQUAL TO 100")
     }
-    const rand_val = Math.floor(Math.random() * sum);
+    const randVal = Math.floor(Math.random() * sum);
 
     for (let i = 0; i < items.length; ++i) {
         sum -= weights[i];
-        if (rand_val >= sum) return items[i];
+        if (randVal >= sum) return items[i];
     }
 }
 
@@ -502,6 +502,7 @@ const getTimeLeftForSetTimeout = (timeout) => {
  * @returns {boolean} Returns **True** if spam intent is detected, **False** otherwise.
  */
 const checkForSpam = async (client, contact, chatFromContact, msg) => {
+    if (await getMutedStatus() === true) return; // Don't check for spam and potentially send a message if bot is muted
     let currentUserObj = client.potentialSoftBanUsers.get(contact.id.user);
 
     // What happens during cooldown
@@ -554,8 +555,8 @@ const checkForSpam = async (client, contact, chatFromContact, msg) => {
 
 
 module.exports = {
-    current_env,
-    current_prefix,
+    currentEnv,
+    currentPrefix,
     PROD_PREFIX,
     BOT_PUSHNAME,
     COOLDOWN_IN_SECS,

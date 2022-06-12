@@ -1,6 +1,6 @@
 const { getMutedStatus } = require("../../models/misc");
 const { SOURCE_CODE } = require("../../utils/data");
-const { current_prefix } = require("../../utils/helpers");
+const { currentPrefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
@@ -13,6 +13,6 @@ module.exports = {
     description: "Get the bot's source code 💻",
     alias: ["sc", "source"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type:\n*${current_prefix}sourcecode*`,
+    help: `To use this command, type:\n*${currentPrefix}sourcecode*`,
     execute,
 }
