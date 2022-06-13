@@ -4,7 +4,7 @@
 const WAWebJS = require("whatsapp-web.js");
 const { MessageMedia } = require("whatsapp-web.js");
 const { getUsersToNotifyForClass, getNotificationStatus, getAllBotAdmins, getMutedStatus } = require("../models/misc");
-const { allClasses, MIME_TYPES } = require("./data");
+const { allClasses, MIME_TYPES, ALL_CLASSES } = require("./data");
 const { getResource } = require('../models/resources');
 
 
@@ -174,7 +174,7 @@ const startNotificationCalculation = async (client) => {
         return;
     }
 
-    const { courses } = allClasses.find(classObj => {
+    const { courses } = ALL_CLASSES.find(classObj => {
         if (classObj.day.slice(0, 3) === todayDay) {
             return classObj;
         }
