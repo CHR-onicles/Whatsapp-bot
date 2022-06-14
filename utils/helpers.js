@@ -4,7 +4,7 @@
 const WAWebJS = require("whatsapp-web.js");
 const { MessageMedia } = require("whatsapp-web.js");
 const { getUsersToNotifyForClass, getNotificationStatus, getAllBotAdmins, getMutedStatus } = require("../models/misc");
-const { allClasses, MIME_TYPES, ALL_CLASSES } = require("./data");
+const {MIME_TYPES, ALL_CLASSES } = require("./data");
 const { getResource } = require('../models/resources');
 
 
@@ -34,7 +34,7 @@ const pickRandomReply = (replies) => {
 }
 
 /**
- * Extract time for a course from the `allClasses` array.
+ * Extract time for a course from the `ALL_CLASSES` array.
  * @param {string} course_name A string containing name, time and venue of class.
  * @returns {string} A string containing the time for a course in the format HH:MM.
  */
@@ -315,7 +315,7 @@ const todayClassReply = async (text, elective) => {
         return text;
     }
 
-    let { courses } = allClasses.find(classObj => {
+    let { courses } = ALL_CLASSES.find(classObj => {
         if (classObj.day.slice(0, 3) === todayDay) {
             return classObj;
         }
