@@ -7,7 +7,7 @@ const execute = async (client, msg) => {
 
     const allContacts = await client.getContacts();
     const contact = await msg.getContact();
-    const isAdmin = await isUserBotAdmin(contact);
+    const isBotAdmin = await isUserBotAdmin(contact);
     const blacklistedUsers = await getBlacklistedUsers();
 
     if (!blacklistedUsers.length) {
@@ -22,7 +22,7 @@ const execute = async (client, msg) => {
         }
     }
 
-    if (isAdmin) {
+    if (isBotAdmin) {
         await msg.reply("〘💀 𝔹𝕝𝕒𝕔𝕜𝕝𝕚𝕤𝕥𝕖𝕕 𝕦𝕤𝕖𝕣𝕤 💀〙\n\n" + foundBlacklistedUsers.map(blackUser => `➣ ${blackUser.number} ~ ${blackUser?.pushname || ''}\n`).join(''));
     } else {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));

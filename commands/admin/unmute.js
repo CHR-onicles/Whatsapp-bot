@@ -4,15 +4,15 @@ const { pickRandomReply, isUserBotAdmin, currentPrefix } = require("../../utils/
 
 const execute = async (client, msg) => {
     const contact = await msg.getContact();
-    const isAdmin = await isUserBotAdmin(contact);
+    const isBotAdmin = await isUserBotAdmin(contact);
     
     if (await getMutedStatus() === true) {
-        if (isAdmin) {
+        if (isBotAdmin) {
             await msg.reply(pickRandomReply(UNMUTE_REPLIES));
             await unmuteBot();
         }
     } else {
-        if (!isAdmin) {
+        if (!isBotAdmin) {
             await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
             return;
         }

@@ -10,10 +10,10 @@ const execute = async (client, msg, args) => {
     const msgArgs = extractCommandArgs(msg)[0];
 
     const contact = await msg.getContact();
-    const isAdmin = await isUserBotAdmin(contact);
+    const isBotAdmin = await isUserBotAdmin(contact);
     const curForwardingStatus = await getForwardingStatus();
 
-    if (isAdmin) {
+    if (isBotAdmin) {
         switch (msgArgs) {
             case 'status':
             case 'stats':

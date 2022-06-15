@@ -28,7 +28,6 @@ exports.ALL_CLASSES = [
             { name: '_Networking_ | ⏰11:30am | 🏠MATH05', duration: 2 },
             { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
             { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Accounting_ | ⏰3:30pm | 🏠JQB23', duration: 2 },
             { name: '_Networking_ | ⏰5:30pm | 🏠E10', duration: 1 },
             { name: '_Accounting_ | ⏰7:30pm | 🏠E10', duration: 1 }
         ]
@@ -330,25 +329,30 @@ exports.COURSE_MATERIALS_REPLIES = [
  */
 exports.FOOTNOTES = new Map([
     ["", 60], // send "nothing" more often, to avoid annoying users with multiple tips
+
+    // Greetings/wishes
     ["Hope you are having a great day 🥳", 1],
     ["Have a great day fam 🤍", 1],
     ["Have a wonderful day 👍🏽", 1],
     ["Do enjoy the rest of your day 👍🏽", 1],
-    [`Good ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')}`, 3],
+    [`Good ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')}`, 2],
     ["Don't forget to DO MORE 👍🏽", 0.5],
     ["Keep on keeping on👍🏽", 0.5],
-    ["Have you tried !𝒉𝒆𝒍𝒑 ?", 3],
-    ["Checked out !𝕞𝕖𝕟𝕦 ?", 2],
-    ["Checkout *!help <command>* to see more information about any command.", 3],
-    ["Use *!menu* to see all the commands available to you", 4],
-    ["Did you know you could ping me in a group to see all the commands? 😮", 3],
-    ["Did you know that almost all commands have aliases?\n\nType *!help <command name>* to see aliases and usage of the command.", 3],
-    ["Don't know how to use a specific command?\n\nType *!help <command name>* to see how to use it.", 3],
-    // ["Use *!notify enable* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 3],
     ["Glad I could be of help 😁", 2],
     ["I hope this was helpful🙂", 2],
     ["Happy to help ☺", 2],
-    ["🆕 There are now *cooldowns* after using any command to avoid overloading the bot.\n\nThis simply means after using any command, you'll have to wait for a few seconds before using another command.", 5]
+
+    // Hints
+    ["Have you tried !𝒉𝒆𝒍𝒑 ?", 2],
+    ["Checked out !𝕞𝕖𝕟𝕦 ?", 2],
+    ["💡 Use *!menu* to see all the commands available to you", 3],
+    ["💡 Did you know you could ping me in a group to see all the commands? 😮", 2],
+    ["💡 Use *!notify enable* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 2],
+    ["🆕 Checkout *!help <command>* to see more information about any command.", 3],
+    ["🆕 Did you know that almost all commands have aliases?\n\nType *!help <command name>* to see aliases and how to use the command.", 3],
+    ["🆕 Don't know how to use a specific command?\n\nType *!help <command name>* to see how to use it.", 3],
+    ["🆕 There are now *cooldowns* after using any command to avoid overloading the bot.\n\nThis simply means after using any command, you'll have to wait for a few seconds before using another command.", 5],
+    ["🆕 Command arguments like *enable* and *disable* can be replaced with *-e* and *-d* respectively", 2]
     // ["Run *!updates* to see the bot's latest updates", 0],
 ])
 

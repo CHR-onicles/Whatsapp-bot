@@ -6,8 +6,8 @@ const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
 
     const contact = await msg.getContact();
-    const isAdmin = await isUserBotAdmin(contact);
-    if (isAdmin) {
+    const isBotAdmin = await isUserBotAdmin(contact);
+    if (isBotAdmin) {
         await msg.reply(pickRandomReply(MUTE_REPLIES));
         await muteBot();
     } else {

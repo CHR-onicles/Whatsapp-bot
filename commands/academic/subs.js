@@ -7,8 +7,8 @@ const execute = async (client, msg) => {
 
     const allContacts = await client.getContacts();
     const contact = await msg.getContact();
-    const isAdmin = await isUserBotAdmin(contact);
-    if (isAdmin) {
+    const isBotAdmin = await isUserBotAdmin(contact);
+    if (isBotAdmin) {
         const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
         const [dataMiningContacts, networkingContacts, softModellingContacts] = [[], [], []];
         for (const con of allContacts) {

@@ -7,7 +7,7 @@ const execute = async (client, msg) => {
 
     const allContacts = await client.getContacts();
     const contact = await msg.getContact();
-    const isAdmin = await isUserBotAdmin(contact);
+    const isBotAdmin = await isUserBotAdmin(contact);
     const allBotAdmins = await getAllBotAdmins();
 
     const foundBotAdmins = [];
@@ -17,7 +17,7 @@ const execute = async (client, msg) => {
         }
     }
 
-    if (!isAdmin) {
+    if (!isBotAdmin) {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
     }
     await msg.reply("〘✪ 𝔹𝕠𝕥 𝕒𝕕𝕞𝕚𝕟𝕤 ✪〙\n\n" + foundBotAdmins.map(admin => `➣ ${admin.number} ~ ${admin?.pushname || ''}\n`).join(''));
