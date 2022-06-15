@@ -242,17 +242,17 @@ const generateTimeoutIntervals = (user, course, chats, timeoutTwoHrs, timeoutOne
     // in case the user opts out or there's a recalculation of notification intervals.
     if (timeoutTwoHrs > 0) {
         VARIABLES_COUNTER++;
-        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours'); console.log('SENT 2hr notif for' + course.name.split('|')[0] + ' to ', + user')}, timeoutTwoHrs)")
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours'); console.log('SENT 2hr notif for' + course.name.split('|')[0] + ' to ', + user)}, timeoutTwoHrs)")
         console.log('Sending 2hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
     if (timeoutOneHr > 0) {
         VARIABLES_COUNTER++;
-        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour'); console.log('SENT 1hr notif for' + course.name.split('|')[0] + ' to ', + user')}, timeoutOneHr)")
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour'); console.log('SENT 1hr notif for' + course.name.split('|')[0] + ' to ', + user)}, timeoutOneHr)")
         console.log('Sending 1hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
     if (timeoutThirtyMins > 0) {
         VARIABLES_COUNTER++;
-        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!'); console.log('SENT 30min notif for' + course.name.split('|')[0] + ' to ', + user')}, timeoutThirtyMins)")
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!'); console.log('SENT 30min notif for' + course.name.split('|')[0] + ' to ', + user)}, timeoutThirtyMins)")
         console.log('Sending 30min notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
 }
