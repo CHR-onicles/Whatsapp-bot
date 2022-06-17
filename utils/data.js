@@ -348,9 +348,10 @@ exports.FOOTNOTES = new Map([
     ["💡 Use *!menu* to see all the commands available to you", 3],
     ["💡 Did you know you could ping me in a group to see all the commands? 😮", 2],
     ["💡 Use *!notify enable* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 2],
+    ["💡 You don't need to type full commands, you can use shorter aliases now!\n\nType *!help <command>* to see if a command has aliases.", 2],
     ["🆕 Checkout *!help <command>* to see more information about any command.", 3],
-    ["🆕 Did you know that almost all commands have aliases?\n\nType *!help <command name>* to see aliases and how to use the command.", 3],
-    ["🆕 Don't know how to use a specific command?\n\nType *!help <command name>* to see how to use it.", 3],
+    ["🆕 Did you know that almost all commands have aliases?\n\nType *!help <command>* to see aliases and how to use the command.", 2],
+    ["🆕 Don't know how to use a specific command?\n\nType *!help <command>* to see how to use it.", 2],
     ["🆕 There are now *cooldowns* after using any command to avoid overloading the bot.\n\nThis simply means after using any command, you'll have to wait for a few seconds before using another command.", 5],
     ["🆕 Command arguments like *enable* and *disable* can be replaced with *-e* and *-d* respectively", 2]
     // ["Run *!updates* to see the bot's latest updates", 0],

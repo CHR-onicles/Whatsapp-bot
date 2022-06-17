@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐❔Add command to get class group links => !classgroups  
 - [ ] ⭐❔ Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
 - [ ] ⭐❔Add minigames  
 - [ ] ⭐❔ Log number of times user gets soft banned to database to increase duration of next soft ban by a factor of 2.  

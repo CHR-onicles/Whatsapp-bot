@@ -54,7 +54,7 @@ const execute = async (client, msg, args) => {
 module.exports = {
     name: "status",
     description: "Check bot's overall status/diagnostics 🩺",
-    alias: ["stats", "stat"],
+    alias: ["st", "stats", "stat"],
     category: "admin", // admin | everyone
     help: `To use this command, type:\n*${currentPrefix}status*`,
     execute,
