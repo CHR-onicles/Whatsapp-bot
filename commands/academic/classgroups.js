@@ -10,7 +10,7 @@ const execute = async (client, msg) => {
     const chatFromContact = await contact.getChat();
     const allChats = await client.getChats();
     const classGroupsInDB = new Set(await getAllClassGroups());
-    let reply = '▄▀▄▀  ℂ𝕃𝔸𝕊𝕊 𝔾ℝ𝕆𝕌ℙ𝕊  ▀▄▀▄\n\n';
+    let reply = '▄▀▄  ℂ𝕃𝔸𝕊𝕊 𝔾ℝ𝕆𝕌ℙ𝕊  ▄▀▄\n\n';
 
     if (!classGroupsInDB.size) {
         await msg.reply("There are no official class groups stored in the database.");
@@ -31,14 +31,24 @@ const execute = async (client, msg) => {
 
     for (const group of classGroups) {
         // Can't do this in forEach because it returns nothing for some reason.
-        const link = await group.getInviteCode();
-        classGroupLinks.push(link);
+        const botChat = group.participants.find((chat) => chat.id.user === process.env.BOT_NUMBER );
+        if (botChat.isAdmin) {
+            const link = await group.getInviteCode();
+            classGroupLinks.push(link);
+        } else {
+            classGroupLinks.push(null);
+        }
     }
 
     // possible emojis to use: 🏫🎒
 
     classGroups.forEach((chat, index) => {
-        reply += `🏫 *${chat.name}*\nhttps://chat.whatsapp.com/${classGroupLinks[index]}${index === classGroups.length-1 ? '' : '\n\n'}`
+        if (!classGroupLinks[index]) {
+            // If bot is not admin send different reply
+            reply += `🏫 *${chat.name}*\n_Can't generate group link because I am not an admin here_${index === classGroups.length-1 ? '' : '\n\n'}`
+        } else {
+            reply += `🏫 *${chat.name}*\nhttps://chat.whatsapp.com/${classGroupLinks[index]}${index === classGroups.length-1 ? '' : '\n\n'}`
+        }
     })
 
     await chatFromContact.sendMessage(reply, '', {linkPreview: true}); // link preview not supported in MD, whatsapp fault, not library
