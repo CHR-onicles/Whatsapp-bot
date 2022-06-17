@@ -6,14 +6,13 @@ Project Description
 
 ### Todo
 
-- [ ] ⭐❔Add command to get class group links => !classgroups  
+- [ ] 👍🏽 Re-record demo vid showing moderator view and normal view  
+- [ ] 👍🏽 Categorize console logs like so: console.log("[CLIENT INFO] other info here ") for logs, not random debugging  
 - [ ] ⭐❔ Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
 - [ ] ⭐❔Add minigames  
 - [ ] ⭐❔ Log number of times user gets soft banned to database to increase duration of next soft ban by a factor of 2.  
-- [ ] 👍🏽 Categorize console logs like so: console.log("[CLIENT INFO] other info here ") for logs, not random debugging  
 - [ ] ⭐❔Add remindme feature like with tatsumaki on discord...use commented code at the bottom of main.js  
 - [ ] ⭐❔ Log response time after any command is run in order to give average response time in status  
-- [ ] 👍🏽 Re-record demo vid showing moderator view and normal view  
 - [ ] ⚠️ Prevent people from calling the bot with whatsapp call  
 - [ ] ⭐❔ Reply to incorrect commands in **dms**? Basically any word starting with "!" but doesn't execute any actual command  
 - [ ] ⭐❔ Add command for last link/announcement sent => !last link || !last ann  

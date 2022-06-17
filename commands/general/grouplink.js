@@ -12,7 +12,7 @@ const execute = async (client, msg) => {
         return;
     }
 
-    const botChatObj = groupChat.participants.find(chat_obj => chat_obj.id.user === process.env.BOT_NUMBER);
+    const botChatObj = groupChat.participants.find(chatObj => chatObj.id.user === process.env.BOT_NUMBER);
     if (!botChatObj.isAdmin) {
         await msg.reply("I am not an admin in this group, so I can't do this");
         return;

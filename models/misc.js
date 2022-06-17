@@ -22,7 +22,8 @@ const MiscellaneousSchema = new Schema({
     electiveDataMining: [String],
     electiveSoftModelling: [String],
     electiveNetworking: [String],
-    blacklistedUsers: [String]
+    blacklistedUsers: [String],
+    classGroups: [String],
     // numOfCommands: Number, // to be used later
 });
 
@@ -151,7 +152,7 @@ exports.enableForwarding = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: true } });
         // console.log(res);
-        console.log("Forwarding of important messages have been turned ON")
+        console.log("Forwarding of important messages has been turned ON")
     } catch (error) {
         console.log(error)
     }
@@ -165,7 +166,7 @@ exports.disableForwarding = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: false } });
         // console.log(res)
-        console.log("Forwarding of important messages have been turned OFF")
+        console.log("Forwarding of important messages has been turned OFF")
     } catch (error) {
         console.log(error)
     }
@@ -351,7 +352,7 @@ exports.removeUserToBeNotified = async (user, elective) => {
 /**
  * Gets users/groups who want announcements/links forwarded to them.
  * @async
- * @returns List of users/groups where announcements and links will be forwarded to.
+ * @returns Array of users/groups where announcements and links will be forwarded to.
  */
 exports.getForwardToUsers = async () => {
     const users = await MiscellaneousModel.findOne(DEFAULT_ID, { forwardToUsers: 1 });
@@ -362,7 +363,7 @@ exports.getForwardToUsers = async () => {
 /**
  * Gets users who have been blacklisted.
  * @async
- * @returns List of users who have been blacklisted.
+ * @returns Array of users who have been blacklisted.
  */
 exports.getBlacklistedUsers = async () => {
     const users = await MiscellaneousModel.findOne(DEFAULT_ID, { blacklistedUsers: 1 });
@@ -395,5 +396,44 @@ exports.removeBlacklistedUser = async (user) => {
         // console.log(res);
     } catch (error) {
         console.error(error)
+    }
+}
+
+/**
+ * Gets all official class groups;
+ * @async
+ * @returns Array of official class groups.
+ */
+exports.getAllClassGroups = async () => {
+    const groups = await MiscellaneousModel.findOne(DEFAULT_ID, { classGroups: 1 });
+    // console.log(groups);
+    return groups.classGroups;
+}
+
+/**
+ * Adds a group as an official class group.
+ * @async
+ * @param {string} group String representing the group id user (`group.id.user`).
+ */
+exports.addClassGroup = async (group) => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { classGroups: group } });
+        // console.log(res);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+/**
+ * Removes a group from official class groups.
+ * @async
+ * @param {string} group String representing the group id user (`group.id.user`).
+ */
+exports.removeClassGroup = async (group) => {
+    try {
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, {$pull: {classGroups: group}});
+        // console.log(res);
+    } catch (error) {
+        console.log(error);
     }
 }
