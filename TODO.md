@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] ⭐Change status command to be for everyone and transfer all status stuff to diagnostics/dashboard command  
 - [ ] 👍🏽 Re-record demo vid showing moderator view and normal view  
 - [ ] 👍🏽 Categorize console logs like so: console.log("[CLIENT INFO] other info here ") for logs, not random debugging  
 - [ ] ⭐❔ Add command for bot to delete the last thing it sent => !del last , !del all to delete all bot responses in a chat that can be deleted for everyone  
