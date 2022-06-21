@@ -1,6 +1,6 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus, getUsersToNotifyForClass } = require("../../models/misc");
-const { DM_REPLIES, FOOTNOTES, ALL_CLASSES } = require("../../utils/data");
+const { REACT_EMOJIS, FOOTNOTES, ALL_CLASSES } = require("../../utils/data");
 const { pickRandomReply, currentPrefix, pickRandomWeightedMessage, allClassesReply, currentEnv } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
@@ -14,7 +14,7 @@ const execute = async (client, msg, args) => {
     let text = "";
 
     if (curChat.isGroup) {
-        await msg.reply(pickRandomReply(DM_REPLIES));
+        await msg.react(pickRandomReply(REACT_EMOJIS));
     }
 
     // refactored repeated code into local function

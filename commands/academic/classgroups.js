@@ -1,5 +1,5 @@
 const { getMutedStatus, getAllClassGroups } = require("../../models/misc");
-const { DM_REPLIES } = require("../../utils/data");
+const { REACT_EMOJIS } = require("../../utils/data");
 const { currentPrefix, pickRandomReply } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
@@ -18,7 +18,7 @@ const execute = async (client, msg) => {
     }
 
     if (curChat.isGroup) {
-        await msg.reply(pickRandomReply(DM_REPLIES));
+        await msg.react(pickRandomReply(REACT_EMOJIS));
     }
 
     const classGroups = [];

@@ -1,5 +1,5 @@
 const { getMutedStatus, getAllClassGroups, addClassGroup, removeClassGroup } = require("../../models/misc");
-const { DM_REPLIES, NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
+const { NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
 const { currentPrefix, pickRandomReply, extractCommandArgs, isUserBotAdmin } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
