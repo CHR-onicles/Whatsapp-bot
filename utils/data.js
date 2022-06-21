@@ -184,39 +184,34 @@ exports.UNMUTE_REPLIES = [
 /**
  * Array containing replies which requires the user to check his PMs.
  */
-exports.DM_REPLIES = [
-    'Check dm 🐦',
-    'Dm 🐦',
-    '𝓓𝓶 👍🏽',
-    'ℙ𝕞 👍🏽',
-    'Pm 🐦',
-    '𝑪𝒉𝒆𝒄𝒌 𝑷𝑴𝒔 🐦',
-    'In your PMs 🐦',
-    'Sliding in your dm 👍🏽',
-    'Acknowledged 👍🏽 ',
-    'Gotcha 🐦',
-    'Got you👍🏽',
-    'Say no more...dm🐦',
-    '✅',
-    '🤖✅',
-    '👀✅',
-    '👍🏽',
-    '🙃👍🏽',
-    '👽✅'
+exports.REACT_EMOJIS = [
+    "✅",
+    "🤖",
+    "👀",
+    "👍🏻",
+    "🙃",
+    "🐦",
+    "👽",
+    "👁",
+    "💪🏻",
+    "🤘🏻",
+    "👊🏻",
+    "👋🏻",
+    "🤝🏻",
+    "🙏🏻",
 ]
 
 /**
  * Array containing replies for users who try to perform administrative functions on the bot but are not bot admins.
  */
 exports.NOT_BOT_ADMIN_REPLIES = [
-    "No please 🐦, you are not a *bot admin* unfortunately.",
-    "No can do 🐦, you don't have sufficient privileges.",
-    "You are not a *bot admin*",
-    "Nope🐦, you don't have the required permissions.",
-    "Only *bot admins* can do this 🙂",
+    "No please 🐦, you are not a *bot admin* unfortunately.\n\nTry *!hep* to see commands available to you.",
+    "No can do 🐦, you don't have sufficient privileges.\n\nTry *!menu* to see commands available to you.",
+    "You are not a *bot admin*\n\nTry *!hep* or *!menu* to see commands that are available to you.",
+    "Nope🐦, you don't have the required permissions.\n\nUse *!hep* or *!menu* to see commands that you can use.",
+    "Only *bot admins* can do this 🙂\n\nCommands you can use be found by typing *!help* or *!menu*",
     // "Only *bot admins* can use this, so that it is not abused.",
-    "Sorry, this command is not available to you.",
-    "Not happening😗, you're not a *bot admin*.",
+    "Sorry, this command is not available to you.\n\nCheckout commands you can use by typing *!hep* or *!menu*.",
 ]
 
 /**

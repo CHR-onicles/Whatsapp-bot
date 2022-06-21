@@ -1,5 +1,5 @@
 const { getMutedStatus } = require("../../models/misc");
-const { DM_REPLIES, NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
+const { REACT_EMOJIS, NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
 const { currentPrefix, isUserBotAdmin, pickRandomReply, extractCommandArgs, BOT_PUSHNAME } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
@@ -13,7 +13,7 @@ const execute = async (client, msg, args) => {
     let text = `Hello there I'm *${BOT_PUSHNAME}*🐦\n\nI'm a bot created for *EPiC Devs🏅🎓*\n\nHere are a few commands you can fiddle with:\n\n`;
 
     if (curChat.isGroup) {
-        await msg.reply(pickRandomReply(DM_REPLIES));
+        await msg.react(pickRandomReply(REACT_EMOJIS));
     }
 
     // If user just types help with no arguments, show all commands

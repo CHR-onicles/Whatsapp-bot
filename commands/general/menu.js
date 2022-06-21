@@ -1,6 +1,6 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus } = require("../../models/misc");
-const { DM_REPLIES, PING_REPLIES } = require("../../utils/data");
+const { REACT_EMOJIS, PING_REPLIES } = require("../../utils/data");
 const { isUserBotAdmin, pickRandomReply, currentPrefix } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
@@ -12,7 +12,7 @@ const execute = async (client, msg, args) => {
     const isBotAdmin = await isUserBotAdmin(contact);
 
     if (curChat.isGroup) {
-        await msg.reply(pickRandomReply(DM_REPLIES));
+        await msg.react(pickRandomReply(REACT_EMOJIS));
     }
 
     // Have to keep this array here because I want the most updated list of super Admins

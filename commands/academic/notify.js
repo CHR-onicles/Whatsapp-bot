@@ -1,6 +1,6 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus, removeUserToBeNotified, getUsersToNotifyForClass, addUserToBeNotified } = require("../../models/misc");
-const { DM_REPLIES } = require("../../utils/data");
+const { REACT_EMOJIS } = require("../../utils/data");
 const { currentEnv, pickRandomReply, currentPrefix, extractCommandArgs, stopOngoingNotifications, startNotificationCalculation } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
@@ -28,7 +28,7 @@ const execute = async (client, msg, args) => {
             }
 
             if (curChat.isGroup) {
-                msg.reply(pickRandomReply(DM_REPLIES));
+                await msg.react(pickRandomReply(REACT_EMOJIS));
             }
 
             await chatFromContact.sendMessage(`🔔 You will now be notified periodically for class, using *${selectedRowId[0] === '1' ? 'Data Mining' : (selectedRowId[0] === '2' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);

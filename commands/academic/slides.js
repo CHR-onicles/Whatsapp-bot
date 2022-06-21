@@ -1,6 +1,6 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus } = require("../../models/misc");
-const { COURSE_MATERIALS_REPLIES, WAIT_REPLIES, DM_REPLIES } = require("../../utils/data");
+const { COURSE_MATERIALS_REPLIES, WAIT_REPLIES, REACT_EMOJIS } = require("../../utils/data");
 const { currentEnv, pickRandomReply, currentPrefix, sendSlides } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
@@ -12,7 +12,7 @@ const execute = async (client, msg, args) => {
     const curChat = await msg.getChat();
     const chatFromContact = await contact.getChat();
 
-    if (curChat.isGroup) await msg.reply(pickRandomReply(DM_REPLIES));
+    if (curChat.isGroup) await msg.react(pickRandomReply(REACT_EMOJIS));
 
     const list = new List(
         '\nThis is a list of courses with available materials',
