@@ -4,7 +4,7 @@
 const WAWebJS = require("whatsapp-web.js");
 const { MessageMedia } = require("whatsapp-web.js");
 const { getUsersToNotifyForClass, getNotificationStatus, getAllBotAdmins, getMutedStatus } = require("../models/misc");
-const {MIME_TYPES, ALL_CLASSES } = require("./data");
+const { MIME_TYPES, ALL_CLASSES } = require("./data");
 const { getResource } = require('../models/resources');
 
 
@@ -502,10 +502,10 @@ const getTimeLeftForSetTimeout = (timeout) => {
  */
 const checkForSpam = async (client, contact, chatFromContact, msg) => {
     if (await getMutedStatus() === true) return; // Don't check for spam and potentially send a message if bot is muted
-    if (contact.id.user === process.env.GRANDMASTER) return; // Don't check for spam for owner of the bot hehe
+    if (contact.id.user === process.env.GRANDMASTER) return; // Don't check for spam for owner of the bot hehe 😈
     let currentUserObj = client.potentialSoftBanUsers.get(contact.id.user);
 
-    // What happens during cooldown
+    // This block takes care of what happens during cooldown
     if (client.usedCommandRecently.has(contact.id.user)) {
 
         if (!currentUserObj.hasSentWarningMessage) {
@@ -552,6 +552,17 @@ const checkForSpam = async (client, contact, chatFromContact, msg) => {
     return false;
 }
 
+/**
+ * Get random chance of occurrence.
+ * @param {number} chance Number representing chance for something to occur. Valid range is from 1 to 9. 1 means 10% chance of occurring, 2 means 20% and so on.
+ * @returns {Boolean} True or False
+ */
+const checkForChance = (chance) => {
+    if (chance < 1) throw new Error("Chance cannot be less than 1");
+    if (chance > 9) throw new Error("Chance cannot be more than 9");
+    return Math.ceil((Math.random() * 10)) < chance;
+}
+
 
 
 module.exports = {
@@ -578,4 +589,5 @@ module.exports = {
     addToUsedCommandRecently,
     getTimeLeftForSetTimeout,
     checkForSpam,
+    checkForChance,
 }

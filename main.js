@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 require('./utils/db');
-const { currentEnv, currentPrefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, getTimeLeftForSetTimeout, checkForSpam } = require('./utils/helpers');
+const { currentEnv, currentPrefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, getTimeLeftForSetTimeout, checkForSpam, checkForChance } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
 
@@ -69,7 +69,7 @@ client.on('ready', async () => {
     if (currentEnv === 'production') {
         const chats = await client.getChats();
         const grandmasterChat = chats.find(chat => chat.id.user === GRANDMASTER);
-        const twentyThreeHrsInMs = 82_800_000; // using numeric separator for readability
+        const twentyThreeHrsInMs = 82_800_000; // using numeric separator to improve readability
 
         // Reminder to restart the bot before Heroku does that for us without our knowledge
         // Will be fixed by RemoteAuth soon
@@ -177,7 +177,13 @@ client.on('message', async (msg) => {
         // Execute command called
         const cmd = client.commands.get(possibleCommand.slice(1)) || client.commands.get(checkForAlias(client.commands, possibleCommand.slice(1)));
         console.log('\nPossible cmd:', possibleCommand, '\nCmd:', cmd, '\nArgs:', args);
-        if (!cmd) return;
+        if (!cmd) {
+            //! Do not always respond to commands as this can be an exploit to spam and crash the bot
+            if (checkForChance(1)) { // 10% chance of sending this message to users who type wrong commands
+                await msg.reply("Do you need help with commands?\n\nType *!help* or *!menu* to get started 👍🏻");
+            }
+            return;
+        }
 
         try {
             cmd.execute(client, msg, args);
