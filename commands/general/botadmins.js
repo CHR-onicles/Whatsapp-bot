@@ -1,14 +1,13 @@
 const { getMutedStatus, getAllBotAdmins } = require("../../models/misc");
-const { NOT_BOT_ADMIN_REPLIES } = require("../../utils/data");
-const { pickRandomReply, isUserBotAdmin, currentPrefix } = require("../../utils/helpers");
+const { currentPrefix, isUserBotAdmin, checkForChance } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
 
-    const allContacts = await client.getContacts();
     const contact = await msg.getContact();
-    const isBotAdmin = await isUserBotAdmin(contact);
+    const allContacts = await client.getContacts();
     const allBotAdmins = await getAllBotAdmins();
+    const isUserBotAdmin = await isUserBotAdmin(contact);
 
     const foundBotAdmins = [];
     for (const con of allContacts) {
@@ -17,10 +16,13 @@ const execute = async (client, msg) => {
         }
     }
 
-    if (!isBotAdmin) {
-        await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
+    const botReply = await msg.reply("〘✪ 𝔹𝕠𝕥 𝕒𝕕𝕞𝕚𝕟𝕤 ✪〙\n\n" + foundBotAdmins.map(admin => `➣ ${admin.number} ~ ${admin?.pushname || ''}\n`).join(''));
+
+    if (!isUserBotAdmin) {
+        if (checkForChance(3)) { // 30% chance this message is sent to non-bot admins
+            await botReply.reply("Reach out to any of them if you need any help 🐦"); // It doesn't quote  `botReply` but it still sends the message so I'll take it 😢👍🏻
+        }
     }
-    await msg.reply("〘✪ 𝔹𝕠𝕥 𝕒𝕕𝕞𝕚𝕟𝕤 ✪〙\n\n" + foundBotAdmins.map(admin => `➣ ${admin.number} ~ ${admin?.pushname || ''}\n`).join(''));
 }
 
 

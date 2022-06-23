@@ -37,7 +37,7 @@ const execute = async (client, msg, args) => {
         '\nThis is a list of commands the bot can execute',
         'See commands',
         [{
-            title: `Commands available to ${isBotAdmin ? 'admins' : 'everyone'}`,
+            title: `Commands available to ${isBotAdmin ? 'bot admins' : 'everyone'}`,
             rows: tempRows
         }],
         isBotAdmin ? pickRandomReply(PING_REPLIES.botAdmin.concat(PING_REPLIES.everyone)) : pickRandomReply(PING_REPLIES.everyone),
