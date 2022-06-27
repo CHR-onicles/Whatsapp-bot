@@ -313,14 +313,16 @@ exports.addUserToBeNotified = async (newUser, rowId) => {
     try {
         let res = null;
         if (rowId === '1') {
-            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveDataMining: newUser } });
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveMultimedia: newUser } });
         } else if (rowId === '2') {
-            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveNetworking: newUser } });
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveExpert: newUser } });
         } else if (rowId === '3') {
-            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveSoftModelling: newUser } });
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveConcurrent: newUser } });
+        } else if (rowId === '4') {
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveMobile: newUser } });
         }
         // console.log(res);
-        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '1' ? 'Data Mining' : (rowId === '2' ? 'Networking' : 'Software Modelling') + ' as elective');
+        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '1' ? 'Multimedia' : (rowId === '2' ? 'Expert' : rowId === '3' ? 'Concurrent' : 'Mobile') + ' as elective');
 
     } catch (error) {
         console.log(error);

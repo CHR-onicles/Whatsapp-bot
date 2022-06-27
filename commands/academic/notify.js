@@ -11,8 +11,8 @@ const execute = async (client, msg, args) => {
     const contact = await msg.getContact();
     const curChat = await msg.getChat();
     const chatFromContact = await contact.getChat();
-    const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
-    const totalUsers = [...dataMining, ...networking, ...softModelling]
+    const { multimedia, expert, concurrent, mobile } = await getUsersToNotifyForClass();
+    const totalUsers = [...multimedia, ...expert, ...concurrent, ...mobile];
 
     if (isListResponse) {
 
@@ -31,7 +31,7 @@ const execute = async (client, msg, args) => {
                 await msg.react(pickRandomReply(REACT_EMOJIS));
             }
 
-            await chatFromContact.sendMessage(`🔔 You will now be notified periodically for class, using *${selectedRowId[0] === '1' ? 'Data Mining' : (selectedRowId[0] === '2' ? 'Networking' : 'Software Modelling')}* as your elective.\n\nExpect me🐦`);
+            await chatFromContact.sendMessage(`🔔 You will now be notified periodically for class, using *${selectedRowId[0] === '1' ? 'Multimedia Applications' : (selectedRowId[0] === '2' ? 'Expert Systems' : selectedRowId[0] === '3' ? 'Concurrent & Distributed Systems' : 'Mobile Computing')}* as your elective.\n\nExpect me🐦`);
             await addUserToBeNotified(contact.id.user, selectedRowId[0]);
             stopOngoingNotifications();
             await startNotificationCalculation(client);
@@ -41,37 +41,49 @@ const execute = async (client, msg, args) => {
             case '1_dev':
                 if (currentEnv !== 'development') break;
                 helper();
-                console.log('add user to be notified from 1_dev');
+                // console.log('add user to be notified from 1_dev');
                 break;
 
             case '1_prod':
                 if (currentEnv !== 'production') break;
                 helper();
-                console.log('add user to be notified from 1_prod');
+                // console.log('add user to be notified from 1_prod');
                 break;
 
             case '2_dev':
                 if (currentEnv !== 'development') break;
                 helper();
-                console.log('add user to be notified from 2_dev');
+                // console.log('add user to be notified from 2_dev');
                 break;
 
             case '2_prod':
                 if (currentEnv !== 'production') break;
                 helper();
-                console.log('add user to be notified from 2_prod');
+                // console.log('add user to be notified from 2_prod');
                 break;
 
             case '3_dev':
                 if (currentEnv !== 'development') break;
                 helper();
-                console.log('add user to be notified from 3_dev');
+                // console.log('add user to be notified from 3_dev');
                 break;
 
             case '3_prod':
                 if (currentEnv !== 'production') break;
                 helper();
-                console.log('add user to be notified from 3_prod');
+                // console.log('add user to be notified from 3_prod');
+                break;
+
+            case '4_dev':
+                if (currentEnv !== 'development') break;
+                helper();
+                // console.log('add user to be notified from 3_dev');
+                break;
+
+            case '4_prod':
+                if (currentEnv !== 'production') break;
+                helper();
+                // console.log('add user to be notified from 3_prod');
                 break;
 
             default:
@@ -99,12 +111,13 @@ const execute = async (client, msg, args) => {
                 [{
                     title: 'Commands available to everyone',
                     rows: [
-                        { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'notify-1_dev' : 'notify-1_prod', title: 'Data Mining', description: 'For those offering Data Mining' },
-                        { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'notify-2_dev' : 'notify-2_prod', title: 'Networking', description: 'For those offering Networking' },
-                        { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'notify-3_dev' : 'notify-3_prod', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                        { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'notify-1_dev' : 'notify-1_prod', title: 'Multimedia Applications', description: 'For those offering Multimedia Applications' },
+                        { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'notify-2_dev' : 'notify-2_prod', title: 'Expert Systems', description: "For those offering Expert Systems" },
+                        { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'notify-3_dev' : 'notify-3_prod', title: 'Conc & Distributed Systems', description: 'For those offering Concurrent & Distributed Systems' },
+                        { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'notify-4_dev' : 'notify-4_prod', title: 'Mobile Computing', description: 'For those offering Mobile Computing' },
                     ]
                 }],
-                'Which elective do you offer?',
+                'What elective do you offer?',
                 'Powered by Ethereal bot'
             );
 
@@ -114,12 +127,14 @@ const execute = async (client, msg, args) => {
         case 'disable':
         case '-d':
             if (totalUsers.includes(contact.id.user)) {
-                if (dataMining.includes(contact.id.user)) {
-                    await removeUserToBeNotified(contact.id.user, 'D');
-                } else if (networking.includes(contact.id.user)) {
-                    await removeUserToBeNotified(contact.id.user, 'N');
-                } else if (softModelling.includes(contact.id.user)) {
-                    await removeUserToBeNotified(contact.id.user, 'S');
+                if (multimedia.includes(contact.id.user)) {
+                    await removeUserToBeNotified(contact.id.user, 'MA');
+                } else if (expert.includes(contact.id.user)) {
+                    await removeUserToBeNotified(contact.id.user, 'E');
+                } else if (concurrent.includes(contact.id.user)) {
+                    await removeUserToBeNotified(contact.id.user, 'C');
+                } else if (mobile.includes(contact.id.user)) {
+                    await removeUserToBeNotified(contact.id.user, 'MC');
                 }
                 msg.reply("I won't remind you to go to class anymore ✅");
                 stopOngoingNotifications();

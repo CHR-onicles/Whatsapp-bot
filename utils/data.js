@@ -62,54 +62,54 @@ exports.ALL_CLASSES = [
  * Array containing current L400 1st Semester Computer Science exams timetable.
  */
 exports.EXAM_TIMETABLE = [
-    {
-        date: "Saturday, May 14 2022",
-        _date: new Date(2022, 04, 14, 13, 20), // to avoid extra processing logic :)
-        time: "1:20pm",
-        courseCode: "CSCD 421",
-        courseTitle: "Accounting",
-        examMode: "Onsite/Online"
-    },
-    {
-        date: "Monday, May 16 2022",
-        _date: new Date(2022, 04, 16, 7, 30),
-        time: "7:30am",
-        courseCode: "CSCD 419",
-        courseTitle: "Formal Methods",
-        examMode: "Onsite/Physical"
-    },
-    {
-        date: "Wednesday, May 18 2022",
-        _date: new Date(2022, 04, 18, 7, 30),
-        time: "7:30am",
-        courseCode: "CSCD 417",
-        courseTitle: "Theory & Survey",
-        examMode: "Onsite/Physical"
-    },
-    {
-        date: "Friday, May 20 2022",
-        _date: new Date(2022, 04, 20, 11, 30),
-        time: "11:30am",
-        courseCode: "CSCD 427",
-        courseTitle: "Networking",
-        examMode: "Onsite/Physical"
-    },
-    {
-        date: "Saturday, May 21 2022",
-        _date: new Date(2022, 04, 21, 7, 30),
-        time: "7:30am",
-        courseCode: "CSCD 415",
-        courseTitle: "Compilers",
-        examMode: "Onsite/Physical"
-    },
-    {
-        date: "Monday, May 23 2022",
-        _date: new Date(2022, 04, 23, 15, 30),
-        time: "3:30pm",
-        courseCode: "CSCD 423",
-        courseTitle: "Software Modelling",
-        examMode: "Onsite/Physical"
-    },
+    // {
+    //     date: "Saturday, May 14 2022",
+    //     _date: new Date(2022, 04, 14, 13, 20), // to avoid extra processing logic :)
+    //     time: "1:20pm",
+    //     courseCode: "CSCD 421",
+    //     courseTitle: "Accounting",
+    //     examMode: "Onsite/Online"
+    // },
+    // {
+    //     date: "Monday, May 16 2022",
+    //     _date: new Date(2022, 04, 16, 7, 30),
+    //     time: "7:30am",
+    //     courseCode: "CSCD 419",
+    //     courseTitle: "Formal Methods",
+    //     examMode: "Onsite/Physical"
+    // },
+    // {
+    //     date: "Wednesday, May 18 2022",
+    //     _date: new Date(2022, 04, 18, 7, 30),
+    //     time: "7:30am",
+    //     courseCode: "CSCD 417",
+    //     courseTitle: "Theory & Survey",
+    //     examMode: "Onsite/Physical"
+    // },
+    // {
+    //     date: "Friday, May 20 2022",
+    //     _date: new Date(2022, 04, 20, 11, 30),
+    //     time: "11:30am",
+    //     courseCode: "CSCD 427",
+    //     courseTitle: "Networking",
+    //     examMode: "Onsite/Physical"
+    // },
+    // {
+    //     date: "Saturday, May 21 2022",
+    //     _date: new Date(2022, 04, 21, 7, 30),
+    //     time: "7:30am",
+    //     courseCode: "CSCD 415",
+    //     courseTitle: "Compilers",
+    //     examMode: "Onsite/Physical"
+    // },
+    // {
+    //     date: "Monday, May 23 2022",
+    //     _date: new Date(2022, 04, 23, 15, 30),
+    //     time: "3:30pm",
+    //     courseCode: "CSCD 423",
+    //     courseTitle: "Software Modelling",
+    //     examMode: "Onsite/Physical"
+    // },
 ]
 
 /**
