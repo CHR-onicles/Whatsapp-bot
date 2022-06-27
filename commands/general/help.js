@@ -59,7 +59,7 @@ const execute = async (client, msg, args) => {
 module.exports = {
     name: "help",
     description: "Give more information about specific commands 💡",
-    alias: ["h", "hep"],
+    alias: ["h"],
     category: "everyone", // admin | everyone
     help: `To use this command, type:\n*${currentPrefix}help*  or\n*${currentPrefix}help <command>*`,
     execute,

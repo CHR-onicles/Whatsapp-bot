@@ -201,10 +201,11 @@ client.on('message', async (msg) => {
 client.on('message', async (msg) => {
     if (await getMutedStatus() === true) return;
     if (await getForwardingStatus() === false) return;
+    const currentChat = await msg.getChat();
+    if (!currentChat.isGroup) return; // to prevent forwarding stuff from private chats
 
     // local helper function to initialize stuff
     const helperForInit = async (msg) => {
-        const currentChat = await msg.getChat();
         const chats = await client.getChats();
         const forwardToUsers = await getForwardToUsers();
         const targetChats = [];
@@ -214,7 +215,7 @@ client.on('message', async (msg) => {
                 if (chat.id.user === ftu) targetChats.push(chat);
             }
         }
-        return { currentChat, forwardToUsers, targetChats };
+        return { forwardToUsers, targetChats };
     }
 
     //* For Announcements
@@ -227,10 +228,10 @@ client.on('message', async (msg) => {
             if (areAllItemsEqual([...msg.body])) return;
         }
 
-        const { currentChat, forwardToUsers, targetChats } = await helperForInit(msg);
+        const { forwardToUsers, targetChats } = await helperForInit(msg);
         let quotedMsg = null;
 
-        // Dont forward announcements from chats which receive forwarded announcements
+        // Don't forward announcements from chats which receive forwarded announcements
         for (const user of forwardToUsers) {
             if (currentChat.id.user === user) {
                 console.log("Announcement from forwardedUsers, so do nothing")
@@ -256,7 +257,7 @@ client.on('message', async (msg) => {
 
     //* For links
     else if (msg.links.length) {
-        const { currentChat, forwardToUsers, targetChats } = await helperForInit(msg);
+        const { forwardToUsers, targetChats } = await helperForInit(msg);
 
         // Don't forward links from chats which receive forwarded links
         for (const user of forwardToUsers) {
