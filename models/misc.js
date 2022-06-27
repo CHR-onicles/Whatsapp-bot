@@ -279,7 +279,7 @@ exports.addBotAdmin = async (newAdmin) => {
 }
 
 /**
- * Demotes a user from being a bot admin.
+ * Demotes a bot admin to a regular user.
  * @param {string} admin A string containing a whatsapp user's number.
  * @async
  */
