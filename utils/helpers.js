@@ -159,9 +159,9 @@ const notificationTimeCalc = (course) => {
  */
 const startNotificationCalculation = async (client) => {
     const todayDay = new Date().toString().split(' ')[0];
-    const { dataMining, softModelling, networking } = await getUsersToNotifyForClass();
+    const { multimedia, expert, concurrent, mobile } = await getUsersToNotifyForClass();
 
-    const totalUsers = [...dataMining, ...softModelling, ...networking];
+    const totalUsers = [...multimedia, ...expert, ...concurrent, ...mobile];
     const chats = await client.getChats();
     const notifsStatus = await getNotificationStatus();
 
@@ -192,25 +192,33 @@ const startNotificationCalculation = async (client) => {
         const timeLeftInMs = newClassTime - curTime;
         if (timeLeftInMs < 0) continue; // if the time for a course is past, skip to next course
 
-        if (course.name.includes('Data Mining')) {
-            if (dataMining.length) {
-                dataMining.forEach(student => {
+        if (course.name.includes('Mult')) {
+            if (multimedia.length) {
+                multimedia.forEach(student => {
                     generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
                     console.log('Student:', student, ' course:', course)
                 })
                 console.log('\n');
             }
-        } else if (course.name.includes('Networking')) {
-            if (networking.length) {
-                networking.forEach(student => {
+        } else if (course.name.includes('Expert')) {
+            if (expert.length) {
+                expert.forEach(student => {
                     generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
                     console.log('Student:', student, ' course:', course)
                 })
                 console.log('\n');
             }
-        } else if (course.name.includes('Soft. Modelling')) {
-            if (softModelling.length) {
-                softModelling.forEach(student => {
+        } else if (course.name.includes('Conc')) {
+            if (concurrent.length) {
+                concurrent.forEach(student => {
+                    generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
+                    console.log('Student:', student, ' course:', course)
+                })
+                console.log('\n');
+            }
+        } else if (course.name.includes('Mob')) {
+            if (mobile.length) {
+                mobile.forEach(student => {
                     generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
                     console.log('Student:', student, ' course:', course)
                 })
@@ -326,15 +334,18 @@ const todayClassReply = async (text, elective) => {
     const inSessionArray = [];
     const upcomingArray = [];
 
-    if (elective === 'D') {
-        text += "Today's classes for students offering *Data Mining*: ☀\n\n"
-        courses = courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
-    } else if (elective === 'N') {
-        text += "Today's classes for students offering *Networking*: ☀\n\n"
-        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"));
-    } else if (elective === 'S') {
-        text += "Today's classes for students offering *Soft. Modelling*: ☀\n\n"
-        courses = courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"));
+    if (elective === 'MA') {
+        text += "Today's classes for students offering *Multimedia Applications*: ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Expert") && !c.name.includes("Conc") && !c.name.includes("Mob"));
+    } else if (elective === 'E') {
+        text += "Today's classes for students offering *Expert Systems*: ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Mult") && !c.name.includes("Conc") && !c.name.includes("Mob"));
+    } else if (elective === 'C') {
+        text += "Today's classes for students offering *Concurrent & Distributed Systems*: ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Mult") && !c.name.includes("Expert") && !c.name.includes("Mob"));
+    } else if (elective === 'MC') {
+        text += "Today's classes for students offering *Mobile Computing*: ☀\n\n"
+        courses = courses.filter(c => !c.name.includes("Mult") && !c.name.includes("Expert") && !c.name.includes("Conc"));
     }
 
     courses.forEach(course => {

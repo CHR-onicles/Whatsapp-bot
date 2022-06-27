@@ -16,47 +16,43 @@ exports.ALL_CLASSES = [
     {
         day: 'Monday',
         courses: [
-            { name: '_Formal Methods_ | ⏰9:30am | 🏠N3', duration: 2 },
-            { name: '_Data Mining_ | ⏰12:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Networking_ | ⏰3:30pm | 🏠E10', duration: 1 },
-            { name: '_Accounting_ | ⏰7:30pm | 🏠E10', duration: 1 }
+            { name: '_Conc & Dist Systems_ | ⏰5:30pm | 🏠JQB11', duration: 2 }
         ]
     },
     {
         day: 'Tuesday',
         courses: [
-            { name: '_Networking_ | ⏰11:30am | 🏠MATH05', duration: 2 },
-            { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
-            { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Networking_ | ⏰5:30pm | 🏠E10', duration: 1 },
-            { name: '_Accounting_ | ⏰7:30pm | 🏠E10', duration: 1 }
+            { name: '_Mult Applications_ | ⏰11:30am | 🏠MATH05', duration: 2 }
         ]
     },
     {
         day: 'Wednesday',
         courses: [
-            { name: '_Compilers_ | ⏰9:30am | 🏠E10', duration: 2 },
-            { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Theory & Survey_ | ⏰3:30pm | 🏠JQB09', duration: 2 },
-            { name: '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1', duration: 2 }
+            { name: '_Conc & Dist Systems_ | ⏰8:30am | 🏠MATH19', duration: 1 },
+            { name: '_Expert Systems_ | ⏰9:30am | 🏠E9', duration: 2 },
+            { name: '_Comp Security_ | ⏰3:30pm | 🏠MATH05', duration: 2 },
+            { name: '_HCI_ | ⏰5:30pm | 🏠LOT1', duration: 2 },
         ]
     },
     {
         day: 'Thursday',
         courses: [
-            { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
-            { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Networking_ | ⏰5:30pm | 🏠E10', duration: 1 },
-            { name: '_Accounting_ | ⏰6:30pm | 🏠E10', duration: 1 }
+            { name: '_Project_ | ⏰8:30am | 🏠ONLINE', duration: 2 },
+            { name: '_Expert Systems_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
+            { name: '_Sys Programming_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
+            { name: '_Mob Computing_ | ⏰3:30pm | 🏠JQB19', duration: 2 },
+            { name: '_Mgmt Principles_ | ⏰5:30pm | 🏠E10', duration: 2 },
         ]
     },
     {
         day: 'Friday',
         courses: [
-            { name: '_Soft. Modelling_ | ⏰9:30am | 🏠N3', duration: 1 },
-            { name: '_Theory & Survey_ | ⏰10:30am | 🏠N3', duration: 1 },
-            { name: '_Data Mining_ | ⏰3:30pm | 🏠NNB2', duration: 1 },
-            { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 },
+            { name: '_Mob Computing_ | ⏰9:30am | 🏠N3', duration: 1 },
+            { name: '_HCI_ | ⏰10:30am | 🏠N3', duration: 1 },
+            { name: '_Comp Security_ | ⏰1:30pm | 🏠MATH05', duration: 1 },
+            { name: '_Mult Applications_ | ⏰2:30pm | 🏠MATH05', duration: 1 },
+            { name: '_Sys Programming_ | ⏰2:30pm | 🏠NNB2', duration: 1 },
+            { name: '_Mgmt Principles_ | ⏰4:30pm | 🏠NNB2', duration: 1 },
             // { name: '_Test Course_ | ⏰7:24pm | 🏠NNB2', duration: 1 }
         ]
     }
