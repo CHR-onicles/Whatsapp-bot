@@ -26,10 +26,10 @@ const execute = async (client, msg) => {
             }
         }
         await msg.reply('The following users have agreed to be notified for class:\n\n' +
-            '*Multimedia Applications:*\n' + multimediaContacts.map(user => `→ ${user.number} ~ ${user?.pushname || ''}\n`).join('') + '\n' +
-            '*Expert Systems:*\n' + expertContacts.map(user => `→ ${user.number} ~ ${user?.pushname || ''}\n`).join('') + '\n' +
-            '*Conc & Dist Systems:*\n' + concurrentContacts.map(user => `→ ${user.number} ~ ${user?.pushname || ''}\n`).join('')) + '\n' +
-            '*Mobile Computing:*\n' + mobileContacts.map(user => `→ ${user.number} ~ ${user?.pushname || ''}\n`).join('');
+            '*Multimedia Applications:*\n' + (multimediaContacts.length ? multimediaContacts.map(user => `→ ${user.number} ~ ${user?.pushname || ''}\n`).join('') : "_None_\n") + '\n' +
+            '*Expert Systems:*\n' + (expertContacts.length ? expertContacts.map(user => `→ ${user.number} ~ ${user?.pushname || ''}\n`).join('') : "_None_\n") + '\n' +
+            '*Conc & Dist Systems:*\n' + (concurrentContacts.length ? concurrentContacts.map(user => `→ ${user.number} ~ ${user?.pushname || ''}\n`).join('') : "_None_\n") + '\n' +
+            '*Mobile Computing:*\n' + (mobileContacts.length ? mobileContacts.map(user => `→ ${user.number} ~ ${user?.pushname || ''}\n`).join('') : "_None_\n"));
     } else {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
         return;

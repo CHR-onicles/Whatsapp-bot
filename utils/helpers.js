@@ -286,23 +286,29 @@ const stopOngoingNotifications = () => {
  */
 const allClassesReply = (allClasses, elective, text) => {
     let filtered_courses = null;
-    if (elective === "D") {
-        text += "Timetable for students offering *Data Mining* as elective: 📅\n\n"
+    if (elective === "MA") {
+        text += "Timetable for students offering *Multimedia Applications* as elective: 📅\n\n"
         allClasses.forEach(classObj => {
-            filtered_courses = classObj.courses.filter(c => !c.name.includes("Networking") && !c.name.includes("Soft. Modelling"));
-            text += "*" + classObj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+            filtered_courses = classObj.courses.filter(c => !c.name.includes("Expert") && !c.name.includes("Conc") && !c.name.includes("Mob"));
+            text += "*" + classObj.day + "*:\n" + (filtered_courses.length ? filtered_courses.map(c => '→ ' + c.name + "\n").join('') : "_None_\n") + "\n";
         })
-    } else if (elective === "N") {
-        text += "Timetable for students offering *Networking* as elective: 📅\n\n"
+    } else if (elective === "E") {
+        text += "Timetable for students offering *Expert Systems* as elective: 📅\n\n"
         allClasses.forEach(classObj => {
-            filtered_courses = classObj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Soft. Modelling"))
-            text += "*" + classObj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+            filtered_courses = classObj.courses.filter(c => !c.name.includes("Mult") && !c.name.includes("Conc") && !c.name.includes("Mob"))
+            text += "*" + classObj.day + "*:\n" + (filtered_courses.length ? filtered_courses.map(c => '→ ' + c.name + "\n").join('') : "_None_\n") + "\n";
         })
-    } else if (elective === "S") {
-        text += "Timetable for students offering *Software Modelling* as elective: 📅\n\n"
+    } else if (elective === "C") {
+        text += "Timetable for students offering *Concurrent & Distributed Systems* as elective: 📅\n\n"
         allClasses.forEach(classObj => {
-            filtered_courses = classObj.courses.filter(c => !c.name.includes("Data Mining") && !c.name.includes("Networking"))
-            text += "*" + classObj.day + "*:\n" + filtered_courses.map(c => '→ ' + c.name + "\n").join('') + "\n";
+            filtered_courses = classObj.courses.filter(c => !c.name.includes("Mult") && !c.name.includes("Expert") && !c.name.includes("Mob"))
+            text += "*" + classObj.day + "*:\n" + (filtered_courses.length ? filtered_courses.map(c => '→ ' + c.name + "\n").join('') : "_None_\n") + "\n";
+        })
+    } else if (elective === "MC") {
+        text += "Timetable for students offering *Mobile Computing* as elective: 📅\n\n"
+        allClasses.forEach(classObj => {
+            filtered_courses = classObj.courses.filter(c => !c.name.includes("Mult") && !c.name.includes("Expert") && !c.name.includes("Conc"))
+            text += "*" + classObj.day + "*:\n" + (filtered_courses.length ? filtered_courses.map(c => '→ ' + c.name + "\n").join('') : "_None_\n") + "\n";
         })
     }
     return text;
