@@ -19,9 +19,10 @@ const MiscellaneousSchema = new Schema({
     allAnnouncements: [String],
     botAdmins: [String],
     forwardToUsers: [String],
-    electiveDataMining: [String],
-    electiveSoftModelling: [String],
-    electiveNetworking: [String],
+    electiveMultimedia: [String],
+    electiveExpert: [String],
+    electiveConcurrent: [String],
+    electiveMobile: [String],
     blacklistedUsers: [String],
     classGroups: [String],
     // numOfCommands: Number, // to be used later
@@ -297,9 +298,9 @@ exports.removeBotAdmin = async (admin) => {
  * @returns Object with each property containing an array of users who offer a specific elective.
  */
 exports.getUsersToNotifyForClass = async () => {
-    const resUsers = await MiscellaneousModel.findOne(DEFAULT_ID, { electiveDataMining: 1, electiveNetworking: 1, electiveSoftModelling: 1 });
-    const { electiveDataMining: dataMining, electiveNetworking: networking, electiveSoftModelling: softModelling } = resUsers;
-    return { dataMining, networking, softModelling };
+    const resUsers = await MiscellaneousModel.findOne(DEFAULT_ID, { electiveMultimedia: 1, electiveExpert: 1, electiveConcurrent: 1, electiveMobile: 1 });
+    const { electiveMultimedia: multimedia, electiveExpert: expert, electiveConcurrent: concurrent, electiveMobile: mobile } = resUsers;
+    return { multimedia, expert, concurrent, mobile };
 }
 
 /**
@@ -312,17 +313,19 @@ exports.addUserToBeNotified = async (newUser, rowId) => {
     try {
         let res = null;
         if (rowId === '1') {
-            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveDataMining: newUser } });
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveMultimedia: newUser } });
         } else if (rowId === '2') {
-            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveNetworking: newUser } });
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveExpert: newUser } });
         } else if (rowId === '3') {
-            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveSoftModelling: newUser } });
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveConcurrent: newUser } });
+        } else if (rowId === '4') {
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveMobile: newUser } });
         }
         // console.log(res);
-        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '1' ? 'Data Mining' : (rowId === '2' ? 'Networking' : 'Software Modelling') + ' as elective');
+        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '1' ? 'Multimedia' : (rowId === '2' ? 'Expert' : rowId === '3' ? 'Concurrent' : 'Mobile') + ' as elective');
 
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
 
@@ -335,12 +338,14 @@ exports.addUserToBeNotified = async (newUser, rowId) => {
 exports.removeUserToBeNotified = async (user, elective) => {
     try {
         let res = null;
-        if (elective === 'D') {
-            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveDataMining: user } });
-        } else if (elective === 'N') {
-            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveNetworking: user } });
-        } else if (elective === 'S') {
-            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveSoftModelling: user } });
+        if (elective === 'MA') {
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveMultimedia: user } });
+        } else if (elective === 'E') {
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveExpert: user } });
+        } else if (elective === 'C') {
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveConcurrent: user } });
+        } else if (elective === 'MC') {
+            res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveMobile: user } });
         }
         // console.log(res);
         console.log("User: " + user + " unsubscribed from being notified for class");
@@ -431,7 +436,7 @@ exports.addClassGroup = async (group) => {
  */
 exports.removeClassGroup = async (group) => {
     try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, {$pull: {classGroups: group}});
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { classGroups: group } });
         // console.log(res);
     } catch (error) {
         console.log(error);

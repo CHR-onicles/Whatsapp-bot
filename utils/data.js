@@ -16,47 +16,43 @@ exports.ALL_CLASSES = [
     {
         day: 'Monday',
         courses: [
-            { name: '_Formal Methods_ | ⏰9:30am | 🏠N3', duration: 2 },
-            { name: '_Data Mining_ | ⏰12:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Networking_ | ⏰3:30pm | 🏠E10', duration: 1 },
-            { name: '_Accounting_ | ⏰7:30pm | 🏠E10', duration: 1 }
+            { name: '_Conc & Dist Systems_ | ⏰5:30pm | 🏠JQB11', duration: 2 }
         ]
     },
     {
         day: 'Tuesday',
         courses: [
-            { name: '_Networking_ | ⏰11:30am | 🏠MATH05', duration: 2 },
-            { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
-            { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Networking_ | ⏰5:30pm | 🏠E10', duration: 1 },
-            { name: '_Accounting_ | ⏰7:30pm | 🏠E10', duration: 1 }
+            { name: '_Mult Applications_ | ⏰11:30am | 🏠MATH05', duration: 2 }
         ]
     },
     {
         day: 'Wednesday',
         courses: [
-            { name: '_Compilers_ | ⏰9:30am | 🏠E10', duration: 2 },
-            { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Theory & Survey_ | ⏰3:30pm | 🏠JQB09', duration: 2 },
-            { name: '_Soft. Modelling_ | ⏰5:30pm | 🏠LOT1', duration: 2 }
+            { name: '_Conc & Dist Systems_ | ⏰8:30am | 🏠MATH19', duration: 1 },
+            { name: '_Expert Systems_ | ⏰9:30am | 🏠E9', duration: 2 },
+            { name: '_Comp Security_ | ⏰3:30pm | 🏠MATH05', duration: 2 },
+            { name: '_HCI_ | ⏰5:30pm | 🏠LOT1', duration: 2 },
         ]
     },
     {
         day: 'Thursday',
         courses: [
-            { name: '_Formal Methods_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
-            { name: '_Data Mining_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Networking_ | ⏰5:30pm | 🏠E10', duration: 1 },
-            { name: '_Accounting_ | ⏰6:30pm | 🏠E10', duration: 1 }
+            { name: '_Project_ | ⏰8:30am | 🏠ONLINE', duration: 2 },
+            { name: '_Expert Systems_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
+            { name: '_Sys Programming_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
+            { name: '_Mob Computing_ | ⏰3:30pm | 🏠JQB19', duration: 2 },
+            { name: '_Mgmt Principles_ | ⏰5:30pm | 🏠E10', duration: 2 },
         ]
     },
     {
         day: 'Friday',
         courses: [
-            { name: '_Soft. Modelling_ | ⏰9:30am | 🏠N3', duration: 1 },
-            { name: '_Theory & Survey_ | ⏰10:30am | 🏠N3', duration: 1 },
-            { name: '_Data Mining_ | ⏰3:30pm | 🏠NNB2', duration: 1 },
-            { name: '_Compilers_ | ⏰4:30pm | 🏠NNB2', duration: 1 },
+            { name: '_Mob Computing_ | ⏰9:30am | 🏠N3', duration: 1 },
+            { name: '_HCI_ | ⏰10:30am | 🏠N3', duration: 1 },
+            { name: '_Comp Security_ | ⏰1:30pm | 🏠MATH05', duration: 1 },
+            { name: '_Mult Applications_ | ⏰2:30pm | 🏠MATH05', duration: 1 },
+            { name: '_Sys Programming_ | ⏰2:30pm | 🏠NNB2', duration: 1 },
+            { name: '_Mgmt Principles_ | ⏰4:30pm | 🏠NNB2', duration: 1 },
             // { name: '_Test Course_ | ⏰7:24pm | 🏠NNB2', duration: 1 }
         ]
     }
@@ -66,54 +62,54 @@ exports.ALL_CLASSES = [
  * Array containing current L400 1st Semester Computer Science exams timetable.
  */
 exports.EXAM_TIMETABLE = [
-    {
-        date: "Saturday, May 14 2022",
-        _date: new Date(2022, 04, 14, 13, 20), // to avoid extra processing logic :)
-        time: "1:20pm",
-        courseCode: "CSCD 421",
-        courseTitle: "Accounting",
-        examMode: "Onsite/Online"
-    },
-    {
-        date: "Monday, May 16 2022",
-        _date: new Date(2022, 04, 16, 7, 30),
-        time: "7:30am",
-        courseCode: "CSCD 419",
-        courseTitle: "Formal Methods",
-        examMode: "Onsite/Physical"
-    },
-    {
-        date: "Wednesday, May 18 2022",
-        _date: new Date(2022, 04, 18, 7, 30),
-        time: "7:30am",
-        courseCode: "CSCD 417",
-        courseTitle: "Theory & Survey",
-        examMode: "Onsite/Physical"
-    },
-    {
-        date: "Friday, May 20 2022",
-        _date: new Date(2022, 04, 20, 11, 30),
-        time: "11:30am",
-        courseCode: "CSCD 427",
-        courseTitle: "Networking",
-        examMode: "Onsite/Physical"
-    },
-    {
-        date: "Saturday, May 21 2022",
-        _date: new Date(2022, 04, 21, 7, 30),
-        time: "7:30am",
-        courseCode: "CSCD 415",
-        courseTitle: "Compilers",
-        examMode: "Onsite/Physical"
-    },
-    {
-        date: "Monday, May 23 2022",
-        _date: new Date(2022, 04, 23, 15, 30),
-        time: "3:30pm",
-        courseCode: "CSCD 423",
-        courseTitle: "Software Modelling",
-        examMode: "Onsite/Physical"
-    },
+    // {
+    //     date: "Saturday, May 14 2022",
+    //     _date: new Date(2022, 04, 14, 13, 20), // to avoid extra processing logic :)
+    //     time: "1:20pm",
+    //     courseCode: "CSCD 421",
+    //     courseTitle: "Accounting",
+    //     examMode: "Onsite/Online"
+    // },
+    // {
+    //     date: "Monday, May 16 2022",
+    //     _date: new Date(2022, 04, 16, 7, 30),
+    //     time: "7:30am",
+    //     courseCode: "CSCD 419",
+    //     courseTitle: "Formal Methods",
+    //     examMode: "Onsite/Physical"
+    // },
+    // {
+    //     date: "Wednesday, May 18 2022",
+    //     _date: new Date(2022, 04, 18, 7, 30),
+    //     time: "7:30am",
+    //     courseCode: "CSCD 417",
+    //     courseTitle: "Theory & Survey",
+    //     examMode: "Onsite/Physical"
+    // },
+    // {
+    //     date: "Friday, May 20 2022",
+    //     _date: new Date(2022, 04, 20, 11, 30),
+    //     time: "11:30am",
+    //     courseCode: "CSCD 427",
+    //     courseTitle: "Networking",
+    //     examMode: "Onsite/Physical"
+    // },
+    // {
+    //     date: "Saturday, May 21 2022",
+    //     _date: new Date(2022, 04, 21, 7, 30),
+    //     time: "7:30am",
+    //     courseCode: "CSCD 415",
+    //     courseTitle: "Compilers",
+    //     examMode: "Onsite/Physical"
+    // },
+    // {
+    //     date: "Monday, May 23 2022",
+    //     _date: new Date(2022, 04, 23, 15, 30),
+    //     time: "3:30pm",
+    //     courseCode: "CSCD 423",
+    //     courseTitle: "Software Modelling",
+    //     examMode: "Onsite/Physical"
+    // },
 ]
 
 /**

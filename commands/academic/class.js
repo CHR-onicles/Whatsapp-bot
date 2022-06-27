@@ -10,7 +10,7 @@ const execute = async (client, msg, args) => {
     const contact = await msg.getContact();
     const chatFromContact = await contact.getChat();
     const curChat = await msg.getChat();
-    const { dataMining, networking, softModelling } = await getUsersToNotifyForClass();
+    const { multimedia, expert, concurrent, mobile } = await getUsersToNotifyForClass();
     let text = "";
 
     if (curChat.isGroup) {
@@ -26,14 +26,17 @@ const execute = async (client, msg, args) => {
 
     // if user has already subscribed to be notified for class, get his elective and send the current day's
     // timetable based on the elective.
-    if (dataMining.includes(contact.id.user)) {
-        helperForClassesToday(text, 'D');
+    if (multimedia.includes(contact.id.user)) {
+        helperForClassesToday(text, 'MA');
         return;
-    } else if (networking.includes(contact.id.user)) {
-        helperForClassesToday(text, 'N');
+    } else if (expert.includes(contact.id.user)) {
+        helperForClassesToday(text, 'E');
         return;
-    } else if (softModelling.includes(contact.id.user)) {
-        helperForClassesToday(text, 'S');
+    } else if (concurrent.includes(contact.id.user)) {
+        helperForClassesToday(text, 'C');
+        return;
+    } else if (mobile.includes(contact.id.user)) {
+        helperForClassesToday(text, 'MC');
         return;
     }
 
@@ -43,9 +46,10 @@ const execute = async (client, msg, args) => {
         [{
             title: 'Commands available to everyone',
             rows: [
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-1_dev' : 'class-1_prod', title: 'Data Mining', description: 'For those offering Data Mining' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-2_dev' : 'class-2_prod', title: 'Networking', description: "For those offering Networking" },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-3_dev' : 'class-3_prod', title: 'Software Modelling', description: 'For those offering Software Simulation and Modelling' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-1_dev' : 'class-1_prod', title: 'Multimedia Applications', description: 'For those offering Multimedia Applications' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-2_dev' : 'class-2_prod', title: 'Expert Systems', description: "For those offering Expert Systems" },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-3_dev' : 'class-3_prod', title: 'Conc & Distributed Systems', description: 'For those offering Concurrent & Distributed Systems' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'class-4_dev' : 'class-4_prod', title: 'Mobile Computing', description: 'For those offering Mobile Computing' },
             ]
         }],
         'What elective do you offer?',
@@ -72,32 +76,42 @@ const execute = async (client, msg, args) => {
         switch (selectedRowId) {
             case '1_dev':
                 if (currentEnv !== 'development') break;
-                helperFunc('D');
+                helperFunc('MA');
                 break;
 
             case '1_prod':
                 if (currentEnv !== 'production') break;
-                helperFunc('D');
+                helperFunc('MA');
                 break;
 
             case '2_dev':
                 if (currentEnv !== 'development') break;
-                helperFunc('N');
+                helperFunc('E');
                 break;
 
             case '2_prod':
                 if (currentEnv !== 'production') break;
-                helperFunc('N');
+                helperFunc('E');
                 break;
 
             case '3_dev':
                 if (currentEnv !== 'development') break;
-                helperFunc('S');
+                helperFunc('C');
                 break;
 
             case '3_prod':
                 if (currentEnv !== 'production') break;
-                helperFunc('S');
+                helperFunc('C');
+                break;
+
+            case '4_dev':
+                if (currentEnv !== 'development') break;
+                helperFunc('MC');
+                break;
+
+            case '4_prod':
+                if (currentEnv !== 'production') break;
+                helperFunc('MC');
                 break;
 
             default:
