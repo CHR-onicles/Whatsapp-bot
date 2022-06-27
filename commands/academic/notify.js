@@ -1,7 +1,7 @@
 const { List } = require("whatsapp-web.js");
 const { getMutedStatus, removeUserToBeNotified, getUsersToNotifyForClass, addUserToBeNotified } = require("../../models/misc");
 const { REACT_EMOJIS } = require("../../utils/data");
-const { currentEnv, pickRandomReply, currentPrefix, extractCommandArgs, stopOngoingNotifications, startNotificationCalculation } = require("../../utils/helpers");
+const { currentEnv, pickRandomReply, currentPrefix, extractCommandArgs, stopAllOngoingNotifications, startNotificationCalculation } = require("../../utils/helpers");
 
 const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
@@ -33,7 +33,7 @@ const execute = async (client, msg, args) => {
 
             await chatFromContact.sendMessage(`🔔 You will now be notified periodically for class, using *${selectedRowId[0] === '1' ? 'Multimedia Applications' : (selectedRowId[0] === '2' ? 'Expert Systems' : selectedRowId[0] === '3' ? 'Concurrent & Distributed Systems' : 'Mobile Computing')}* as your elective.\n\nExpect me🐦`);
             await addUserToBeNotified(contact.id.user, selectedRowId[0]);
-            stopOngoingNotifications();
+            stopAllOngoingNotifications();
             await startNotificationCalculation(client);
         }
 
@@ -137,7 +137,7 @@ const execute = async (client, msg, args) => {
                     await removeUserToBeNotified(contact.id.user, 'MC');
                 }
                 msg.reply("I won't remind you to go to class anymore ✅");
-                stopOngoingNotifications();
+                stopAllOngoingNotifications();
                 await startNotificationCalculation(client);
             } else {
                 await msg.reply("You weren't subscribed in the first place 🤔");

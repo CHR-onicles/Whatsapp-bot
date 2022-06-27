@@ -164,8 +164,9 @@ const startNotificationCalculation = async (client) => {
     const totalUsers = [...multimedia, ...expert, ...concurrent, ...mobile];
     const chats = await client.getChats();
     const notifsStatus = await getNotificationStatus();
+    const { CSCD416, CSCD418, CSCD422, CSCD424, CSCD400, CSCD426, CSCD428, CSCD432, CSCD434 } = notifsStatus;
 
-    if (!notifsStatus) return;
+    if (Object.values(notifsStatus).every(elem => !elem)) return; // Stop if all courses have notifications turned off
 
     if (!totalUsers.length) return; // if there are no subscribed users, stop
 
@@ -182,6 +183,18 @@ const startNotificationCalculation = async (client) => {
     // console.log(courses);
 
     for (const course of courses) {
+        if ((course.code === 'CSCD416' && !CSCD416) ||
+            (course.code === 'CSCD418' && !CSCD418) ||
+            (course.code === 'CSCD422' && !CSCD422) ||
+            (course.code === 'CSCD424' && !CSCD424) ||
+            (course.code === 'CSCD400' && !CSCD400) ||
+            (course.code === 'CSCD426' && !CSCD426) ||
+            (course.code === 'CSCD428' && !CSCD428) ||
+            (course.code === 'CSCD432' && !CSCD432) ||
+            (course.code === 'CSCD434' && !CSCD434)) {
+            continue;
+        }
+
         const classTime = extractTime(course.name);
         const classTimeHrs = +classTime.split(':')[0];
         const classTimeMins = +classTime.split(':')[1].slice(0, classTime.split(':')[1].length - 2);
@@ -192,42 +205,29 @@ const startNotificationCalculation = async (client) => {
         const timeLeftInMs = newClassTime - curTime;
         if (timeLeftInMs < 0) continue; // if the time for a course is past, skip to next course
 
+        // Helper function to reduce repetition;
+        const helperForTimeoutIntervalGeneration = (electiveArray) => {
+            if (electiveArray.length) {
+                electiveArray.forEach(student => {
+                    generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
+                    console.log('Student:', student, ' course:', course);
+                })
+                console.log('\n');
+            }
+        }
+
         if (course.name.includes('Mult')) {
-            if (multimedia.length) {
-                multimedia.forEach(student => {
-                    generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
-                    console.log('Student:', student, ' course:', course)
-                })
-                console.log('\n');
-            }
+            helperForTimeoutIntervalGeneration(multimedia);
         } else if (course.name.includes('Expert')) {
-            if (expert.length) {
-                expert.forEach(student => {
-                    generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
-                    console.log('Student:', student, ' course:', course)
-                })
-                console.log('\n');
-            }
+            helperForTimeoutIntervalGeneration(expert);
         } else if (course.name.includes('Conc')) {
-            if (concurrent.length) {
-                concurrent.forEach(student => {
-                    generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
-                    console.log('Student:', student, ' course:', course)
-                })
-                console.log('\n');
-            }
+            helperForTimeoutIntervalGeneration(concurrent);
         } else if (course.name.includes('Mob')) {
-            if (mobile.length) {
-                mobile.forEach(student => {
-                    generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
-                    console.log('Student:', student, ' course:', course)
-                })
-                console.log('\n');
-            }
+            helperForTimeoutIntervalGeneration(mobile);
         } else {
             totalUsers.forEach(student => {
                 generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
-                console.log('Student:', student, ' course:', course)
+                console.log('Student:', student, ' course:', course);
             })
             console.log('\n');
         }
@@ -268,7 +268,7 @@ const generateTimeoutIntervals = (user, course, chats, timeoutTwoHrs, timeoutOne
 /**
  * Stops notification callbacks from executing by clearing the dynamically created timeouts and resetting the global `VARIABLES_COUNTER` to 0.
  */
-const stopOngoingNotifications = () => {
+const stopAllOngoingNotifications = () => {
     for (let i = 1; i < VARIABLES_COUNTER + 1; ++i) {
         eval("clearTimeout(t" + i + ")");
         console.log(`Cleared timeout t${i}`);
@@ -594,7 +594,7 @@ module.exports = {
     extractCommandArgs,
     msToDHMS, notificationTimeCalc,
     startNotificationCalculation,
-    stopOngoingNotifications,
+    stopAllOngoingNotifications,
     allClassesReply,
     todayClassReply,
     sendSlides,

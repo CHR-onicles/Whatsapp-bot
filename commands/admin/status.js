@@ -11,7 +11,7 @@ const execute = async (client, msg, args) => {
     if (!BOT_START_TIME) throw new Error('Invalid Bot Start Time');
     const contact = await msg.getContact();
     const isBotAdmin = await isUserBotAdmin(contact);
-    const isNotifsOn = await getNotificationStatus();
+    const { CSCD416, CSCD418, CSCD422, CSCD424, CSCD400, CSCD426, CSCD428, CSCD432, CSCD434 } = await getNotificationStatus();
     const isForwardingOn = await getForwardingStatus();
 
     if (isBotAdmin) {
@@ -40,8 +40,17 @@ const execute = async (client, msg, args) => {
         reply.push(`[🔰] *Blocked chats:* ${blocked_chats.length}`);
         reply.push(`[🔰] *Announcements stored:* ${allAnnouncements.length}`);
         reply.push(`[🔰] *Links stored:* ${allLinks.length}`);
-        reply.push(`[🔰] *Class notifications status:* ${isNotifsOn ? "✅" : "❌"}`);
-        reply.push(`[🔰] *Forwarding stuff status:* ${isForwardingOn ? "✅" : "❌"}`); // temporary - will be removed soon
+        reply.push(`[🔰] *Forwarding stuff status:* ${isForwardingOn ? "✅" : "❌"}\n`); // temporary - will be removed soon
+
+        reply.push(`[🔰] *CSCD416 notification status:* ${CSCD416 ? "✅" : "❌"}`);
+        reply.push(`[🔰] *CSCD418 notification status:* ${CSCD418 ? "✅" : "❌"}`);
+        reply.push(`[🔰] *CSCD422 notification status:* ${CSCD422 ? "✅" : "❌"}`);
+        reply.push(`[🔰] *CSCD424 notification status:* ${CSCD424 ? "✅" : "❌"}`);
+        reply.push(`[🔰] *CSCD400 notification status:* ${CSCD400 ? "✅" : "❌"}`);
+        reply.push(`[🔰] *CSCD426 notification status:* ${CSCD426 ? "✅" : "❌"}`);
+        reply.push(`[🔰] *CSCD428 notification status:* ${CSCD428 ? "✅" : "❌"}`);
+        reply.push(`[🔰] *CSCD432 notification status:* ${CSCD432 ? "✅" : "❌"}`);
+        reply.push(`[🔰] *CSCD434 notification status:* ${CSCD434 ? "✅" : "❌"}`);
 
         await msg.reply(reply.join('\n'));
     } else {
