@@ -201,13 +201,13 @@ exports.REACT_EMOJIS = [
  * Array containing replies for users who try to perform administrative functions on the bot but are not bot admins.
  */
 exports.NOT_BOT_ADMIN_REPLIES = [
-    "No please 🐦, you are not a *bot admin* unfortunately.\n\nTry *!hep* to see commands available to you.",
+    "No please 🐦, you are not a *bot admin* unfortunately.\n\nTry *!help* to see commands available to you.",
     "No can do 🐦, you don't have sufficient privileges.\n\nTry *!menu* to see commands available to you.",
-    "You are not a *bot admin*\n\nTry *!hep* or *!menu* to see commands that are available to you.",
-    "Nope🐦, you don't have the required permissions.\n\nUse *!hep* or *!menu* to see commands that you can use.",
+    "You are not a *bot admin*\n\nTry *!help* or *!menu* to see commands that are available to you.",
+    "Nope🐦, you don't have the required permissions.\n\nUse *!help* or *!menu* to see commands that you can use.",
     "Only *bot admins* can do this 🙂\n\nCommands you can use be found by typing *!help* or *!menu*",
     // "Only *bot admins* can use this, so that it is not abused.",
-    "Sorry, this command is not available to you.\n\nCheckout commands you can use by typing *!hep* or *!menu*.",
+    "Sorry, this command is not available to you.\n\nCheckout commands you can use by typing *!help* or *!menu*.",
 ]
 
 /**

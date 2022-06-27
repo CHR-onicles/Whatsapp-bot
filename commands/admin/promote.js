@@ -54,7 +54,7 @@ const execute = async (client, msg) => {
             return;
         } else {
             await addBotAdmin(foundUser.id.user);
-            await msg.reply('Admin successfully added! ✅'); //todo: Add more replies for this later
+            await msg.reply('Bot admin successfully added! ✅'); //todo: Add more replies for this later
         }
     } else {
         await msg.reply("Sorry, I couldn't find that user ☹")
