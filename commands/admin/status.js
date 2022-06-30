@@ -62,19 +62,18 @@ const execute = async (client, msg, args) => {
             return reply.join('\n');
         }
 
-
+        let botLogGroup = null;
         // --------------------------------------------------------
         const logger = async () => {
-            const chats = await client.getChats();
-            const botLogGroup = chats.find(chat => chat.pinned && chat.id.user === process.env.BOT_LOG_GROUP);
-
-            botLogGroup.sendMessage(await generateReplies()); // send status once before the 1hour interval starts
+            await botLogGroup.sendMessage(await generateReplies()); // send status once before the 1hour interval starts
             setInterval(async () => {
                 await botLogGroup.sendMessage(await generateReplies());
-            }, currentEnv === 'production' ? 3600_000 : 15_000);
+            }, currentEnv === 'production' ? 3600_000 : 30_000);
         }
-
+        
         if (RUN_FIRST_TIME) {
+            const chats = await client.getChats();
+            botLogGroup = chats.find(chat => chat.pinned && chat.id.user === process.env.BOT_LOG_GROUP);
             logger();
             args.RUN_FIRST_TIME = false;
         } else {
