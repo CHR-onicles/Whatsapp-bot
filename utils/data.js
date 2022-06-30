@@ -16,43 +16,43 @@ exports.ALL_CLASSES = [
     {
         day: 'Monday',
         courses: [
-            { name: '_Conc & Dist Systems_ | ⏰5:30pm | 🏠JQB11', duration: 2 }
+            { name: '_Conc & Dist Systems_ | ⏰5:30pm | 🏠JQB11', code: 'CSCD432', duration: 2 }
         ]
     },
     {
         day: 'Tuesday',
         courses: [
-            { name: '_Mult Applications_ | ⏰11:30am | 🏠MATH05', duration: 2 }
+            { name: '_Mult Applications_ | ⏰11:30am | 🏠MATH05', code: 'CSCD426', duration: 2 }
         ]
     },
     {
         day: 'Wednesday',
         courses: [
-            { name: '_Conc & Dist Systems_ | ⏰8:30am | 🏠MATH19', duration: 1 },
-            { name: '_Expert Systems_ | ⏰9:30am | 🏠E9', duration: 2 },
-            { name: '_Comp Security_ | ⏰3:30pm | 🏠MATH05', duration: 2 },
-            { name: '_HCI_ | ⏰5:30pm | 🏠LOT1', duration: 2 },
+            { name: '_Conc & Dist Systems_ | ⏰8:30am | 🏠MATH19', code: 'CSCD432', duration: 1 },
+            { name: '_Expert Systems_ | ⏰9:30am | 🏠E9', code: 'CSCD428', duration: 2 },
+            { name: '_Comp Security_ | ⏰3:30pm | 🏠MATH05', code: 'CSCD418', duration: 2 },
+            { name: '_HCI_ | ⏰5:30pm | 🏠LOT1', code: 'CSCD422', duration: 2 },
         ]
     },
     {
         day: 'Thursday',
         courses: [
-            { name: '_Project_ | ⏰8:30am | 🏠ONLINE', duration: 2 },
-            { name: '_Expert Systems_ | ⏰12:30pm | 🏠JQB19', duration: 1 },
-            { name: '_Sys Programming_ | ⏰1:30pm | 🏠JQB14', duration: 2 },
-            { name: '_Mob Computing_ | ⏰3:30pm | 🏠JQB19', duration: 2 },
-            { name: '_Mgmt Principles_ | ⏰5:30pm | 🏠E10', duration: 2 },
+            { name: '_Project_ | ⏰8:30am | 🏠ONLINE', code: 'CSCD400', duration: 2 },
+            { name: '_Expert Systems_ | ⏰12:30pm | 🏠JQB19', code: 'CSCD428', duration: 1 },
+            { name: '_Sys Programming_ | ⏰1:30pm | 🏠JQB14', code: 'CSCD416', duration: 2 },
+            { name: '_Mob Computing_ | ⏰3:30pm | 🏠JQB19', code: 'CSCD434', duration: 2 },
+            { name: '_Mgmt Principles_ | ⏰5:30pm | 🏠E10', code: 'CSCD424', duration: 2 },
         ]
     },
     {
         day: 'Friday',
         courses: [
-            { name: '_Mob Computing_ | ⏰9:30am | 🏠N3', duration: 1 },
-            { name: '_HCI_ | ⏰10:30am | 🏠N3', duration: 1 },
-            { name: '_Comp Security_ | ⏰1:30pm | 🏠MATH05', duration: 1 },
-            { name: '_Mult Applications_ | ⏰2:30pm | 🏠MATH05', duration: 1 },
-            { name: '_Sys Programming_ | ⏰2:30pm | 🏠NNB2', duration: 1 },
-            { name: '_Mgmt Principles_ | ⏰4:30pm | 🏠NNB2', duration: 1 },
+            { name: '_Mob Computing_ | ⏰9:30am | 🏠N3', code: 'CSCD434', duration: 1 },
+            { name: '_HCI_ | ⏰10:30am | 🏠N3', code: 'CSCD422', duration: 1 },
+            { name: '_Comp Security_ | ⏰1:30pm | 🏠MATH05', code: 'CSCD418', duration: 1 },
+            { name: '_Mult Applications_ | ⏰2:30pm | 🏠MATH05', code: 'CSCD426', duration: 1 },
+            { name: '_Sys Programming_ | ⏰2:30pm | 🏠NNB2', code: 'CSCD416', duration: 1 },
+            { name: '_Mgmt Principles_ | ⏰4:30pm | 🏠NNB2', code: 'CSCD424', duration: 1 },
             // { name: '_Test Course_ | ⏰7:24pm | 🏠NNB2', duration: 1 }
         ]
     }

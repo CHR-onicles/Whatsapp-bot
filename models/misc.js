@@ -13,11 +13,11 @@ const { Schema, model } = require('mongoose');
 const MiscellaneousSchema = new Schema({
     _id: { type: Number, default: 1 },
     isMuted: { type: Boolean, default: false },
-    isNotifsOn: { type: Boolean, default: false },
+    classNotifications: { type: Object, default: { CSCD416: false, CSCD418: false, CSCD422: false, CSCD424: false, CSCD400: false, CSCD426: false, CSCD428: false, CSCD432: false, CSCD434: false } },
     isForwardingOn: { type: Boolean, default: false }, // temporary
     allLinks: [String],
     allAnnouncements: [String],
-    botAdmins: [String],
+    botAdmins: { type: Array, default: [process.env.GRANDMASTER] },
     forwardToUsers: [String],
     electiveMultimedia: [String],
     electiveExpert: [String],
@@ -32,8 +32,7 @@ const devModelName = "miscellaneous-dev";
 const prodModelName = "miscellaneous";
 const currentModelName = process.env.NODE_ENV === "production" ? prodModelName : devModelName;
 const MiscellaneousModel = model(currentModelName, MiscellaneousSchema);
-const DEFAULT_ID = { _id: process.env.NODE_ENV === 'production' ? 1 : 2 };  // to always update one specific document
-
+const DEFAULT_ID = { _id: 1 };  // to always update one specific document
 
 /**
  * Helper function to initialize the miscellaneous/miscellaneous-dev collection.
@@ -41,18 +40,18 @@ const DEFAULT_ID = { _id: process.env.NODE_ENV === 'production' ? 1 : 2 };  // t
  */
 const initCollection = async () => {
     const count = await MiscellaneousModel.countDocuments({});
-    // console.log(count);
+    console.log(count);
     if (!count) {
-        const misc = new MiscellaneousModel({ _id: 1, botAdmins: [process.env.GRANDMASTER] });
-        // const misc = new MiscellaneousModel();
+        const misc = new MiscellaneousModel({ _id: 1 });
         try {
             await misc.save();
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     } else console.log(currentModelName + " collection is not empty");
 }
 initCollection();
+
 
 // EXPORTS ---------------------------------------------
 
@@ -96,41 +95,77 @@ exports.unmuteBot = async () => {
 }
 
 /**
- * Gets status of notifications for class.
+ * Gets status of notifications for each course.
  * @async
- * @returns {Promise<boolean>} **True** if all notifications are on, **false** otherwise.
+ * @returns {Promise<boolean>} **True** if notifications are on for a specific course, **false** otherwise.
  */
+
 exports.getNotificationStatus = async () => {
-    const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isNotifsOn: 1 });
+    const status = await MiscellaneousModel.findOne(DEFAULT_ID, { classNotifications: 1 });
     // console.log(status);
-    return status.isNotifsOn;
+    return status.classNotifications;
 }
 
 /**
- * Turns on all notifications for class.
+ * Enable or Disable notifications for all courses.
+ * @param {boolean} status Boolean representing enabled(True) or disabled(False).
  * @async
  */
-exports.enableAllNotifications = async () => {
+exports.enableOrDisableAllNotifications = async (status) => {
     try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isNotifsOn: true } });
+        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { CSCD416: status, CSCD418: status, CSCD422: status, CSCD424: status, CSCD400: status, CSCD426: status, CSCD428: status, CSCD432: status, CSCD434: status } } });
         // console.log(res);
-        console.log("All notifications have been turned ON")
+        console.log("All notifications have been turned ON\n")
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
 
 /**
- * Turns off all notifications for class.
+ * Enable or Disable notifications for a particular course.
+ * @param {string} courseCode String representing the course code Eg: `CSCD400`.
+ * @param {boolean} status Boolean representing enabled(True) or disabled(False).
  * @async
  */
-exports.disableAllNotifications = async () => {
+exports.enableOrDisableNotificationForCourse = async (courseCode, status) => {
+    const classNotifsRes = await MiscellaneousModel.findOne(DEFAULT_ID, { classNotifications: 1 });
+    let res = null;
+    // Couldn't think of a better way of making it more dynamic
     try {
-        const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isNotifsOn: false } });
-        // console.log(res)
-        console.log("All notifications have been turned OFF")
+        switch (courseCode) {
+            case 'CSCD416':
+                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD416: status } } });
+                break;
+            case 'CSCD418':
+                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD418: status } } });
+                break;
+            case 'CSCD422':
+                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD422: status } } });
+                break;
+            case 'CSCD424':
+                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD424: status } } });
+                break;
+            case 'CSCD400':
+                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD400: status } } });
+                break;
+            case 'CSCD426':
+                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD426: status } } });
+                break;
+            case 'CSCD428':
+                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD428: status } } });
+                break;
+            case 'CSCD432':
+                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD432: status } } });
+                break;
+            case 'CSCD434':
+                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD434: status } } });
+                break;
+
+            default:
+                break;
+        }
     } catch (error) {
-        console.log(error)
+        console.error(error);
     }
 }
 

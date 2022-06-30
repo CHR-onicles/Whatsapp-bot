@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 require('./utils/db');
-const { currentEnv, currentPrefix, extractCommand, startNotificationCalculation, stopOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, getTimeLeftForSetTimeout, checkForSpam, checkForChance } = require('./utils/helpers');
+const { currentEnv, currentPrefix, extractCommand, startNotificationCalculation, stopAllOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, getTimeLeftForSetTimeout, checkForSpam, checkForChance } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
 
@@ -358,7 +358,7 @@ client.on('message', async (msg) => {
 // ---------------------------------------------------------------------------------------
 // Endpoint to hit in order to restart calculations for class notifications (will be done by a cron-job)
 app.get('/reset-notif-calc', async (req, res) => {
-    stopOngoingNotifications();
+    stopAllOngoingNotifications();
     await startNotificationCalculation(client);
     res.send('<h1>Restarting the class notification calculation function...</h1>');
 })
