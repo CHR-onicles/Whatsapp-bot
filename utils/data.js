@@ -136,7 +136,7 @@ exports.PING_REPLIES = {
         "Listening in 🐦",
         "Greetings 🐦",
         "The bot is fine, thanks for not asking 🙄",
-        `Great ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours() < 17 ? 'afternoon' : 'evening')} 🥳`,
+        // `Great ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours() < 17 ? 'afternoon' : 'evening')} 🥳`,
         "🙋🏽‍♂️",
         "👋🏽",
         "🐦",
