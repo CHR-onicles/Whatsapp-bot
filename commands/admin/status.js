@@ -64,11 +64,11 @@ const execute = async (client, msg, args) => {
 
 
         // --------------------------------------------------------
-        let botLogGroup = null;
         const logger = async () => {
             const chats = await client.getChats();
-            botLogGroup = chats.find(chat => chat.pinned && chat.id.user === process.env.BOT_LOG_GROUP);
+            const botLogGroup = chats.find(chat => chat.pinned && chat.id.user === process.env.BOT_LOG_GROUP);
 
+            await botLogGroup.sendMessage(await generateReplies()); // send status once before the 1hour interval starts
             setInterval(async () => {
                 await botLogGroup.sendMessage(await generateReplies());
             }, currentEnv === 'production' ? 3600_000 : 15_000);

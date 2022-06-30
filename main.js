@@ -84,6 +84,7 @@ client.on('ready', async () => {
     // Run status command here first to start logging to group chat chain reaction
     try {
         args.RUN_FIRST_TIME = true;
+        console.log("Starting logs...")
         client.commands.get('status').execute(client, null, args);
     } catch (error) {
         console.error(error);
