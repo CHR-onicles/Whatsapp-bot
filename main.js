@@ -79,9 +79,9 @@ client.on('ready', async () => {
             await grandmasterChat.sendMessage("Reminder to restart the bot after 23 hours!");
         }, twentyThreeHrsInMs);
         console.log("Preparing to send bot restart reminder in 23 hours\n");
-
     }
-    // Run status command here first to start logging chain reaction
+
+    // Run status command here first to start logging to group chat chain reaction
     try {
         args.RUN_FIRST_TIME = true;
         client.commands.get('status').execute(client, null, args);

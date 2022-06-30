@@ -71,8 +71,7 @@ const execute = async (client, msg, args) => {
 
             setInterval(async () => {
                 await botLogGroup.sendMessage(await generateReplies());
-            // }, 15_000);
-            }, 3600_000);
+            }, currentEnv === 'production' ? 3600_000 : 15_000);
         }
 
         if (RUN_FIRST_TIME) {
