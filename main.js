@@ -12,6 +12,7 @@ require('./utils/db');
 const { currentEnv, currentPrefix, extractCommand, startNotificationCalculation, stopAllOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, getTimeLeftForSetTimeout, checkForSpam, checkForChance } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
+// const { reply } = require('./commands/admin/status');
 
 
 // --------------------------------------------------
@@ -68,6 +69,7 @@ client.on('ready', async () => {
 
     if (currentEnv === 'production') {
         const chats = await client.getChats();
+        // console.log(chats);
         const grandmasterChat = chats.find(chat => chat.id.user === GRANDMASTER);
         const twentyThreeHrsInMs = 82_800_000; // using numeric separator to improve readability
 
@@ -77,6 +79,14 @@ client.on('ready', async () => {
             await grandmasterChat.sendMessage("Reminder to restart the bot after 23 hours!");
         }, twentyThreeHrsInMs);
         console.log("Preparing to send bot restart reminder in 23 hours\n");
+    }
+
+    // Run status command here first to start logging to group chat chain reaction
+    try {
+        args.RUN_FIRST_TIME = true;
+        client.commands.get('status').execute(client, null, args);
+    } catch (error) {
+        console.error(error);
     }
 });
 
