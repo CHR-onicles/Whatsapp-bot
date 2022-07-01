@@ -1,5 +1,5 @@
 const { getMutedStatus, removeBotAdmin } = require("../../models/misc");
-const { isUserBotAdmin, currentEnv,  currentPrefix} = require("../../utils/helpers");
+const { isUserBotAdmin, currentEnv, currentPrefix } = require("../../utils/helpers");
 
 const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;

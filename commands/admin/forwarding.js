@@ -13,32 +13,33 @@ const execute = async (client, msg, args) => {
     const isBotAdmin = await isUserBotAdmin(contact);
     const curForwardingStatus = await getForwardingStatus();
 
-    if (isBotAdmin) {
-        switch (msgArgs) {
-            case 'status':
-            case 'stats':
-            case '-s':
-                await msg.reply(`Forwarding of important messages is ${curForwardingStatus ? 'ON ✅' : 'OFF ❌'}`);
-                break;
-
-            case 'enable':
-            case '-e':
-                await enableForwarding();
-                await msg.reply("Forwarding of important messages is enabled ✅");
-                break;
-
-            case 'disable':
-            case '-d':
-                await disableForwarding();
-                await msg.reply("Forwarding of important messages is disabled ❌");
-                break;
-
-            default:
-                await msg.reply("Please add valid arguments: \nstatus | enable | disable");
-                break;
-        }
-    } else {
+    if (!isBotAdmin) {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
+        return;
+    }
+
+    switch (msgArgs) {
+        case 'status':
+        case 'stats':
+        case '-s':
+            await msg.reply(`Forwarding of important messages is ${curForwardingStatus ? 'ON ✅' : 'OFF ❌'}`);
+            break;
+
+        case 'enable':
+        case '-e':
+            await enableForwarding();
+            await msg.reply("Forwarding of important messages is enabled ✅");
+            break;
+
+        case 'disable':
+        case '-d':
+            await disableForwarding();
+            await msg.reply("Forwarding of important messages is disabled ❌");
+            break;
+
+        default:
+            await msg.reply("Please add valid arguments: \nstatus | enable | disable");
+            break;
     }
 }
 

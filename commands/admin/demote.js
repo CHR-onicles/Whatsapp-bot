@@ -9,15 +9,15 @@ const execute = async (client, msg) => {
     const curChat = await msg.getChat();
     const contact = await msg.getContact();
     const isBotAdmin = await isUserBotAdmin(contact);
-
-    if (!userToDemote) {
-        await msg.reply("Please supply a valid user");
-        return;
-    }
-
+    
     // Don't do anything if run by a user who is not a bot admin.
     if (!isBotAdmin) {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
+        return;
+    }
+
+    if (!userToDemote) {
+        await msg.reply("Please supply a valid user");
         return;
     }
 
