@@ -13,16 +13,17 @@ const execute = async (client, msg) => {
 
     const foundContact = allContacts.find((con) => con.number === userToAcknowledge);
 
-    if (!userToAcknowledge) {
-        await msg.reply("Please supply a valid user");
-        return;
-    }
-
     // Don't do anything if run by a user who is not a bot admin.
     if (!isBotAdmin) {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
         return;
     }
+
+    if (!userToAcknowledge) {
+        await msg.reply("Please supply a valid user");
+        return;
+    }
+
 
     // Make sure the user is pinging someone
     if (userToAcknowledge[0] !== '@') {

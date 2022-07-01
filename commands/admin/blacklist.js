@@ -10,6 +10,11 @@ const execute = async (client, msg) => {
     const isBotAdmin = await isUserBotAdmin(contact);
     const blacklistedUsers = await getBlacklistedUsers();
 
+    if (!isBotAdmin) {
+        await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
+        return;
+    }
+
     if (!blacklistedUsers.length) {
         await msg.reply("There are currently no blacklisted users");
         return;
@@ -22,11 +27,7 @@ const execute = async (client, msg) => {
         }
     }
 
-    if (isBotAdmin) {
-        await msg.reply("〘💀 𝔹𝕝𝕒𝕔𝕜𝕝𝕚𝕤𝕥𝕖𝕕 𝕦𝕤𝕖𝕣𝕤 💀〙\n\n" + foundBlacklistedUsers.map(blackUser => `➣ ${blackUser.number} ~ ${blackUser?.pushname || ''}\n`).join(''));
-    } else {
-        await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
-    }
+    await msg.reply("〘💀 𝔹𝕝𝕒𝕔𝕜𝕝𝕚𝕤𝕥𝕖𝕕 𝕦𝕤𝕖𝕣𝕤 💀〙\n\n" + foundBlacklistedUsers.map(blackUser => `➣ ${blackUser.number} ~ ${blackUser?.pushname || ''}\n`).join(''));
 }
 
 

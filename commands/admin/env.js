@@ -7,12 +7,13 @@ const execute = async (client, msg) => {
 
     const contact = await msg.getContact();
     const isBotAdmin = await isUserBotAdmin(contact);
-    if (isBotAdmin) {
-        await msg.reply(`Bot is currently running in *${currentEnv}* environment`)
-    } else {
+
+    if (!isBotAdmin) {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
         return;
     }
+
+    await msg.reply(`Bot is currently running in *${currentEnv}* environment`)
 }
 
 

@@ -11,8 +11,6 @@ const execute = async (client, msg) => {
     const isBotAdmin = await isUserBotAdmin(contact);
     const blacklistedUsers = new Set(await getBlacklistedUsers());
 
-    const foundContact = allContacts.find((con) => con.number === userToIgnore);
-
     // Don't do anything if run by a user who is not a bot admin.
     if (!isBotAdmin) {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
@@ -30,6 +28,7 @@ const execute = async (client, msg) => {
         return;
     }
 
+    const foundContact = allContacts.find((con) => con.number === userToIgnore);
     userToIgnore = userToIgnore.slice(1);
     if (blacklistedUsers.has(userToIgnore)) {
         await msg.reply("This user is already blacklisted 😒");
