@@ -10,6 +10,15 @@ const execute = async (client, msg) => {
     const isBotAdmin = await isUserBotAdmin(contact);
 
     if (isBotAdmin) {
+
+        // Helper function to reduce repetition
+        const helper = async (courseCode, enableStatus) => {
+            await enableOrDisableNotificationForCourse(courseCode, enableStatus);
+            await stopAllOngoingNotifications();
+            await startNotificationCalculation(client);
+            await msg.reply(`Notifications for *Systems Programming* have been turned *${enableStatus ? 'ON' : 'OFF'}*`);
+        }
+
         switch (args.join(' ').trim()) {
             case 'status':
             case 'stats':
@@ -45,8 +54,7 @@ const execute = async (client, msg) => {
             case '-e CSCD416':
             case '-e c416':
             case '-e C416':
-                await enableOrDisableNotificationForCourse('CSCD416', true);
-                await msg.reply("Notifications for *Systems Programming* have been turned *ON*");
+                await helper('CSCD416', true);
                 break;
 
             case 'enable CSCD418':
@@ -54,8 +62,7 @@ const execute = async (client, msg) => {
             case '-e CSCD418':
             case '-e c418':
             case '-e C418':
-                await enableOrDisableNotificationForCourse('CSCD418', true);
-                await msg.reply("Notifications for *Computer Systems Security* have been turned *ON*");
+                await helper('CSCD418', true);
                 break;
 
             case 'enable CSCD422':
@@ -63,8 +70,7 @@ const execute = async (client, msg) => {
             case '-e CSCD422':
             case '-e c422':
             case '-e C422':
-                await enableOrDisableNotificationForCourse('CSCD422', true);
-                await msg.reply("Notifications for *Human Computer Interaction* have been turned *ON*");
+                await helper('CSCD422', true);
                 break;
 
             case 'enable CSCD424':
@@ -72,8 +78,7 @@ const execute = async (client, msg) => {
             case '-e CSCD424':
             case '-e c424':
             case '-e C424':
-                await enableOrDisableNotificationForCourse('CSCD424', true);
-                await msg.reply("Notifications for *Management Principles in Computing* have been turned *ON*");
+                await helper('CSCD424', true);
                 break;
 
             case 'enable CSCD400':
@@ -81,8 +86,7 @@ const execute = async (client, msg) => {
             case '-e CSCD400':
             case '-e c400':
             case '-e C400':
-                await enableOrDisableNotificationForCourse('CSCD400', true);
-                await msg.reply("Notifications for *Project* have been turned *ON*");
+                await helper('CSCD400', true);
                 break;
 
             case 'enable CSCD426':
@@ -90,8 +94,7 @@ const execute = async (client, msg) => {
             case '-e CSCD426':
             case '-e c426':
             case '-e C426':
-                await enableOrDisableNotificationForCourse('CSCD426', true);
-                await msg.reply("Notifications for *Multimedia Applications* have been turned *ON*");
+                await helper('CSCD426', true);
                 break;
 
             case 'enable CSCD428':
@@ -99,8 +102,7 @@ const execute = async (client, msg) => {
             case '-e CSCD428':
             case '-e c428':
             case '-e C428':
-                await enableOrDisableNotificationForCourse('CSCD428', true);
-                await msg.reply("Notifications for *Expert Systems* have been turned *ON*");
+                await helper('CSCD428', true);
                 break;
 
             case 'enable CSCD432':
@@ -108,8 +110,7 @@ const execute = async (client, msg) => {
             case '-e CSCD432':
             case '-e c432':
             case '-e C432':
-                await enableOrDisableNotificationForCourse('CSCD432', true);
-                await msg.reply("Notifications for *Concurrent & Distributed Systems* have been turned *ON*");
+                await helper('CSCD432', true);
                 break;
 
             case 'enable CSCD434':
@@ -117,8 +118,7 @@ const execute = async (client, msg) => {
             case '-e CSCD434':
             case '-e c434':
             case '-e C434':
-                await enableOrDisableNotificationForCourse('CSCD434', true);
-                await msg.reply("Notifications for *Mobile Computing* have been turned *ON*");
+                await helper('CSCD434', true);
                 break;
 
 
@@ -136,8 +136,7 @@ const execute = async (client, msg) => {
             case '-d CSCD416':
             case '-d c416':
             case '-d C416':
-                await enableOrDisableNotificationForCourse('CSCD416', false);
-                await msg.reply("Notifications for *Systems Programming* have been turned *OFF*");
+                await helper('CSCD416', false);
                 break;
 
             case 'disable CSCD418':
@@ -145,8 +144,7 @@ const execute = async (client, msg) => {
             case '-d CSCD418':
             case '-d c418':
             case '-d C418':
-                await enableOrDisableNotificationForCourse('CSCD418', false);
-                await msg.reply("Notifications for *Computer Systems Security* have been turned *OFF*");
+                await helper('CSCD418', false);
                 break;
 
             case 'disable CSCD422':
@@ -154,8 +152,7 @@ const execute = async (client, msg) => {
             case '-d CSCD422':
             case '-d c422':
             case '-d C422':
-                await enableOrDisableNotificationForCourse('CSCD422', false);
-                await msg.reply("Notifications for *Human Computer Interaction* have been turned *OFF*");
+                await helper('CSCD422', false);
                 break;
 
             case 'disable CSCD424':
@@ -163,8 +160,7 @@ const execute = async (client, msg) => {
             case '-d CSCD424':
             case '-d c424':
             case '-d C424':
-                await enableOrDisableNotificationForCourse('CSCD424', false);
-                await msg.reply("Notifications for *Management Principles in Computing* have been turned *OFF*");
+                await helper('CSCD424', false);
                 break;
 
             case 'disable CSCD400':
@@ -172,8 +168,7 @@ const execute = async (client, msg) => {
             case '-d CSCD400':
             case '-d c400':
             case '-d C400':
-                await enableOrDisableNotificationForCourse('CSCD400', false);
-                await msg.reply("Notifications for *Project* have been turned *OFF*");
+                await helper('CSCD400', false);
                 break;
 
             case 'disable CSCD426':
@@ -181,8 +176,7 @@ const execute = async (client, msg) => {
             case '-d CSCD426':
             case '-d c426':
             case '-d C426':
-                await enableOrDisableNotificationForCourse('CSCD426', false);
-                await msg.reply("Notifications for *Multimedia Applications* have been turned *OFF*");
+                await helper('CSCD426', false);
                 break;
 
             case 'disable CSCD428':
@@ -190,8 +184,7 @@ const execute = async (client, msg) => {
             case '-d CSCD428':
             case '-d c428':
             case '-d C428':
-                await enableOrDisableNotificationForCourse('CSCD428', false);
-                await msg.reply("Notifications for *Expert Systems* have been turned *OFF*");
+                await helper('CSCD428', false);
                 break;
 
             case 'disable CSCD432':
@@ -199,8 +192,7 @@ const execute = async (client, msg) => {
             case '-d CSCD432':
             case '-d c432':
             case '-d C432':
-                await enableOrDisableNotificationForCourse('CSCD432', false);
-                await msg.reply("Notifications for *Concurrent & Distributed Systems* have been turned *OFF*");
+                await helper('CSCD432', false);
                 break;
 
             case 'disable CSCD434':
@@ -208,8 +200,7 @@ const execute = async (client, msg) => {
             case '-d CSCD434':
             case '-d c434':
             case '-d C434':
-                await enableOrDisableNotificationForCourse('CSCD434', false);
-                await msg.reply("Notifications for *Mobile Computing* have been turned *OFF*");
+                await helper('CSCD434', false);
                 break;
 
             default:

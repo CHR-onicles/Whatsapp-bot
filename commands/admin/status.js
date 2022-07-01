@@ -62,18 +62,18 @@ const execute = async (client, msg, args) => {
             return reply.join('\n');
         }
 
-        let botLogGroup = null;
         // --------------------------------------------------------
         const logger = async () => {
-            await botLogGroup.sendMessage(await generateReplies()); // send status once before the 1hour interval starts
+            const chats = await client.getChats();
+            const botLogGroup = chats.find(chat => chat.pinned && chat.id.user === process.env.BOT_LOG_GROUP);
+            //! This generates an error only in production stating that botLogGroup is undefined
+            // await botLogGroup.sendMessage(await generateReplies()); // send status once before the 1hour interval starts
             setInterval(async () => {
                 await botLogGroup.sendMessage(await generateReplies());
-            }, currentEnv === 'production' ? 3600_000 : 30_000);
+            }, currentEnv === 'production' ? 1800_000 : 30_000);
         }
-        
+
         if (RUN_FIRST_TIME) {
-            const chats = await client.getChats();
-            botLogGroup = chats.find(chat => chat.pinned && chat.id.user === process.env.BOT_LOG_GROUP);
             logger();
             args.RUN_FIRST_TIME = false;
         } else {
