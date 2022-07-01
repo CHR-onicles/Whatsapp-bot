@@ -74,10 +74,10 @@ const execute = async (client, msg, args) => {
         await botLogGroup.sendMessage(await generateReplies()); // send status once before the 1hour interval starts
         setInterval(async () => {
             await botLogGroup.sendMessage(await generateReplies());
-        }, currentEnv === 'production' ? 3600_000 : 30_000);
+        }, 3600_000);
     }
 
-    if (RUN_FIRST_TIME) {
+    if (RUN_FIRST_TIME && currentEnv === 'production') {
         logger();
         args.RUN_FIRST_TIME = false;
     } else {
