@@ -20,13 +20,15 @@ const execute = async (client, msg, args) => {
         [{
             title: '',
             rows: [
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-415_dev' : 'slides-415_prod', title: 'Compilers', description: 'CSCD 415' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-417_dev' : 'slides-417_prod', title: 'Theory & Survey of Programming Languages', description: 'CSCD 417' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-419_dev' : 'slides-419_prod', title: 'Formal Methods', description: 'CSCD 419' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-421_dev' : 'slides-421_prod', title: 'Accounting', description: 'CSCD 421' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-423_dev' : 'slides-423_prod', title: 'Software Modelling & Simulation', description: 'CSCD 423' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-409_dev' : 'slides-409_prod', title: 'Data Mining', description: 'CSCD 409' },
-                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-427_dev' : 'slides-427_prod', title: 'Networking', description: 'CSCD 427' },
+                // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-416_dev' : 'slides-416_prod', title: 'System Programming', description: 'CSCD 416' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-418_dev' : 'slides-418_prod', title: 'Computer Systems Security', description: 'CSCD 418' },
+                // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-422_dev' : 'slides-422_prod', title: 'Human Computer Interaction', description: 'CSCD 422' },
+                // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-424_dev' : 'slides-424_prod', title: 'Management Principles', description: 'CSCD 424' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-400_dev' : 'slides-400_prod', title: 'Project', description: 'CSCD 400' },
+                // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-426_dev' : 'slides-426_prod', title: 'Multimedia Applications', description: 'CSCD 426' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-428_dev' : 'slides-428_prod', title: 'Expert Systems', description: 'CSCD 428' },
+                // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-432_dev' : 'slides-432_prod', title: 'Concurrent & Distributed Systems', description: 'CSCD 432' },
+                // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-434_dev' : 'slides-434_prod', title: 'Mobile Computing', description: 'CSCD 434' },
             ]
         }],
         pickRandomReply(COURSE_MATERIALS_REPLIES),
@@ -43,88 +45,112 @@ const execute = async (client, msg, args) => {
         console.log(`Slides from ${currentEnv} env`)
 
         switch (selectedRowId) {
-            case '415_dev':
+            case '416_dev':
                 if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES)); // have to repeat this to avoid it leaking when bot environments are running simultaneously
-                sendSlides(msg, 'CSCD 415');
+                sendSlides(msg, 'CSCD 416');
                 break;
 
-            case '415_prod':
+            case '416_prod':
                 if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 415');
+                sendSlides(msg, 'CSCD 416');
                 break;
 
-            case '417_dev':
+            case '418_dev':
                 if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 417');
+                sendSlides(msg, 'CSCD 418');
                 break;
 
-            case '417_prod':
+            case '418_prod':
                 if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 417');
+                sendSlides(msg, 'CSCD 418');
                 break;
 
-            case '419_dev':
+            case '422_dev':
                 if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 419');
+                sendSlides(msg, 'CSCD 422');
                 break;
 
-            case '419_prod':
+            case '422_prod':
                 if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 419');
+                sendSlides(msg, 'CSCD 422');
                 break;
 
-            case '421_dev':
+            case '424_dev':
                 if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 421');
+                sendSlides(msg, 'CSCD 424');
                 break;
 
-            case '421_prod':
+            case '424_prod':
                 if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 421');
+                sendSlides(msg, 'CSCD 424');
                 break;
 
-            case '409_dev':
+            case '400_dev':
                 if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 409');
+                sendSlides(msg, 'CSCD 400');
                 break;
 
-            case '409_prod':
+            case '400_prod':
                 if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 409');
+                sendSlides(msg, 'CSCD 400');
                 break;
 
-            case '423_dev':
+            case '426_dev':
                 if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 423');
+                sendSlides(msg, 'CSCD 426');
                 break;
 
-            case '423_prod':
+            case '426_prod':
                 if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 423');
+                sendSlides(msg, 'CSCD 426');
                 break;
 
-            case '427_dev':
+            case '428_dev':
                 if (currentEnv !== 'development') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 427');
+                sendSlides(msg, 'CSCD 428');
                 break;
 
-            case '427_prod':
+            case '428_prod':
                 if (currentEnv !== 'production') break;
                 await msg.reply(pickRandomReply(WAIT_REPLIES));
-                sendSlides(msg, 'CSCD 427');
+                sendSlides(msg, 'CSCD 428');
+                break;
+
+            case '432_dev':
+                if (currentEnv !== 'development') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
+                sendSlides(msg, 'CSCD 432');
+                break;
+
+            case '432_prod':
+                if (currentEnv !== 'production') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
+                sendSlides(msg, 'CSCD 432');
+                break;
+
+            case '434_dev':
+                if (currentEnv !== 'development') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
+                sendSlides(msg, 'CSCD 434');
+                break;
+
+            case '434_prod':
+                if (currentEnv !== 'production') break;
+                await msg.reply(pickRandomReply(WAIT_REPLIES));
+                sendSlides(msg, 'CSCD 434');
                 break;
 
             default:
