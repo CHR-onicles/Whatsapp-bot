@@ -35,7 +35,7 @@ const execute = async (client, msg) => {
         return;
     } else {
         // Prevent trying to blacklist the bot.
-        if (userToIgnore === process.env.BOT_NUMBER) {
+        if (userToIgnore === client.info.wid.user) {
             await msg.reply("I'm the one doing the ignoring here fam 🐦");
             return;
         } else if (userToIgnore === process.env.GRANDMASTER) {

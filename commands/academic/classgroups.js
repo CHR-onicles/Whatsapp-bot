@@ -31,7 +31,7 @@ const execute = async (client, msg) => {
 
     for (const group of classGroups) {
         // Can't do this in forEach because it returns nothing for some reason.
-        const botChat = group.participants.find((chat) => chat.id.user === process.env.BOT_NUMBER );
+        const botChat = group.participants.find((chat) => chat.id.user === client.info.wid.user);
         if (botChat.isAdmin) {
             const link = await group.getInviteCode();
             classGroupLinks.push(link);
@@ -45,13 +45,13 @@ const execute = async (client, msg) => {
     classGroups.forEach((chat, index) => {
         if (!classGroupLinks[index]) {
             // If bot is not admin send different reply
-            reply += `🏫 *${chat.name}*\n_Can't generate group link because I am not an admin here_${index === classGroups.length-1 ? '' : '\n\n'}`
+            reply += `🏫 *${chat.name}*\n_Can't generate group link because I am not an admin here_${index === classGroups.length - 1 ? '' : '\n\n'}`
         } else {
-            reply += `🏫 *${chat.name}*\nhttps://chat.whatsapp.com/${classGroupLinks[index]}${index === classGroups.length-1 ? '' : '\n\n'}`
+            reply += `🏫 *${chat.name}*\nhttps://chat.whatsapp.com/${classGroupLinks[index]}${index === classGroups.length - 1 ? '' : '\n\n'}`
         }
     })
 
-    await chatFromContact.sendMessage(reply, '', {linkPreview: true}); // link preview not supported in MD, whatsapp fault, not library
+    await chatFromContact.sendMessage(reply, '', { linkPreview: true }); // link preview not supported in MD, whatsapp fault, not library
 }
 
 
