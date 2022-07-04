@@ -21,7 +21,7 @@ const execute = async (client, msg) => {
     if (chat.participants) {
         for (const participant of chat.participants) {
             const newContact = await client.getContactById(participant.id._serialized);
-            if (newContact.id.user.includes(contact.id.user) || newContact.id.user.includes(process.env.BOT_NUMBER)) continue;
+            if (newContact.id.user.includes(contact.id.user) || newContact.id.user.includes(client.info.wid.user)) continue;
             mentions.push(newContact);
             text += `@${participant.id.user} `;
         }

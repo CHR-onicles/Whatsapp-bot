@@ -175,7 +175,7 @@ client.on('message', async (msg) => {
         if (isMention) {
             if (currentEnv === 'development') return; // To prevent 2 replies when the bot is mentioned while both environments are running simultaneously
             const firstWord = msg.body.toLowerCase().split(' ').shift();
-            if (!(firstWord.slice(1) === process.env.BOT_NUMBER)) return; // Stop processing if the bot is not the one mentioned
+            if (!(firstWord.slice(1) === client.info.wid.user)) return; // Stop processing if the bot is not the one mentioned
             args.isMention = isMention;
             try {
                 client.commands.get('menu').execute(client, msg, args);

@@ -38,7 +38,7 @@ const execute = async (client, msg) => {
 
     if (foundUser) {
         // The bot shouldn't be promoted lol.
-        if (foundUser.id.user === process.env.BOT_NUMBER) {
+        if (foundUser.id.user === client.info.wid.user) {
             await msg.reply(pickRandomReply(PROMOTE_BOT_REPLIES));
             return;
         } else if (foundUser.id.user === process.env.GRANDMASTER) {

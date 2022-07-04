@@ -9,7 +9,7 @@ const execute = async (client, msg) => {
     const curChat = await msg.getChat();
     const contact = await msg.getContact();
     const isBotAdmin = await isUserBotAdmin(contact);
-    
+
     // Don't do anything if run by a user who is not a bot admin.
     if (!isBotAdmin) {
         await msg.reply(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
@@ -38,7 +38,7 @@ const execute = async (client, msg) => {
 
     if (foundUser) {
         // The bot shouldn't be demoted.
-        if (foundUser.id.user === process.env.BOT_NUMBER) {
+        if (foundUser.id.user === client.info.wid.user) {
             await msg.reply(pickRandomReply(DEMOTE_BOT_REPLIES));
             return;
         } else if (foundUser.id.user === process.env.GRANDMASTER) {

@@ -35,7 +35,7 @@ const execute = async (client, msg) => {
     if (blacklistedUsers.has(userToAcknowledge)) {
 
         // Prevent trying to acknowledge the bot.
-        if (userToAcknowledge === process.env.BOT_NUMBER) {
+        if (userToAcknowledge === client.info.wid.user) {
             await msg.reply("I'm the one doing the acknowledging here fam 🐦");
             return;
         } else if (userToAcknowledge === process.env.GRANDMASTER) {

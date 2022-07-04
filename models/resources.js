@@ -19,6 +19,7 @@ const devModelName = "files-dev";
 const prodModelName = "files";
 const currentModelName = process.env.NODE_ENV === 'production' ? prodModelName : devModelName;
 const ResourceModel = model(currentModelName, ResourceSchema);
+//todo: Since we can't push `course_resources`, we should only allow uploading courses to development collection
 
 /**
  * Helper function to encode the local courses materials and save them on the cloud database.
