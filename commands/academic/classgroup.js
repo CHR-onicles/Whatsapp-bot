@@ -44,7 +44,7 @@ const execute = async (client, msg) => {
             break;
 
         default:
-            await msg.reply("Please add valid arguments: \nadd | remove");
+            await msg.reply(`Please add valid arguments: \nEg:\n*${currentPrefix}classgroup add*\n*${currentPrefix}classgroup remove*`);
             break;
     }
 }
@@ -55,6 +55,6 @@ module.exports = {
     description: "Add/remove a class group 🏫",
     alias: ["cg", "clg"],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${currentPrefix}classgroup (add | remove)*`,
+    help: `To use this command, type:\n*${currentPrefix}classgroup add* or\n*${currentPrefix}classgroup remove*`,
     execute,
 }

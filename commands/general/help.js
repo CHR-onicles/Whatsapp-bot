@@ -61,6 +61,6 @@ module.exports = {
     description: "Give more information about specific commands 💡",
     alias: ["h"],
     category: "everyone", // admin | everyone
-    help: `To use this command, type:\n*${currentPrefix}help*  or\n*${currentPrefix}help <command>*`,
+    help: `To use this command, type:\n*${currentPrefix}help* or\n*${currentPrefix}help <command>*`,
     execute,
 }

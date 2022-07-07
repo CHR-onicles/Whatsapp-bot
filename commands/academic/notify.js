@@ -145,7 +145,7 @@ const execute = async (client, msg, args) => {
             break;
 
         default:
-            await msg.reply(`You missed some arguments!\nCorrect syntax:\n${currentPrefix}notify (enable | disable)`)
+            await msg.reply(`You missed some arguments!\nCorrect syntax:\n*${currentPrefix}notify enable*\n*${currentPrefix}notify disable*`)
             break;
     }
 }
@@ -155,6 +155,6 @@ module.exports = {
     description: "Turn on/off reminders for class 🔔",
     alias: [],
     category: "everyone", // admin | everyone
-    help: `To use this command, type:\n*${currentPrefix}notify (enable | disable)*`,
+    help: `To use this command, type:\n*${currentPrefix}notify enable* or\n*${currentPrefix}notify disable*`,
     execute,
 }
