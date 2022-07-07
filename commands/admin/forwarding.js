@@ -38,7 +38,7 @@ const execute = async (client, msg, args) => {
             break;
 
         default:
-            await msg.reply("Please add valid arguments: \nstatus | enable | disable");
+            await msg.reply(`Please add valid arguments:\nEg:\n*${currentPrefix}forwarding status*\n*${currentPrefix}forwarding enable*\n*${currentPrefix}forwarding disable*`);
             break;
     }
 }
@@ -49,6 +49,6 @@ module.exports = {
     description: "Turn on/off forwarding of announcements and links 📲",
     alias: ["fwd"],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${currentPrefix}forwarding (status | enable | disable)*`,
+    help: `To use this command, type:\n*${currentPrefix}forwarding status*\n*${currentPrefix}forwarding enable* or\n*${currentPrefix}forwarding disable*`,
     execute,
 }

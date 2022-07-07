@@ -64,6 +64,6 @@ module.exports = {
     description: "Blacklist a user ☠",
     alias: ["ig"],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${currentPrefix}ignore <@user>*`,
+    help: `To use this command, type:\n*${currentPrefix}ignore @user*`,
     execute,
 }

@@ -67,6 +67,6 @@ module.exports = {
     description: "Remove a user from blacklist 💫",
     alias: ["ack", "ak"],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${currentPrefix}acknowledge <@user>*`,
+    help: `To use this command, type:\n*${currentPrefix}acknowledge @user*`,
     execute,
 }

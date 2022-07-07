@@ -208,7 +208,7 @@ const execute = async (client, msg) => {
             break;
 
         default:
-            await msg.reply("Please add valid arguments: \nEg: status | enable <course code> | disable <course code> | enable all | disable all ");
+            await msg.reply(`Please add valid arguments: \nEg:\n*${currentPrefix}notifs status*\n*${currentPrefix}notifs enable CSCD400*\n*${currentPrefix}notifs disable CSCD400*\n*${currentPrefix}notifs enable all*\n*${currentPrefix}notifs disable all*`);
             break;
     }
 }
@@ -219,6 +219,6 @@ module.exports = {
     description: "Get status or turn on/off class notifications 🔈",
     alias: [],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${currentPrefix}notifs (status | enable <course code> | disable <course code> | enable all | disable all)*`,
+    help: `To use this command, type:\n*${currentPrefix}notifs status* or\n*${currentPrefix}notifs enable CSCD400* or\n*${currentPrefix}notifs disable CSCD400* or\n*${currentPrefix}notifs enable all* or\n*${currentPrefix}notifs disable all*`,
     execute,
 }
