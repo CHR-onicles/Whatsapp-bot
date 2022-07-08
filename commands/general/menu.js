@@ -27,6 +27,9 @@ const execute = async (client, msg, args) => {
         if (!isBotAdmin && value.category === 'everyone') {
             tempRows.push({ id: `menu-${startID}`, title: currentPrefix + value.name, description: value.description });
         } else if (isBotAdmin) {
+            if ((value.name === 'selfpromote' || value.name === 'selfdemote') && contact.id.user !== process.env.GRANDMASTER) {
+                return; // kinda acts like "continue"
+            }
             tempRows.push({ id: `menu-${startID}`, title: currentPrefix + value.name, description: value.description });
         }
     })
