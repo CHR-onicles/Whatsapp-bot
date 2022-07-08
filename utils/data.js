@@ -51,7 +51,7 @@ exports.ALL_CLASSES = [
             { name: '_HCI_ | ⏰10:30am | 🏠N3', code: 'CSCD422', duration: 1 },
             { name: '_Comp Security_ | ⏰1:30pm | 🏠MATH05', code: 'CSCD418', duration: 1 },
             { name: '_Mult Applications_ | ⏰2:30pm | 🏠MATH05', code: 'CSCD426', duration: 1 },
-            { name: '_Sys Programming_ | ⏰2:30pm | 🏠NNB2', code: 'CSCD416', duration: 1 },
+            { name: '_Sys Programming_ | ⏰3:30pm | 🏠NNB2', code: 'CSCD416', duration: 1 },
             { name: '_Mgmt Principles_ | ⏰4:30pm | 🏠NNB2', code: 'CSCD424', duration: 1 },
             // { name: '_Test Course_ | ⏰7:24pm | 🏠NNB2', duration: 1 }
         ]
