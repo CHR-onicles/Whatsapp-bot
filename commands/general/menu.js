@@ -10,6 +10,7 @@ const execute = async (client, msg, args) => {
     const chatFromContact = await contact.getChat();
     const curChat = await msg.getChat();
     const isBotAdmin = await isUserBotAdmin(contact);
+    const isGrandmaster = contact.id.user === process.env.GRANDMASTER;
 
     if (curChat.isGroup) {
         await msg.react(pickRandomReply(REACT_EMOJIS));
@@ -27,6 +28,9 @@ const execute = async (client, msg, args) => {
         if (!isBotAdmin && value.category === 'everyone') {
             tempRows.push({ id: `menu-${startID}`, title: currentPrefix + value.name, description: value.description });
         } else if (isBotAdmin) {
+            if ((value.name === 'selfpromote' || value.name === 'selfdemote') && contact.id.user !== process.env.GRANDMASTER) {
+                return; // kinda acts like "continue"
+            }
             tempRows.push({ id: `menu-${startID}`, title: currentPrefix + value.name, description: value.description });
         }
     })
@@ -37,7 +41,7 @@ const execute = async (client, msg, args) => {
         '\nThis is a list of commands the bot can execute',
         'See commands',
         [{
-            title: `Commands available to ${isBotAdmin ? 'bot admins' : 'everyone'}`,
+            title: `Commands available to ${isBotAdmin ? (isGrandmaster ? 'Grandmaster' : 'bot admins') : 'everyone'}`,
             rows: tempRows
         }],
         isBotAdmin ? pickRandomReply(PING_REPLIES.botAdmin.concat(PING_REPLIES.everyone)) : pickRandomReply(PING_REPLIES.everyone),
