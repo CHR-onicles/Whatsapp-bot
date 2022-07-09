@@ -40,15 +40,15 @@ const DEFAULT_ID = { _id: 1 };  // to always update one specific document
  */
 const initCollection = async () => {
     const count = await MiscellaneousModel.countDocuments({});
-    console.log(count);
+    // console.log([MISC MODEL] count);
     if (!count) {
         const misc = new MiscellaneousModel({ _id: 1 });
         try {
             await misc.save();
         } catch (err) {
-            console.error(err);
+            console.error('[MISC MODEL ERROR]', err);
         }
-    } else console.log(currentModelName + " collection is not empty");
+    } else console.log('[MISC MODEL]', currentModelName + " collection is not empty");
 }
 initCollection();
 
@@ -62,7 +62,7 @@ initCollection();
  */
 exports.getMutedStatus = async () => {
     const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isMuted: 1 });
-    // console.log(status);
+    // console.log('[MISC MODEL]', status);
     return status.isMuted;
 }
 
@@ -73,10 +73,10 @@ exports.getMutedStatus = async () => {
 exports.muteBot = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isMuted: true } });
-        // console.log(res);
-        console.log("Bot muted");
+        // console.log('[MISC MODEL]', res);
+        console.log("[MISC MODEL] Bot muted");
     } catch (error) {
-        console.log(error)
+        console.error('[MISC MODEL ERROR]', error)
     }
 }
 
@@ -87,10 +87,10 @@ exports.muteBot = async () => {
 exports.unmuteBot = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isMuted: false } });
-        // console.log(res);
-        console.log("Bot unmuted");
+        // console.log('[MISC MODEL]', res);
+        console.log("[MISC MODEL] Bot unmuted");
     } catch (error) {
-        console.log(error);
+        console.error('[MISC MODEL ERROR]', error);
     }
 }
 
@@ -99,10 +99,9 @@ exports.unmuteBot = async () => {
  * @async
  * @returns {Promise<boolean>} **True** if notifications are on for a specific course, **false** otherwise.
  */
-
 exports.getNotificationStatus = async () => {
     const status = await MiscellaneousModel.findOne(DEFAULT_ID, { classNotifications: 1 });
-    // console.log(status);
+    // console.log('[MISC MODEL]', status);
     return status.classNotifications;
 }
 
@@ -114,10 +113,10 @@ exports.getNotificationStatus = async () => {
 exports.enableOrDisableAllNotifications = async (status) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { CSCD416: status, CSCD418: status, CSCD422: status, CSCD424: status, CSCD400: status, CSCD426: status, CSCD428: status, CSCD432: status, CSCD434: status } } });
-        // console.log(res);
-        console.log("All notifications have been turned ON\n")
+        // console.log('[MISC MODEL]',res);
+        console.log("[MISC MODEL] All notifications have been turned ON\n")
     } catch (error) {
-        console.log(error);
+        console.error('[MISC MODEL ERROR]', error);
     }
 }
 
@@ -165,7 +164,7 @@ exports.enableOrDisableNotificationForCourse = async (courseCode, status) => {
                 break;
         }
     } catch (error) {
-        console.error(error);
+        console.error('[MISC MODEL ERROR]', error);
     }
 }
 
@@ -176,7 +175,7 @@ exports.enableOrDisableNotificationForCourse = async (courseCode, status) => {
  */
 exports.getForwardingStatus = async () => {
     const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isForwardingOn: 1 });
-    // console.log(status);
+    // console.log('[MISC MODEL]', status);
     return status.isForwardingOn;
 }
 
@@ -187,10 +186,10 @@ exports.getForwardingStatus = async () => {
 exports.enableForwarding = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: true } });
-        // console.log(res);
-        console.log("Forwarding of important messages has been turned ON")
+        // console.log('[MISC MODEL]', res);
+        console.log("[MISC MODEL] Forwarding of important messages has been turned ON")
     } catch (error) {
-        console.log(error)
+        console.error('[MISC MODEL ERROR]', error)
     }
 }
 
@@ -201,10 +200,10 @@ exports.enableForwarding = async () => {
 exports.disableForwarding = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: false } });
-        // console.log(res)
-        console.log("Forwarding of important messages has been turned OFF")
+        // console.log('[MISC MODEL]', res)
+        console.log("[MISC MODEL] Forwarding of important messages has been turned OFF")
     } catch (error) {
-        console.log(error)
+        console.error('[MISC MODEL ERROR]', error)
     }
 }
 
@@ -215,7 +214,7 @@ exports.disableForwarding = async () => {
  */
 exports.getAllLinks = async () => {
     const links = await MiscellaneousModel.findOne(DEFAULT_ID, { allLinks: 1 });
-    // console.log(links.allLinks);
+    // console.log('[MISC MODEL]', links.allLinks);
     return links.allLinks;
 }
 
@@ -227,10 +226,10 @@ exports.getAllLinks = async () => {
 exports.addLink = async (newLink) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { allLinks: newLink } });
-        // console.log(res);
-        console.log('New Link added');
+        // console.log('[MISC MODEL]', res);
+        console.log('[MISC MODEL] New Link added');
     } catch (error) {
-        console.log(error);
+        console.error('[MISC MODEL]', error);
     }
 }
 
@@ -241,9 +240,9 @@ exports.addLink = async (newLink) => {
 exports.removeAllLinks = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { allLinks: [] } });
-        // console.log(res);
+        // console.log('[MISC MODEL]', res);
     } catch (error) {
-        console.log(error)
+        console.error('[MISC MODEL]', error)
     }
 }
 
@@ -254,7 +253,7 @@ exports.removeAllLinks = async () => {
  */
 exports.getAllAnnouncements = async () => {
     const ann = await MiscellaneousModel.findOne(DEFAULT_ID, { allAnnouncements: 1 });
-    // console.log(ann.allAnnouncements);
+    // console.log('[MISC MODEL]', ann.allAnnouncements);
     return ann.allAnnouncements;
 }
 
@@ -266,11 +265,11 @@ exports.getAllAnnouncements = async () => {
 exports.addAnnouncement = async (newAnnouncement) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { allAnnouncements: newAnnouncement } });
-        // console.log(res);
-        console.log('New announcement added');
+        // console.log('[MISC MODEL]', res);
+        console.log('[MISC MODEL] New announcement added');
 
     } catch (error) {
-        console.log(error)
+        console.error('[MISC MODEL ERROR]', error)
     }
 }
 
@@ -281,10 +280,10 @@ exports.addAnnouncement = async (newAnnouncement) => {
 exports.removeAllAnnouncements = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { allAnnouncements: [] } });
-        // console.log(res);
-        console.log("Cleared all announcements");
+        // console.log('[MISC MODEL]', res);
+        console.log("[MISC MODEL] Cleared all announcements");
     } catch (error) {
-        console.log(error);
+        console.error('[MISC MODEL]', error);
     }
 }
 
@@ -295,7 +294,7 @@ exports.removeAllAnnouncements = async () => {
  */
 exports.getAllBotAdmins = async () => {
     const botAdmins = await MiscellaneousModel.distinct("botAdmins");
-    // console.log(botAdmins);
+    // console.log('[MISC MODEL]', botAdmins);
     return botAdmins;
 }
 
@@ -307,9 +306,9 @@ exports.getAllBotAdmins = async () => {
 exports.addBotAdmin = async (newAdmin) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { botAdmins: newAdmin } });
-        // console.log(res);
+        // console.log('[MISC MODEL]', res);
     } catch (error) {
-        console.log(error)
+        console.error('[MISC MODEL ERROR]', error)
     }
 }
 
@@ -321,9 +320,9 @@ exports.addBotAdmin = async (newAdmin) => {
 exports.removeBotAdmin = async (admin) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { botAdmins: admin } });
-        // console.log(res);
+        // console.log('[MISC MODEL]', res);
     } catch (error) {
-        console.log(error);
+        console.error('[MISC MODEL ERROR]', error);
     }
 }
 
@@ -356,11 +355,11 @@ exports.addUserToBeNotified = async (newUser, rowId) => {
         } else if (rowId === '4') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { electiveMobile: newUser } });
         }
-        // console.log(res);
-        console.log("User: " + newUser + " subscribed to be notified for class with " + rowId === '1' ? 'Multimedia' : (rowId === '2' ? 'Expert' : rowId === '3' ? 'Concurrent' : 'Mobile') + ' as elective');
+        // console.log('[MISC MODEL]', res);
+        console.log("[MISC MODEL] User: " + newUser + " subscribed to be notified for class with " + rowId === '1' ? 'Multimedia' : (rowId === '2' ? 'Expert' : rowId === '3' ? 'Concurrent' : 'Mobile') + ' as elective');
 
     } catch (error) {
-        console.log(error);
+        console.error('[MISC MODEL ERROR]', error);
     }
 }
 
@@ -382,10 +381,10 @@ exports.removeUserToBeNotified = async (user, elective) => {
         } else if (elective === 'MC') {
             res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { electiveMobile: user } });
         }
-        // console.log(res);
-        console.log("User: " + user + " unsubscribed from being notified for class");
+        // console.log('[MISC MODEL]', res);
+        console.log("[MISC MODEL] User: " + user + " unsubscribed from being notified for class");
     } catch (error) {
-        console.log(error);
+        console.error('[MISC MODEL ERROR]', error);
     }
 }
 
@@ -396,7 +395,7 @@ exports.removeUserToBeNotified = async (user, elective) => {
  */
 exports.getForwardToUsers = async () => {
     const users = await MiscellaneousModel.findOne(DEFAULT_ID, { forwardToUsers: 1 });
-    // console.log(users.forwardToUsers);
+    // console.log('[MISC MODEL]', users.forwardToUsers);
     return users.forwardToUsers;
 }
 
@@ -407,7 +406,7 @@ exports.getForwardToUsers = async () => {
  */
 exports.getBlacklistedUsers = async () => {
     const users = await MiscellaneousModel.findOne(DEFAULT_ID, { blacklistedUsers: 1 });
-    // console.log(users);
+    // console.log('[MISC MODEL]', users);
     return users.blacklistedUsers;
 }
 
@@ -419,9 +418,9 @@ exports.getBlacklistedUsers = async () => {
 exports.addBlacklistedUser = async (user) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { blacklistedUsers: user } });
-        // console.log(res);
+        // console.log('[MISC MODEL]', res);
     } catch (e) {
-        console.error(e);
+        console.error('[MISC MODEL ERROR]', e);
     }
 }
 
@@ -433,9 +432,9 @@ exports.addBlacklistedUser = async (user) => {
 exports.removeBlacklistedUser = async (user) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { blacklistedUsers: user } });
-        // console.log(res);
+        // console.log('[MISC MODEL]', res);
     } catch (error) {
-        console.error(error)
+        console.error('[MISC MODEL ERROR]', error)
     }
 }
 
@@ -446,7 +445,7 @@ exports.removeBlacklistedUser = async (user) => {
  */
 exports.getAllClassGroups = async () => {
     const groups = await MiscellaneousModel.findOne(DEFAULT_ID, { classGroups: 1 });
-    // console.log(groups);
+    // console.log('[MISC MODEL]', groups);
     return groups.classGroups;
 }
 
@@ -458,9 +457,9 @@ exports.getAllClassGroups = async () => {
 exports.addClassGroup = async (group) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { classGroups: group } });
-        // console.log(res);
+        // console.log('[MISC MODEL]', res);
     } catch (error) {
-        console.log(error);
+        console.error('[MISC MODEL ERROR]', error);
     }
 }
 
@@ -472,8 +471,8 @@ exports.addClassGroup = async (group) => {
 exports.removeClassGroup = async (group) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { classGroups: group } });
-        // console.log(res);
+        // console.log('[MISC MODEL]', res);
     } catch (error) {
-        console.log(error);
+        console.log('[MISC MODEL ERROR]', error);
     }
 }

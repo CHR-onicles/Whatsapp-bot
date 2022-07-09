@@ -42,7 +42,7 @@ const execute = async (client, msg, args) => {
 
     if (isListResponse) {
         const selectedRowId = msg.selectedRowId.split('-')[1];
-        console.log(`Slides from ${currentEnv} env`)
+        console.log(`[SLIDES CMD] Slides from ${currentEnv} env`)
 
         switch (selectedRowId) {
             case '416_dev':

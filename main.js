@@ -25,7 +25,7 @@ const args = {};
 let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed = null;
-console.log("Current prefix:", currentPrefix);
+console.log("[PREFIX] Current prefix:", currentPrefix);
 
 
 
@@ -44,7 +44,7 @@ client.on('qr', (qr) => {
 });
 
 client.on("disconnected", () => {
-    console.log("Oh no! Client is disconnected!");
+    console.error("[CLIENT ERROR] Oh no! Client is disconnected!");
 })
 
 app.get("/", (req, res) => {
@@ -53,7 +53,7 @@ app.get("/", (req, res) => {
     );
 });
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+app.listen(port, () => console.log(`[SERVER] Server is running on port ${port}`));
 
 
 // --------------------------------------------------
@@ -62,14 +62,13 @@ app.listen(port, () => console.log(`Server is running on port ${port}`));
 
 // Bot initialization
 client.on('ready', async () => {
-    console.log('Client is ready!', currentEnv === 'development' ? '\n' : '');
+    console.log('[CLIENT] Client is ready!', currentEnv === 'development' ? '\n' : '');
     BOT_START_TIME = new Date();
     args.BOT_START_TIME = BOT_START_TIME;
     await startNotificationCalculation(client);
 
     if (currentEnv === 'production') {
         const chats = await client.getChats();
-        // console.log(chats);
         const grandmasterChat = chats.find(chat => chat.id.user === GRANDMASTER);
         const twentyThreeHrsInMs = 82_800_000; // using numeric separator to improve readability
 
@@ -78,16 +77,16 @@ client.on('ready', async () => {
         setTimeout(async () => {
             await grandmasterChat.sendMessage("Reminder to restart the bot after 23 hours!");
         }, twentyThreeHrsInMs);
-        console.log("Preparing to send bot restart reminder in 23 hours\n");
+        console.log("[CLIENT] Preparing to send bot restart reminder in 23 hours\n");
     }
 
     // Run status command here first to start logging to group chat chain reaction
     try {
         args.RUN_FIRST_TIME = true;
-        console.log("Starting logs...")
+        console.log("[CLIENT] Starting logs...")
         client.commands.get('status').execute(client, null, args);
     } catch (error) {
-        console.error(error);
+        console.error('[CLIENT ERROR]',  error);
     }
 });
 
@@ -101,17 +100,17 @@ client.potentialSoftBanUsers = new Map();
 // Read commands into memory
 const rootDir = path.join(__dirname, './commands');
 fs.readdir('./commands', (err, folders) => {
-    if (err) return console.error(err);
+    if (err) return console.error('[CLIENT ERROR]', err);
     folders.forEach(folder => {
         const commands = fs.readdirSync(`${rootDir}/${folder}`).filter((file) => file.endsWith(".js"));
         for (let file of commands) {
             const command = require(`${rootDir}/${folder}/${file}`);
             client.commands.set(command.name, command);
-            // console.log('done')
+            // console.log('[CLIENT] done')
         }
     })
 
-    console.log('Number of commands read successfully:', client.commands.size);
+    console.log('[CLIENT] Number of commands read successfully:', client.commands.size);
     isDoneReadingCommands = true;
 })
 
@@ -121,7 +120,7 @@ fs.readdir('./commands', (err, folders) => {
 client.on('message', async (msg) => {
     await sleep(500); // Might help with performance slightly maybe?
     if (!isDoneReadingCommands) {
-        console.log("Not done reading commands");
+        console.error("[CLIENT ERROR] Not done reading commands");
         return;
     }
     const contact = await msg.getContact();
@@ -180,14 +179,14 @@ client.on('message', async (msg) => {
             try {
                 client.commands.get('menu').execute(client, msg, args);
             } catch (error) {
-                console.error(error);
+                console.error('[CLIENT ERROR]', error);
             }
             return;
         }
 
         // Execute command called
         const cmd = client.commands.get(possibleCommand.slice(1)) || client.commands.get(checkForAlias(client.commands, possibleCommand.slice(1)));
-        console.log('\nPossible cmd:', possibleCommand, '\nCmd:', cmd, '\nArgs:', args);
+        console.log('\n[CLIENT] Possible cmd:', possibleCommand, '\nCmd:', cmd, '\nArgs:', args);
         if (!cmd) {
             //! Do not always respond to commands as this can be an exploit to spam and crash the bot
             if (checkForChance(1)) { // 10% chance of sending this message to users who type wrong commands
@@ -201,7 +200,7 @@ client.on('message', async (msg) => {
             addToUsedCommandRecently(client, contact.id.user);
             client.potentialSoftBanUsers.set(contact.id.user, { isQualifiedForSoftBan: false, numOfCommandsUsed: 0, hasSentWarningMessage: false, timeout: null });
         } catch (error) {
-            console.error(error);
+            console.error('[CLIENT ERROR]', error);
         }
     }
 })
@@ -245,12 +244,12 @@ client.on('message', async (msg) => {
         // Don't forward announcements from chats which receive forwarded announcements
         for (const user of forwardToUsers) {
             if (currentChat.id.user === user) {
-                console.log("Announcement from forwardedUsers, so do nothing")
+                console.log("[CLIENT] Announcement from forwardedUsers, so do nothing")
                 return;
             }
         }
         const currentForwardedAnnouncements = await getAllAnnouncements();
-        // console.log('Recognized an announcement');
+        // console.log('[CLIENT] Recognized an announcement');
 
         if (!currentForwardedAnnouncements.includes(msg.body)) {
             await addAnnouncement(msg.body);
@@ -261,7 +260,7 @@ client.on('message', async (msg) => {
             targetChats.forEach(async (chat) => await msg.forward(chat));
             targetChats.forEach(async (chat) => await chat.sendMessage(`Forwarded announcement from *${currentChat.name}*`));
         } else {
-            console.log('Repeated announcement');
+            console.log('[CLIENT] Repeated announcement');
         }
     }
 
@@ -273,7 +272,7 @@ client.on('message', async (msg) => {
         // Don't forward links from chats which receive forwarded links
         for (const user of forwardToUsers) {
             if (currentChat.id.user === user) {
-                console.log("Link from forwardedUsers, so do nothing")
+                console.log("[CLIENT] Link from forwardedUsers, so do nothing")
                 return;
             }
         }
@@ -284,16 +283,16 @@ client.on('message', async (msg) => {
         for (const singleLink of links) {
             if (!singleLink.link.includes('https')) return;
         }
-        // console.log(links);
+        // console.log('[CLIENT]', links);
         let currentForwardedLinks = await getAllLinks();
         currentForwardedLinks = currentForwardedLinks.map(link => link.toLowerCase());
-        // console.log(currentForwardedLinks)
+        // console.log('[CLIENT]', currentForwardedLinks)
         const blacklistedStuff = LINKS_BLACKLIST.concat(WORDS_IN_LINKS_BLACKLIST);
 
         // Checking if whatsapp has flagged the link as suspicious
         for (const singleLink of links) {
             if (singleLink.isSuspicious) {
-                console.log("Whatsapp flags this link as suspicious:", singleLink.link);
+                console.error("[CLIENT ERROR] Whatsapp flags this link as suspicious:", singleLink.link);
                 return;
             }
         }
@@ -302,19 +301,19 @@ client.on('message', async (msg) => {
         for (const singleLink of links) {
             for (const item of blacklistedStuff) {
                 if (singleLink.link.includes(item)) {
-                    console.log("Link contains a blacklisted item:", item);
+                    console.log("[CLIENT] Link contains a blacklisted item:", item);
                     return;
                 }
             }
         }
 
-        // console.log('recognized a link');
+        // console.log('[CLIENT] recognized a link');
         if (!currentForwardedLinks.includes(msg.body.toLowerCase())) {
             await addLink(msg.body);
             targetChats.forEach(async (chat) => await msg.forward(chat));
             targetChats.forEach(async (chat) => await chat.sendMessage(`Forwarded link from *${currentChat.name}*`));
         } else {
-            console.log("Repeated link");
+            console.log("[CLIENT] Repeated link");
         }
     }
 })

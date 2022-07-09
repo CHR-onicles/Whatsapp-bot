@@ -6,8 +6,8 @@ const execute = async (client, msg) => {
     const msgTimestamp = new Date(msg.timestamp * 1000);
     const curTime = new Date();
     const actualPing = Math.abs(curTime - msgTimestamp);
-    // console.log('Msg timestamp:', msgTimestamp, ' | Current time:', curTime)
-    // console.log(`Actual ping: ${actualPing}ms`)
+    // console.log('[PING CMD] Msg timestamp:', msgTimestamp, ' | Current time:', curTime)
+    // console.log(`[PING CMD] Actual ping: ${actualPing}ms`)
     await msg.reply(`Response in _${actualPing}ms_`);
 }
 
