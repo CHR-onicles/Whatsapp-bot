@@ -20,7 +20,7 @@ const execute = async (client, msg, args) => {
         [{
             title: '',
             rows: [
-                // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-416_dev' : 'slides-416_prod', title: 'System Programming', description: 'CSCD 416' },
+                { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-416_dev' : 'slides-416_prod', title: 'System Programming', description: 'CSCD 416' },
                 { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-418_dev' : 'slides-418_prod', title: 'Computer Systems Security', description: 'CSCD 418' },
                 // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-422_dev' : 'slides-422_prod', title: 'Human Computer Interaction', description: 'CSCD 422' },
                 // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'slides-424_dev' : 'slides-424_prod', title: 'Management Principles', description: 'CSCD 424' },
