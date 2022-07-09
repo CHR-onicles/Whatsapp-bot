@@ -145,7 +145,7 @@ const execute = async (client, msg, args) => {
             break;
 
         default:
-            await msg.reply(`You missed some arguments!\nCorrect syntax:\n*${currentPrefix}notify enable*\n*${currentPrefix}notify disable*`)
+            await msg.reply(`You missed some arguments!\nCorrect syntax:\n*${currentPrefix}notify enable* or\n*${currentPrefix}notify disable*`)
             break;
     }
 }

@@ -90,7 +90,7 @@ const extractCommandArgs = (msg) => {
  */
 const msToDHMS = (duration) => {
     if (duration < 0) {
-        throw new Error('The duration cannot be negative!');
+        throw new Error('[HELPERS] The duration cannot be negative!');
     }
     let seconds = Math.floor((duration / 1000) % 60),
         minutes = Math.floor((duration / (1000 * 60)) % 60),
@@ -570,8 +570,8 @@ const checkForSpam = async (client, contact, chatFromContact, msg) => {
  * @returns {Boolean} True or False
  */
 const checkForChance = (chance) => {
-    if (chance < 1) throw new Error("Chance cannot be less than 1");
-    if (chance > 9) throw new Error("Chance cannot be more than 9");
+    if (chance < 1) throw new Error("[HELPERS] Chance cannot be less than 1");
+    if (chance > 9) throw new Error("[HELPERS] Chance cannot be more than 9");
     return Math.ceil((Math.random() * 10)) < chance;
 }
 

@@ -8,7 +8,7 @@ const execute = async (client, msg, args) => {
     if (await getMutedStatus() === true) return;
 
     const { BOT_START_TIME, RUN_FIRST_TIME } = args;
-    if (!BOT_START_TIME) throw new Error('Invalid Bot Start Time');
+    if (!BOT_START_TIME) throw new Error('[STATUS CMD] Invalid Bot Start Time');
     let isBotAdmin = null;
     if (!RUN_FIRST_TIME) {
         // to prevent getting an error when running for the first time
