@@ -17,13 +17,13 @@ const execute = async (client, msg, args) => {
     if (isListResponse) {
 
         const selectedRowId = msg.selectedRowId.split('-')[1];
-        // console.log('selected row id:', selectedRowId)
+        // console.log('[NOTIFY CMD] selected row id:', selectedRowId)
 
         // Helper function to solely for refactoring
         const helper = async () => {
             if (totalUsers.includes(contact.id.user)) {
                 await msg.reply("You are already being notified for class🐦");
-                console.log('Already subscribed, from List Response')
+                console.log('[NOTIFY CMD] Already subscribed, from List Response')
                 return;
             }
 
@@ -41,49 +41,49 @@ const execute = async (client, msg, args) => {
             case '1_dev':
                 if (currentEnv !== 'development') break;
                 helper();
-                // console.log('add user to be notified from 1_dev');
+                // console.log([NOTIFY CMD] 'add user to be notified from 1_dev');
                 break;
 
             case '1_prod':
                 if (currentEnv !== 'production') break;
                 helper();
-                // console.log('add user to be notified from 1_prod');
+                // console.log('[NOTIFY CMD] add user to be notified from 1_prod');
                 break;
 
             case '2_dev':
                 if (currentEnv !== 'development') break;
                 helper();
-                // console.log('add user to be notified from 2_dev');
+                // console.log('[NOTIFY CMD] add user to be notified from 2_dev');
                 break;
 
             case '2_prod':
                 if (currentEnv !== 'production') break;
                 helper();
-                // console.log('add user to be notified from 2_prod');
+                // console.log('[NOTIFY CMD] add user to be notified from 2_prod');
                 break;
 
             case '3_dev':
                 if (currentEnv !== 'development') break;
                 helper();
-                // console.log('add user to be notified from 3_dev');
+                // console.log('[NOTIFY CMD] add user to be notified from 3_dev');
                 break;
 
             case '3_prod':
                 if (currentEnv !== 'production') break;
                 helper();
-                // console.log('add user to be notified from 3_prod');
+                // console.log('[NOTIFY CMD] add user to be notified from 3_prod');
                 break;
 
             case '4_dev':
                 if (currentEnv !== 'development') break;
                 helper();
-                // console.log('add user to be notified from 3_dev');
+                // console.log('[NOTIFY CMD] add user to be notified from 3_dev');
                 break;
 
             case '4_prod':
                 if (currentEnv !== 'production') break;
                 helper();
-                // console.log('add user to be notified from 3_prod');
+                // console.log('[NOTIFY CMD] add user to be notified from 3_prod');
                 break;
 
             default:
@@ -95,13 +95,13 @@ const execute = async (client, msg, args) => {
     }
 
 
-    console.log('msg args:', msgArgs);
+    console.log('[NOTIFY CMD] msg args:', msgArgs);
     switch (msgArgs) {
         case 'enable':
         case '-e':
             if (totalUsers.includes(contact.id.user)) {
                 await msg.reply("You are already being notified for class🐦");
-                console.log('Already subscribed from case enable')
+                console.log('[NOTIFY CMD] Already subscribed from case enable')
                 return;
             }
 

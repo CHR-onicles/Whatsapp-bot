@@ -35,7 +35,7 @@ const execute = async (client, msg) => {
         } else await msg.reply(text, "", { mentions });
     } else {
         await msg.reply("Can't do this - This is not a  group chat 😗");
-        console.log("Called " + currentPrefix + "everyone in a chat that is not a group chat");
+        console.log("[EVERYONE CMD] Called " + currentPrefix + "everyone in a chat that is not a group chat");
     }
 }
 

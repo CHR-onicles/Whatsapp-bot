@@ -5,7 +5,7 @@ const execute = async (client, msg) => {
     if (await getMutedStatus() === true) return;
 
     const groupChat = await msg.getChat();
-    // console.log(groupChat.participants);
+    // console.log([GROUPLINK CMD] groupChat.participants);
 
     if (!groupChat.isGroup) {
         await msg.reply('This is not a group chat!');
