@@ -48,7 +48,7 @@ const initCollection = async () => {
         } catch (err) {
             console.error('[MISC MODEL ERROR]', err);
         }
-    } else console.log('[MISC MODEL]' + currentModelName + " collection is not empty");
+    } else console.log('[MISC MODEL]', currentModelName + " collection is not empty");
 }
 initCollection();
 
@@ -62,7 +62,7 @@ initCollection();
  */
 exports.getMutedStatus = async () => {
     const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isMuted: 1 });
-    console.log('[MISC MODEL]', status);
+    // console.log('[MISC MODEL]', status);
     return status.isMuted;
 }
 

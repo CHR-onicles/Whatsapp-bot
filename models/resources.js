@@ -44,7 +44,7 @@ const initCollection = async () => {
             }
         }
         console.log("[RESOURCES MODEL] Done encoding all course resources!");
-    } else console.log(currentModelName + " collection is not empty");
+    } else console.log('[RESOURCES MODEL]', currentModelName + " collection is not empty");
 }
 initCollection();
 
