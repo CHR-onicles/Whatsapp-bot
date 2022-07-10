@@ -326,7 +326,7 @@ exports.FOOTNOTES = new Map([
     ["Have a great day fam 🤍", 1],
     ["Have a wonderful day 👍🏽", 1],
     ["Do enjoy the rest of your day 👍🏽", 1],
-    [`Good ${new Date().getHours() < 12 ? 'morning' : (new Date().getHours < 17 ? 'afternoon' : 'evening')}`, 2],
+    [`Good ${new Date().getHours() >= 0 && new Date().getHours() <= 11 ? 'morning' : (new Date().getHours() >= 12 && new Date().getHours() <= 16 ? 'afternoon' : 'evening')} 🥳`, 2],
     ["Don't forget to DO MORE 👍🏽", 0.5],
     ["Keep on keeping on👍🏽", 0.5],
     ["Glad I could be of help 😁", 2],
@@ -336,14 +336,14 @@ exports.FOOTNOTES = new Map([
     // Hints
     ["Have you tried !𝒉𝒆𝒍𝒑 ?", 2],
     ["Checked out !𝕞𝕖𝕟𝕦 ?", 2],
-    ["💡 Use *!menu* to see all the commands available to you", 3],
+    ["💡 Use *!menu* to see all the commands available to you", 2],
     ["💡 Did you know you could ping me in a group to see all the commands? 😮", 2],
-    ["💡 Use *!notify enable* to subscribe to class notifications.\n\nThe bot will then remember your elective whenever you request for a timetable 💪🏽", 2],
+    ["💡 Use *!notify enable* to subscribe to class notifications.\n\nThe bot will remember your elective whenever you request for a timetable 💪🏽", 5],
     ["💡 You don't need to type full commands, you can use shorter aliases now!\n\nType *!help <command>* to see if a command has aliases.\n\nEg: *!help class*", 2],
     ["🆕 Checkout *!help <command>* to see more information about any command.\n\nEg: *!help botadmins*", 3],
     ["🆕 Did you know that almost all commands have aliases?\n\nType *!help <command>* to see aliases and how to use the command.\n\nEg: *!help classes*", 2],
     ["🆕 Don't know how to use a specific command?\n\nType *!help <command>* to see how to use it.\n\nEg: *!help slides*", 2],
-    ["🆕 There are now *cooldowns* after using any command to avoid overloading the bot.\n\nThis simply means after using any command, you'll have to wait for a few seconds before using another command.", 5],
+    ["🆕 There are now *cooldowns* after using any command to avoid overloading the bot.\n\nThis simply means after using any command, you'll have to wait for a few seconds before using another command.", 3],
     ["🆕 Command arguments like *enable* and *disable* can be replaced with *-e* and *-d* respectively.\n\nEg: *!notify -e* or *!notify -d*", 2]
     // ["Run *!updates* to see the bot's latest updates", 0],
 ])

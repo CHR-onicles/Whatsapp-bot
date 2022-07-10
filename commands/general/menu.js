@@ -25,11 +25,18 @@ const execute = async (client, msg, args) => {
 
     client.commands.forEach((value, key) => {
         startID++;
+        if (value.name === 'notify') {
+            tempRows.push({ id: `menu-${startID}`, title: currentPrefix + value.name + ' enable', description: 'Turn on notifications for class' });
+            startID++;
+            tempRows.push({ id: `menu-${startID}`, title: currentPrefix + value.name + ' disable', description: 'Turn off notifications for class' });
+            return;
+        }
+        
         if (!isBotAdmin && value.category === 'everyone') {
             tempRows.push({ id: `menu-${startID}`, title: currentPrefix + value.name, description: value.description });
         } else if (isBotAdmin) {
             if ((value.name === 'selfpromote' || value.name === 'selfdemote') && contact.id.user !== process.env.GRANDMASTER) {
-                return; // kinda acts like "continue"
+                return; // kinda acts like "continue" I guess
             }
             tempRows.push({ id: `menu-${startID}`, title: currentPrefix + value.name, description: value.description });
         }
