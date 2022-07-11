@@ -28,7 +28,10 @@ const execute = async (client, msg) => {
     });
 
     await chatFromContact.sendMessage(text);
-    setTimeout(async () => await chatFromContact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
+    setTimeout(async () => {
+        const temp = pickRandomWeightedMessage(FOOTNOTES);
+        temp && await chatFromContact.sendMessage(temp);
+    }, 2000);
 }
 
 

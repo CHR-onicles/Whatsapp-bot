@@ -21,7 +21,10 @@ const execute = async (client, msg, args) => {
     const helperForAllClassesReply = async (text, elective) => {
         text += allClassesReply(ALL_CLASSES, elective, text)
         await chatFromContact.sendMessage(text);
-        setTimeout(async () => await chatFromContact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
+        setTimeout(async () => {
+            const temp = pickRandomWeightedMessage(FOOTNOTES);
+            temp && await chatFromContact.sendMessage(temp);
+        }, 2000);
     }
 
     // if the user has already subscribed to be notified, find his elective and send the timetable based on that.
@@ -66,7 +69,10 @@ const execute = async (client, msg, args) => {
             text += allClassesReply(ALL_CLASSES, elective, text);
             // await msg.reply(text + `\nFrom ${currentEnv} env`);
             await msg.reply(text);
-            setTimeout(async () => await chatFromContact.sendMessage(pickRandomWeightedMessage(FOOTNOTES)), 2000);
+            setTimeout(async () => {
+                const temp = pickRandomWeightedMessage(FOOTNOTES);
+                temp && await chatFromContact.sendMessage(temp);
+            }, 2000);
         }
 
         switch (selectedRowId) {
