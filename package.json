@@ -8,7 +8,7 @@
     "express": "^4.18.1",
     "mongoose": "^6.4.3",
     "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.17.0"
+    "whatsapp-web.js": "^1.17.1"
   },
   "scripts": {
     "start": "node main.js"
