@@ -8,9 +8,9 @@
   integrity sha512-wtnBAETBVYZ9GvcbgdswRVSLkFkYAGv1KzwBBTeRXvGT9sb9cPllOgFFWXCn9PyARQ0H+Ijz6mmoRrGateUDxQ==
 
 "@types/node@*":
-  version "18.0.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.0.tgz#67c7b724e1bcdd7a8821ce0d5ee184d3b4dd525a"
-  integrity sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==
+  version "18.0.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.3.tgz#463fc47f13ec0688a33aec75d078a0541a447199"
+  integrity sha512-HzNRZtp4eepNitP+BD6k2L6DROIDG4Q0fm4x+dwfsr6LGmROENnok75VGw40628xf+iR24WeMFcHuuBDUAzzsQ==
 
 "@types/webidl-conversions@*":
   version "6.1.1"
@@ -103,9 +103,9 @@ brace-expansion@^1.1.7:
     concat-map "0.0.1"
 
 bson@^4.6.2, bson@^4.6.3:
-  version "4.6.4"
-  resolved "https://registry.yarnpkg.com/bson/-/bson-4.6.4.tgz#e66d4a334f1ab230dfcfb9ec4ea9091476dd372e"
-  integrity sha512-TdQ3FzguAu5HKPPlr0kYQCyrYUYh8tFM+CMTpxjNzVzxeiJY00Rtuj3LXLHSgiGvmaWlZ8PE+4KyM2thqE38pQ==
+  version "4.6.5"
+  resolved "https://registry.yarnpkg.com/bson/-/bson-4.6.5.tgz#1a410148c20eef4e40d484878a037a7036e840fb"
+  integrity sha512-uqrgcjyOaZsHfz7ea8zLRCLe1u+QGUSzMZmvXqO24CDW7DWoW1qiN9folSwa7hSneTSgM2ykDIzF5kcQQ8cwNw==
   dependencies:
     buffer "^5.6.0"
 

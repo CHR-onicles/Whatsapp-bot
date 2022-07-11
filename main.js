@@ -12,7 +12,6 @@ require('./utils/db');
 const { currentEnv, currentPrefix, extractCommand, startNotificationCalculation, stopAllOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, checkForSpam, checkForChance } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
 const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
-// const { reply } = require('./commands/admin/status');
 
 
 // --------------------------------------------------
