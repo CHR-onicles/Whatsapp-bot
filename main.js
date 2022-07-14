@@ -56,14 +56,10 @@ app.get("/", (req, res) => {
 app.listen(port, () => console.log(`[SERVER] Server is running on port ${port}`));
 
 // Continuously ping the server to prevent it from becoming idle
-// (async () => {
-//     const res = await axios.get("https://chr-whatsapp-bot.herokuapp.com/");
-//     console.log('[SERVER]', res);
-// })();
-
 setInterval(async () => {
-    const res = await axios.get("https://chr-whatsapp-bot.herokuapp.com/");
-}, 5 * 60 * 1000); // every 5 minutes (300000)
+    await axios.get("https://chr-whatsapp-bot.herokuapp.com/");
+    console.log('[SERVER] Pinged server')
+}, 15 * 60 * 1000); // every 15 minutes
 
 
 // --------------------------------------------------
