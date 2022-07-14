@@ -58,7 +58,7 @@ const execute = async (client, msg) => {
 module.exports = {
     name: "classgroups",
     description: "Get all class group links 📱",
-    alias: ["cgs", "clgs"],
+    alias: ["cgs", "clgs", "groups"],
     category: "everyone", // admin | everyone
     help: `To use this command, type:\n*${currentPrefix}classgroups*`,
     execute,

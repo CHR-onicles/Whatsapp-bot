@@ -4,6 +4,7 @@
 const app = require('express')();
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
+const axios = require('axios');
 require('dotenv').config();
 const path = require('path');
 const fs = require('fs');
@@ -54,6 +55,12 @@ app.get("/", (req, res) => {
 
 app.listen(port, () => console.log(`[SERVER] Server is running on port ${port}`));
 
+// Continuously ping the server to prevent it from becoming idle
+setInterval(async () => {
+    await axios.get("https://chr-whatsapp-bot.herokuapp.com/");
+    console.log('[SERVER] Pinged server')
+}, 15 * 60 * 1000); // every 15 minutes
+
 
 // --------------------------------------------------
 // BOT LOGIC
@@ -85,7 +92,7 @@ client.on('ready', async () => {
         console.log("[CLIENT] Starting logs...")
         client.commands.get('status').execute(client, null, args);
     } catch (error) {
-        console.error('[CLIENT ERROR]',  error);
+        console.error('[CLIENT ERROR]', error);
     }
 });
 
