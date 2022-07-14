@@ -20,7 +20,20 @@ const execute = async (client, msg) => {
         await enableOrDisableNotificationForCourse(courseCode, enableStatus);
         await stopAllOngoingNotifications();
         await startNotificationCalculation(client);
-        await msg.reply(`Notifications for *Systems Programming* have been turned *${enableStatus ? 'ON' : 'OFF'}*`);
+
+        //? Maybe move this to data.js ?
+        const courses = {
+            CSCD416: 'System Programming',
+            CSCD418: 'Computer Systems Security',
+            CSCD422: 'Human Computer Interaction',
+            CSCD424: 'Management Principles',
+            CSCD400: 'Project',
+            CSCD426: 'Multimedia Applications',
+            CSCD428: 'Expert Systems',
+            CSCD432: 'Concurrent & Distributed Systems',
+            CSCD434: 'Mobile Computing'
+        }
+        await msg.reply(`Notifications for *${courses[courseCode]}* have been turned *${enableStatus ? 'ON' : 'OFF'}*`);
     }
 
     switch (args.join(' ').trim()) {
