@@ -50,7 +50,7 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 
 ### My solution
 
-<span style="font-size: 18px">Ethereal</span> seeks to make life easier for L400 Computer Science students by:
+<span style="font-size: 18px">Ethereal</span> seeks to make life easier for '22 final year Computer Science students by:
 
 - Forwarding important **announcements** and **links** from class groups to our dms.
 - Reminding us individually about the times we have class.
