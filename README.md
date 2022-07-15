@@ -2,7 +2,7 @@
 
 <br>
 
-This is a whatsapp bot created initially for EPiC Devs ([wait who?](#who-are-epic-devs)) but now widely used by '22 L400 Computer Science members to make academic life a tiny bit easier. It uses a [Whatsapp web library](https://github.com/pedroslopez/whatsapp-web.js) and acts just like a regular user. It was built alongside a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. Since I'm using a free Heroku dyno, I use cron-jobs to keep the dyno from idling. The bot often interacts with a MongoDB cloud database to supplement its functionalities.
+This is a whatsapp bot created initially for EPiC Devs ([wait who?](#who-are-epic-devs)) but now widely used by '22 final year Computer Science students to make academic life a tiny bit easier. It uses a [Whatsapp web library](https://github.com/pedroslopez/whatsapp-web.js) and acts just like a regular user. It was built on a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. The bot interacts with a MongoDB cloud database to supplement its functionalities.
 
 <br>
 
@@ -16,6 +16,7 @@ This is a whatsapp bot created initially for EPiC Devs ([wait who?](#who-are-epi
 - [Commands](#⚡-commands)
 - [Built with](#🧰-built-with)
 - [Who are EPiC Devs?](#who-are-epic-devs)
+- [Credits](#credits)
 - [Disclaimer](#⚠-disclaimer)
 
 <br>
@@ -49,7 +50,7 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 
 ### My solution
 
-<span style="font-size: 18px">Ethereal</span> seeks to make life easier for L400 Computer Science students by:
+<span style="font-size: 18px">Ethereal</span> seeks to make life easier for '22 final year Computer Science students by:
 
 - Forwarding important **announcements** and **links** from class groups to our dms.
 - Reminding us individually about the times we have class.
@@ -95,6 +96,8 @@ Oh and I couldn't add all the functionalities of the bot in the demo as it was g
 | `!blacklist` 💎| Get users who have been blacklisted |
 | `!botadmins` | Get current bot admins |
 | `!class` | Get the classes for the day, depending on user's elective |
+| `!classgroup (add \| remove)` 💎| Recognize a whatsapp group as an official class group |
+| `!classgroups` | Get a list of all the official whatsapp class group links |
 | `!classes` | Get the classes for the week, depending on user's elective |
 | `!demote`💎 | Demote a bot admin |
 | `!env`💎 | Check the _environment_ the bot is running in _(Production/Development)_ |
@@ -144,6 +147,14 @@ Check us out!:
 - [Papafio (Frontend developer/Graphic designer)](https://www.linkedin.com/in/nii-laryea-quartey-papafio-229440176)
 - [Divine (Frontend developer)](https://www.linkedin.com/in/divineanum)
 
+<br>
+
+## Credits
+
+Shout out to the following people for ideas and support:
+- [Mini-Sylar](https://github.com/Mini-Sylar) (Checkout his [anime platform](https://github.com/Mini-Sylar/Anime-Info-Platform))
+- [Somya Mahapatra](https://github.com/Daketey)
+
 
 <br>
 
@@ -155,10 +166,7 @@ This project is not affiliated, associated, authorized, endorsed by, or in any w
 
 ### PS:
 
-I recommend the following extensions in VS Code in order to have a little more insight into the codebase:
+I recommend [Better Comments](https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments) to see comments with keywords highlighted differently in order to have more insight into the codebase
 
-- [Better Comments](https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments) to see comments with keywords highlighted differently.
-
-- [TODO.md Kanban Taskboard](https://marketplace.visualstudio.com/items?itemName=coddx.coddx-alpha) to see my TODO list in a more elegant form.
 
 Feel free to hit me up if you do have interest in it ([📩Email](mailto:tpandivine48@gmail.com))
