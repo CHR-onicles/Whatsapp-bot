@@ -90,7 +90,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
         const curTime = new Date();
         const midnightTime = new Date();
         midnightTime.setDate(curTime.getDate() + 1);
-        midnightTime.setHours(0, 10, 0);
+        midnightTime.setHours(0, 1, 0);
         console.log('[CLIENT] Time for next notification reset:', midnightTime);
 
         // Helper function to avoid repetition
@@ -106,7 +106,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
             setInterval(async () => {
                 await resetNotifications();
             }, 24 * 60 * 60 * 1000); // Repeat every 24 hours
-        }, midnightTime - curTime);
+        }, midnightTime - curTime); // Time left till midnight
     });
 
 
