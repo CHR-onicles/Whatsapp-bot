@@ -58,7 +58,7 @@ const extractTime = (course_name) => {
 const extractCommand = (msg) => {
     const split = msg?.body.toLowerCase().split(/(\s+|\n+)/);
     const firstWord = split.shift();
-    // console.log('[HELPERS]', firstWord)
+    // console.log('[HELPERS - EC]', firstWord)
     if (firstWord.startsWith(currentPrefix)) return firstWord;
     return '';
 }
@@ -74,7 +74,7 @@ const extractCommandArgs = (msg) => {
 
     // Now split's the group of words by a space... these should be the valid args
     let validArgs = args.split(/\s+/);
-    // console.log('[HELPERS]', validArgs);
+    // console.log('[HELPERS - ECA]', validArgs);
 
     if (validArgs.length) {
         validArgs = validArgs.map(arg => arg.trim());
@@ -90,7 +90,7 @@ const extractCommandArgs = (msg) => {
  */
 const msToDHMS = (duration) => {
     if (duration < 0) {
-        throw new Error('[HELPERS] The duration cannot be negative!');
+        throw new Error('[HELPERS - MTDHMS] The duration cannot be negative!');
     }
     let seconds = Math.floor((duration / 1000) % 60),
         minutes = Math.floor((duration / (1000 * 60)) % 60),
@@ -111,7 +111,7 @@ const msToDHMS = (duration) => {
  * @param {{name: string, duration: number}} course Object containing course name and duration.
  * @returns Object containing milliseconds left for a reminder in 2 hours, 1 hour, and 30 minutes respectively.
  */
-const notificationTimeCalc = (course) => {
+const notificationTimeLeftCalc = (course) => {
     // Constants for notification intervals
     const twoHrsInMs = 120 * 60 * 1000;
     const oneHrInMs = 60 * 60 * 1000;
@@ -131,24 +131,24 @@ const notificationTimeCalc = (course) => {
     const timeLeftInMs = newClassTime - curTime;
 
     if (twoHrsInMs > timeLeftInMs) {
-        console.log("[HELPERS] Less than 2hrs left to remind for", course.name.split('|')[0]);
+        console.log("[HELPERS - NTLC] Less than 2hrs left to remind for", course.name.split('|')[0]);
     } else {
         timeoutTwoHrs = timeLeftInMs - twoHrsInMs;
     }
 
     if (oneHrInMs > timeLeftInMs) {
-        console.log("[HELPERS] Less than 1 hr left to remind for", course.name.split('|')[0]);
+        console.log("[HELPERS - NTLC] Less than 1 hr left to remind for", course.name.split('|')[0]);
     } else {
         timeoutOneHr = timeLeftInMs - oneHrInMs;
     }
 
     if (thirtyMinsInMs > timeLeftInMs) {
-        console.log("[HELPERS] Less than 30 mins left to remind for", course.name.split('|')[0]);
+        console.log("[HELPERS - NTLC] Less than 30 mins left to remind for", course.name.split('|')[0]);
     } else {
         timeoutThirtyMins = timeLeftInMs - thirtyMinsInMs;
     }
 
-    // console.log('[HELPERS]', timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
+    // console.log('[HELPERS - NTLC]', timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
     return { timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins };
 }
 
@@ -165,12 +165,18 @@ const startNotificationCalculation = async (client) => {
     const notifsStatus = await getNotificationStatus();
     const { CSCD416, CSCD418, CSCD422, CSCD424, CSCD400, CSCD426, CSCD428, CSCD432, CSCD434 } = notifsStatus;
 
-    if (Object.values(notifsStatus).every(elem => !elem)) return; // Stop if all courses have notifications turned off
+    if (Object.values(notifsStatus).every(elem => !elem)) {
+        console.log('[HELPERS - SNC] Exiting because all notifications have been turned OFF')
+        return;
+    }
 
-    if (!totalUsers.length) return; // if there are no subscribed users, stop
+    if (!totalUsers.length) {
+        console.log('[HELPERS - SNC] Exiting because there are no users to notify');
+        return;
+    }
 
     if (todayDay === 'Sat' || todayDay === 'Sun') {
-        console.log("[HELPERS] No courses to be notified for during the weekend!");
+        console.log("[HELPERS - SNC] No courses to be notified for during the weekend!");
         return;
     }
 
@@ -179,7 +185,7 @@ const startNotificationCalculation = async (client) => {
             return classObj;
         }
     });
-    // console.log('[HELPERS]', courses);
+    // console.log('[HELPERS - SNC]', courses);
 
     for (const course of courses) {
         if ((course.code === 'CSCD416' && !CSCD416) ||
@@ -197,7 +203,7 @@ const startNotificationCalculation = async (client) => {
         const classTime = extractTime(course.name);
         const classTimeHrs = +classTime.split(':')[0];
         const classTimeMins = +classTime.split(':')[1].slice(0, classTime.split(':')[1].length - 2);
-        const { timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins } = notificationTimeCalc(course);
+        const { timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins } = notificationTimeLeftCalc(course);
 
         const curTime = new Date();
         const newClassTime = new Date(curTime.getFullYear(), curTime.getMonth(), curTime.getDate(), classTimeHrs, classTimeMins, 0);
@@ -209,7 +215,7 @@ const startNotificationCalculation = async (client) => {
             if (electiveArray.length) {
                 electiveArray.forEach(student => {
                     generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
-                    // console.log('[HELPERS] Student:', student, ' course:', course);
+                    // console.log('[HELPERS - SNC] Student:', student, ' course:', course);
                 })
                 console.log('\n');
             }
@@ -226,7 +232,7 @@ const startNotificationCalculation = async (client) => {
         } else {
             totalUsers.forEach(student => {
                 generateTimeoutIntervals(student, course, chats, timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins);
-                // console.log('[HELPERS] Student:', student, ' course:', course);
+                // console.log('[HELPERS - SNC] Student:', student, ' course:', course);
             })
             console.log('\n');
         }
@@ -249,18 +255,18 @@ const generateTimeoutIntervals = (user, course, chats, timeoutTwoHrs, timeoutOne
     // in case the user opts out or there's a recalculation of notification intervals.
     if (timeoutTwoHrs > 0) {
         VARIABLES_COUNTER++;
-        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours'); console.log('[HELPERS] SENT 2hr notif for' + course.name.split('|')[0] + ' to ', + user)}, timeoutTwoHrs)")
-        console.log('[HELPERS] Sending 2hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0]+ ' in 2 hours'); console.log('[HELPERS - GTI] SENT 2hr notif for' + course.name.split('|')[0] + ' to ', + user)}, timeoutTwoHrs)")
+        console.log('[HELPERS - GTI] Sending 2hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
     if (timeoutOneHr > 0) {
         VARIABLES_COUNTER++;
-        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour'); console.log('[HELPERS] SENT 1hr notif for' + course.name.split('|')[0] + ' to ', + user)}, timeoutOneHr)")
-        console.log('[HELPERS] Sending 1hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! You have ' + course.name.split('|')[0] + ' in 1 hour'); console.log('[HELPERS - GTI] SENT 1hr notif for' + course.name.split('|')[0] + ' to ', + user)}, timeoutOneHr)")
+        console.log('[HELPERS - GTI] Sending 1hr notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
     if (timeoutThirtyMins > 0) {
         VARIABLES_COUNTER++;
-        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!'); console.log('[HELPERS] SENT 30min notif for' + course.name.split('|')[0] + ' to ', + user)}, timeoutThirtyMins)")
-        console.log('[HELPERS] Sending 30min notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
+        eval("globalThis['t' + VARIABLES_COUNTER] = setTimeout(async () => {await chat_from_user.sendMessage('Reminder! ' + course.name.split('|')[0] + ' is in 30 minutes!'); console.log('[HELPERS - GTI] SENT 30min notif for' + course.name.split('|')[0] + ' to ', + user)}, timeoutThirtyMins)")
+        console.log('[HELPERS - GTI] Sending 30min notif for', course.name.split('|')[0], ' to', user, '=> t' + VARIABLES_COUNTER)
     }
 }
 
@@ -270,9 +276,9 @@ const generateTimeoutIntervals = (user, course, chats, timeoutTwoHrs, timeoutOne
 const stopAllOngoingNotifications = () => {
     for (let i = 1; i < VARIABLES_COUNTER + 1; ++i) {
         eval("clearTimeout(t" + i + ")");
-        console.log(`[HELPERS] Cleared timeout t${i}`);
+        console.log(`[HELPERS - SAON] Cleared timeout t${i}`);
     }
-    console.log('[HELPERS] Cleared all dynamic variables with timeouts');
+    console.log('[HELPERS - SAON] Cleared all dynamic variables with timeouts');
     VARIABLES_COUNTER = 0;
 }
 
@@ -392,22 +398,22 @@ const todayClassReply = async (text, elective) => {
  */
 const sendSlides = async (msg, courseCode) => {
     let isDone = false;
-    console.log("[HELPERS] Getting slides...")
+    console.log("[HELPERS - SS] Getting slides...")
     const materials = await getResource(courseCode);
-    if (materials.length) console.log(" [HELPERS]Got slides")
-    else console.error(" [HELPERS ERROR] No slides received from DB");
+    if (materials.length) console.log(" [HELPERS - SS]Got slides")
+    else console.error(" [HELPERS - SS ERROR] No slides received from DB");
     for (const material of materials) {
         const curMaterial = material;
         const file_extension = curMaterial.title.split(".")[curMaterial.title.split(".").length - 1]; // always extract the last "." and what comes after
         const { mime_type } = MIME_TYPES.find(obj => obj.fileExtension === file_extension);
         const slide = new MessageMedia(mime_type, curMaterial.binData, curMaterial.title);
         await msg.reply(slide);
-        console.log("[HELPERS] Sent a slide")
+        console.log("[HELPERS - SS] Sent a slide")
         if (material === materials[materials.length - 1]) isDone = true;
     }
     // if (isDone) await msg.reply(`Done 👍🏽 from ${currentEnv}`);
     if (isDone) await msg.reply(`Done 👍🏽`);
-    console.log(" [HELPERS]Done sending slides")
+    console.log(" [HELPERS - SS]Done sending slides")
 }
 
 /**
@@ -438,7 +444,7 @@ const pickRandomWeightedMessage = (map) => {
 
     let sum = weights.reduce((prev, cur) => prev + cur, 0);
     if (sum !== 100) {
-        console.log("[HELPERS] Sum:", sum)
+        console.log("[HELPERS - PRWM] Sum:", sum)
         throw new Error("[HELPERS] Sum is NOT EQUAL TO 100")
     }
     const randVal = Math.floor(Math.random() * sum);
@@ -473,10 +479,10 @@ const sleep = async (milliseconds = 500) => {
 const checkForAlias = (map, keyword) => {
     for (const entry of map) {
         const aliases = entry[1].alias;
-        // console.log('[HELPERS]', aliases);
+        // console.log('[HELPERS - CFA]', aliases);
 
         if (aliases.includes(keyword)) {
-            // console.log('[HELPERS]', entry[0]);
+            // console.log('[HELPERS - CFA]', entry[0]);
             return entry[0];
         }
     }
@@ -533,12 +539,12 @@ const checkForSpam = async (client, contact, chatFromContact, msg) => {
                 isQualifiedForSoftBan: true,
                 timeout: setTimeout(async () => {
                     client.potentialSoftBanUsers.delete(contact.id.user);
-                    console.log(`[HELPERS] User ${contact.id.user}'s soft ban has been lifted`);
+                    console.log(`[HELPERS - CFS] User ${contact.id.user}'s soft ban has been lifted`);
                     await contact.unblock();
                     chatFromContact.sendMessage("🔊 Your temporary ban has been lifted.\n\nYou can now use bot commands.")
                 }, SOFT_BAN_DURATION_IN_MINS * 60 * 1000)
             });
-            console.log(`[HELPERS] User ${contact.id.user} is now qualified to be soft banned`);
+            console.log(`[HELPERS - CFS] User ${contact.id.user} is now qualified to be soft banned`);
             await chatFromContact.sendMessage(`🔇You have been banned for a duration of ${SOFT_BAN_DURATION_IN_MINS}mins for spamming.\n\nThe bot will no longer respond to your commands.`)
             await contact.block();
             // Log to DB - implement if need be later
@@ -555,9 +561,9 @@ const checkForSpam = async (client, contact, chatFromContact, msg) => {
     // Check if user issues a command while being soft banned
     if (client.potentialSoftBanUsers.has(contact.id.user) && currentUserObj.isQualifiedForSoftBan) {
         try {
-            console.log(`[HELPERS] User ${contact.id.user} is still in soft ban, time left: ${getTimeLeftForSetTimeout(client.potentialSoftBanUsers.get(contact.id.user).timeout)} secs`);
+            console.log(`[HELPERS - CFS] User ${contact.id.user} is still in soft ban, time left: ${getTimeLeftForSetTimeout(client.potentialSoftBanUsers.get(contact.id.user).timeout)} secs`);
         } catch (error) {
-            console.error('[HELPERS]', error);
+            console.error('[HELPERS - CFS]', error);
         }
         return true;
     }
@@ -587,7 +593,7 @@ module.exports = {
     extractTime,
     extractCommand,
     extractCommandArgs,
-    msToDHMS, notificationTimeCalc,
+    msToDHMS, notificationTimeLeftCalc,
     startNotificationCalculation,
     stopAllOngoingNotifications,
     allClassesReply,

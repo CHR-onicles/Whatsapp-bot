@@ -85,6 +85,28 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
         } catch (error) {
             console.error('[CLIENT ERROR]', error);
         }
+
+        // Reset notifications everyday
+        const curTime = new Date();
+        const midnightTime = new Date();
+        midnightTime.setDate(curTime.getDate() + 1);
+        midnightTime.setHours(0, 10, 0);
+        console.log('[CLIENT] Time for next notification reset:', midnightTime);
+
+        // Helper function to avoid repetition
+        const resetNotifications = async () => {
+            stopAllOngoingNotifications();
+            await startNotificationCalculation(client);
+            console.log('[CLIENT] Reset all notifications');
+        }
+
+        setTimeout(async () => {
+            await resetNotifications();
+
+            setInterval(async () => {
+                await resetNotifications();
+            }, 24 * 60 * 60 * 1000); // Repeat every 24 hours
+        }, midnightTime - curTime);
     });
 
 
@@ -372,13 +394,6 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => console.log(`[SERVER] Server is running on port ${port}`));
-
-// Endpoint to hit in order to restart calculations for class notifications (will be done by a cron-job)
-app.get('/reset-notif-calc', async (req, res) => {
-    stopAllOngoingNotifications();
-    await startNotificationCalculation(client);
-    res.send('<h1>Restarting the class notification calculation function...</h1>');
-})
 
 // All other pages should be returned as error pages
 app.all("*", (req, res) => {
