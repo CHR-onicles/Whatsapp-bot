@@ -20,7 +20,6 @@ const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLi
 // --------------------------------------------------
 // Global variables
 // --------------------------------------------------
-const GRANDMASTER = process.env.GRANDMASTER; // Owner of the bot
 const port = process.env.PORT || 3000;
 let BOT_START_TIME = 0;
 const args = {};
@@ -77,19 +76,6 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
         BOT_START_TIME = new Date();
         args.BOT_START_TIME = BOT_START_TIME;
         await startNotificationCalculation(client);
-
-        if (currentEnv === 'production') {
-            const chats = await client.getChats();
-            const grandmasterChat = chats.find(chat => chat.id.user === GRANDMASTER);
-            const twentyThreeHrsInMs = 82_800_000; // using numeric separator to improve readability
-
-            // Reminder to restart the bot before Heroku does that for us without our knowledge
-            // Will be fixed by RemoteAuth soon
-            setTimeout(async () => {
-                await grandmasterChat.sendMessage("Reminder to restart the bot after 23 hours!");
-            }, twentyThreeHrsInMs);
-            console.log("[CLIENT] Preparing to send bot restart reminder in 23 hours\n");
-        }
 
         // Run status command here first to start logging to group chat chain reaction
         try {
