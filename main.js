@@ -14,7 +14,7 @@ const fs = require('fs');
 require('./utils/db');
 const { currentEnv, currentPrefix, extractCommand, startNotificationCalculation, stopAllOngoingNotifications, areAllItemsEqual, sleep, checkForAlias, BOT_PUSHNAME, addToUsedCommandRecently, checkForSpam, checkForChance } = require('./utils/helpers');
 const { LINKS_BLACKLIST, WORDS_IN_LINKS_BLACKLIST } = require('./utils/data');
-const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus } = require('./models/misc');
+const { getMutedStatus, getAllLinks, getAllAnnouncements, addAnnouncement, addLink, getForwardToUsers, getForwardingStatus, enableOrDisableAllNotifications } = require('./models/misc');
 
 
 // --------------------------------------------------
@@ -105,6 +105,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
 
             setInterval(async () => {
                 await resetNotifications();
+                await enableOrDisableAllNotifications(true);
             }, 24 * 60 * 60 * 1000); // Repeat every 24 hours
         }, midnightTime - curTime); // Time left till midnight
     });

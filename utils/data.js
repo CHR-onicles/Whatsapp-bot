@@ -37,7 +37,7 @@ exports.ALL_CLASSES = [
     {
         day: 'Thursday',
         courses: [
-            { name: '_Project_ | ⏰8:30am | 🏠ONLINE', code: 'CSCD400', duration: 2 },
+            // { name: '_Project_ | ⏰8:30am | 🏠ONLINE', code: 'CSCD400', duration: 2 },
             { name: '_Expert Systems_ | ⏰12:30pm | 🏠JQB19', code: 'CSCD428', duration: 1 },
             { name: '_Sys Programming_ | ⏰1:30pm | 🏠JQB14', code: 'CSCD416', duration: 2 },
             { name: '_Mob Computing_ | ⏰3:30pm | 🏠JQB19', code: 'CSCD434', duration: 2 },
