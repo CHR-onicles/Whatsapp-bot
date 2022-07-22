@@ -122,7 +122,7 @@ exports.enableOrDisableAllNotifications = async (status) => {
 
 /**
  * Enable or Disable notifications for a particular course.
- * @param {string} courseCode String representing the course code Eg: `CSCD400`.
+ * @param {string} courseCode String representing the course code Eg: `CSCD416`.
  * @param {boolean} status Boolean representing enabled(True) or disabled(False).
  * @async
  */
@@ -144,9 +144,9 @@ exports.enableOrDisableNotificationForCourse = async (courseCode, status) => {
             case 'CSCD424':
                 res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD424: status } } });
                 break;
-            case 'CSCD400':
-                res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD400: status } } });
-                break;
+            // case 'CSCD400':
+            //     res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD400: status } } });
+            //     break;
             case 'CSCD426':
                 res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { ...classNotifsRes.classNotifications, CSCD426: status } } });
                 break;

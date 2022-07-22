@@ -45,12 +45,12 @@ const execute = async (client, msg) => {
                 await msg.reply("All notifications for today's classes are *OFF* ❌");
             } else {
                 let reply = [];
-                const { CSCD416, CSCD418, CSCD422, CSCD424, CSCD400, CSCD426, CSCD428, CSCD432, CSCD434 } = notifsStatus;
+                const { CSCD416, CSCD418, CSCD422, CSCD424, CSCD426, CSCD428, CSCD432, CSCD434 } = notifsStatus;
                 reply.push(`[🔰] *CSCD416 notification status:* ${CSCD416 ? "✅" : "❌"}`);
                 reply.push(`[🔰] *CSCD418 notification status:* ${CSCD418 ? "✅" : "❌"}`);
                 reply.push(`[🔰] *CSCD422 notification status:* ${CSCD422 ? "✅" : "❌"}`);
                 reply.push(`[🔰] *CSCD424 notification status:* ${CSCD424 ? "✅" : "❌"}`);
-                reply.push(`[🔰] *CSCD400 notification status:* ${CSCD400 ? "✅" : "❌"}`);
+                // reply.push(`[🔰] *CSCD400 notification status:* ${CSCD400 ? "✅" : "❌"}`);
                 reply.push(`[🔰] *CSCD426 notification status:* ${CSCD426 ? "✅" : "❌"}`);
                 reply.push(`[🔰] *CSCD428 notification status:* ${CSCD428 ? "✅" : "❌"}`);
                 reply.push(`[🔰] *CSCD432 notification status:* ${CSCD432 ? "✅" : "❌"}`);
@@ -98,13 +98,13 @@ const execute = async (client, msg) => {
             await helper('CSCD424', true);
             break;
 
-        case 'enable CSCD400':
-        case 'enable cscd400':
-        case '-e CSCD400':
-        case '-e c400':
-        case '-e C400':
-            await helper('CSCD400', true);
-            break;
+        // case 'enable CSCD400':
+        // case 'enable cscd400':
+        // case '-e CSCD400':
+        // case '-e c400':
+        // case '-e C400':
+        //     await helper('CSCD400', true);
+        //     break;
 
         case 'enable CSCD426':
         case 'enable cscd426':
@@ -180,13 +180,13 @@ const execute = async (client, msg) => {
             await helper('CSCD424', false);
             break;
 
-        case 'disable CSCD400':
-        case 'disable cscd400':
-        case '-d CSCD400':
-        case '-d c400':
-        case '-d C400':
-            await helper('CSCD400', false);
-            break;
+        // case 'disable CSCD400':
+        // case 'disable cscd400':
+        // case '-d CSCD400':
+        // case '-d c400':
+        // case '-d C400':
+        //     await helper('CSCD400', false);
+        //     break;
 
         case 'disable CSCD426':
         case 'disable cscd426':
@@ -221,7 +221,7 @@ const execute = async (client, msg) => {
             break;
 
         default:
-            await msg.reply(`Please add valid arguments: \nEg:\n*${currentPrefix}notifs status*\n*${currentPrefix}notifs enable CSCD400*\n*${currentPrefix}notifs disable CSCD400*\n*${currentPrefix}notifs enable all*\n*${currentPrefix}notifs disable all*`);
+            await msg.reply(`Please add valid arguments: \nEg:\n*${currentPrefix}notifs status*\n*${currentPrefix}notifs enable CSCD416*\n*${currentPrefix}notifs disable CSCD416*\n*${currentPrefix}notifs enable all*\n*${currentPrefix}notifs disable all*`);
             break;
     }
 }
@@ -232,6 +232,6 @@ module.exports = {
     description: "Get status or turn on/off class notifications 🔈",
     alias: [],
     category: "admin", // admin | everyone
-    help: `To use this command, type:\n*${currentPrefix}notifs status* or\n*${currentPrefix}notifs enable CSCD400* or\n*${currentPrefix}notifs disable CSCD400* or\n*${currentPrefix}notifs enable all* or\n*${currentPrefix}notifs disable all*`,
+    help: `To use this command, type:\n*${currentPrefix}notifs status* or\n*${currentPrefix}notifs enable CSCD416* or\n*${currentPrefix}notifs disable CSCD416* or\n*${currentPrefix}notifs enable all* or\n*${currentPrefix}notifs disable all*`,
     execute,
 }

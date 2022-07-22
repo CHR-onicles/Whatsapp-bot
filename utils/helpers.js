@@ -163,7 +163,7 @@ const startNotificationCalculation = async (client) => {
     const totalUsers = [...multimedia, ...expert, ...concurrent, ...mobile];
     const chats = await client.getChats();
     const notifsStatus = await getNotificationStatus();
-    const { CSCD416, CSCD418, CSCD422, CSCD424, CSCD400, CSCD426, CSCD428, CSCD432, CSCD434 } = notifsStatus;
+    const { CSCD416, CSCD418, CSCD422, CSCD424, CSCD426, CSCD428, CSCD432, CSCD434 } = notifsStatus;
 
     if (Object.values(notifsStatus).every(elem => !elem)) {
         console.log('[HELPERS - SNC] Exiting because all notifications have been turned OFF')
@@ -192,7 +192,7 @@ const startNotificationCalculation = async (client) => {
             (course.code === 'CSCD418' && !CSCD418) ||
             (course.code === 'CSCD422' && !CSCD422) ||
             (course.code === 'CSCD424' && !CSCD424) ||
-            (course.code === 'CSCD400' && !CSCD400) ||
+            // (course.code === 'CSCD400' && !CSCD400) ||
             (course.code === 'CSCD426' && !CSCD426) ||
             (course.code === 'CSCD428' && !CSCD428) ||
             (course.code === 'CSCD432' && !CSCD432) ||
