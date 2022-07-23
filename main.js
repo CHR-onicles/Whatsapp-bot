@@ -2,7 +2,7 @@
 // main.js contains the primary bot logic
 // --------------------------------------------------
 const app = require('express')();
-const { Client, RemoteAuth } = require('whatsapp-web.js');
+const { Client, RemoteAuth, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const { MongoStore } = require('wwebjs-mongo');
 const mongoose = require('mongoose');
@@ -34,14 +34,22 @@ console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
 // Configurations
 // --------------------------------------------------
 mongoose.connect(process.env.MONGO_URL).then(() => {
-    const store = new MongoStore({ mongoose: mongoose });
-    const client = new Client({
-        puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
-        authStrategy: new RemoteAuth({
-            store: store,
-            backupSyncIntervalMs: 300000
+    let client = null;
+    if (currentEnv === 'development') {
+        client = new Client({
+            puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
+            authStrategy: new LocalAuth()
         })
-    });
+    } else {
+        const store = new MongoStore({ mongoose: mongoose });
+        client = new Client({
+            puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
+            authStrategy: new RemoteAuth({
+                store: store,
+                backupSyncIntervalMs: 300000
+            })
+        });
+    }
 
     client.setMaxListeners(0); // for an infinite number of event listeners
     client.initialize();
@@ -75,8 +83,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
         console.log('[CLIENT] Client is ready!', currentEnv === 'development' ? '\n' : '');
         BOT_START_TIME = new Date();
         args.BOT_START_TIME = BOT_START_TIME;
-        await startNotificationCalculation(client);
-
+        
         // Run status command here first to start logging to group chat chain reaction
         try {
             args.RUN_FIRST_TIME = true;
@@ -86,28 +93,34 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
             console.error('[CLIENT ERROR]', error);
         }
 
-        // Reset notifications everyday
-        const curTime = new Date();
-        const midnightTime = new Date();
-        midnightTime.setDate(curTime.getDate() + 1);
-        midnightTime.setHours(0, 1, 0);
-        console.log('[CLIENT] Time for next notification reset:', midnightTime);
-
-        // Helper function to avoid repetition
-        const resetNotifications = async () => {
-            stopAllOngoingNotifications();
+        if (currentEnv === 'production') {
             await startNotificationCalculation(client);
-            console.log('[CLIENT] Reset all notifications');
-        }
+            
+            // Reset notifications everyday
+            const curTime = new Date();
+            const midnightTime = new Date();
+            midnightTime.setDate(curTime.getDate() + 1);
+            midnightTime.setHours(0, 1, 0);
+            console.log('[CLIENT] Time for next notification reset:', midnightTime);
 
-        setTimeout(async () => {
-            await resetNotifications();
+            // Helper function to avoid repetition
+            const resetNotifications = async () => {
+                stopAllOngoingNotifications();
+                await startNotificationCalculation(client);
+                console.log('[CLIENT] Reset all notifications');
+            }
 
-            setInterval(async () => {
+            setTimeout(async () => {
                 await resetNotifications();
-                await enableOrDisableAllNotifications(true);
-            }, 24 * 60 * 60 * 1000); // Repeat every 24 hours
-        }, midnightTime - curTime); // Time left till midnight
+
+                setInterval(async () => {
+                    await resetNotifications();
+                    await enableOrDisableAllNotifications(true);
+                }, 24 * 60 * 60 * 1000); // Repeat every 24 hours
+            }, midnightTime - curTime); // Time left till midnight in milliseconds
+                // }, 30 * 1000); // For testing
+            // }, 10_000); // For testing
+        }
     });
 
 
