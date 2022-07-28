@@ -69,7 +69,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
 
     // Continuously ping the server to prevent it from becoming idle
     setInterval(async () => {
-        await axios.get("https://chr-whatsapp-bot.herokuapp.com/");
+        await axios.get("https://dana-whatsapp-bot.herokuapp.com/");
         console.log('[SERVER] Pinged server')
     }, 15 * 60 * 1000); // every 15 minutes
 
