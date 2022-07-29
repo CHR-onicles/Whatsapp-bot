@@ -15,10 +15,8 @@ const ResourceSchema = new Schema({
     binData: String, // when Buffer is used, puppeteer complains that it's not properly encoded
 });
 
-const devModelName = "files-dev";
 const prodModelName = "files";
-const currentModelName = process.env.NODE_ENV === 'production' ? prodModelName : devModelName;
-const ResourceModel = model(currentModelName, ResourceSchema);
+const ResourceModel = model(prodModelName, ResourceSchema);
 //todo: Since we can't push `course_resources`, we should only allow uploading courses to development collection
 
 /**
