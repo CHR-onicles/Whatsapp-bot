@@ -132,7 +132,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
 
     // Read commands into memory
     const rootDir = path.join(__dirname, './commands');
-    fs.readdir('./commands', (err, folders) => {
+    fs.readdir(rootDir, (err, folders) => {
         if (err) return console.error('[CLIENT ERROR]', err);
         folders.forEach(folder => {
             const commands = fs.readdirSync(`${rootDir}/${folder}`).filter((file) => file.endsWith(".js"));
