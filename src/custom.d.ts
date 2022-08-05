@@ -9,7 +9,7 @@ interface IClient extends Client {
 }
 
 interface IArgs {
-    BOT_START_TIME?: typeof BOT_START_TIME;
+    BOT_START_TIME?: Date;
     RUN_FIRST_TIME?: boolean;
     isListResponse?: boolean;
     isMention?: boolean;
