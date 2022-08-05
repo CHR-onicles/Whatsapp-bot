@@ -7,12 +7,12 @@
 /**
  * Source code for the bot, hosted on Github.
  */
-exports.SOURCE_CODE = 'https://github.com/CHR-onicles/Whatsapp-bot';
+export const SOURCE_CODE = 'https://github.com/CHR-onicles/Whatsapp-bot';
 
 /**
  * Array containing timetable for Level 400 Computer Science students, all electives included.
  */
-exports.ALL_CLASSES = [
+export const ALL_CLASSES = [
     {
         day: 'Monday',
         courses: [
@@ -61,10 +61,17 @@ exports.ALL_CLASSES = [
 /**
  * Array containing current L400 1st Semester Computer Science exams timetable.
  */
-exports.EXAM_TIMETABLE = [
+export const EXAM_TIMETABLE: {
+    date?: string;
+    _date?: Date;
+    time?: string;
+    courseCode?: string;
+    courseTitle?: string;
+    examMode?: string;
+}[] = [
     // {
     //     date: "Saturday, May 14 2022",
-    //     _date: new Date(2022, 04, 14, 13, 20), // to avoid extra processing logic :)
+    //     _date: new Date(2022, 4, 14, 13, 20), // to avoid extra processing logic :)
     //     time: "1:20pm",
     //     courseCode: "CSCD 421",
     //     courseTitle: "Accounting",
@@ -115,7 +122,7 @@ exports.EXAM_TIMETABLE = [
 /**
  * Object containing arrays of replies for both bot admins and everyone.
  */
-exports.PING_REPLIES = {
+export const PING_REPLIES = {
     botAdmin: [
         "Need me sir?",
         "Sir",
@@ -154,7 +161,7 @@ exports.PING_REPLIES = {
 /**
  * Array containing replies to the `!mute` command.
  */
-exports.MUTE_REPLIES = [
+export const MUTE_REPLIES = [
     'Yes sir',
     'Roger that🐦',
     'Sigh...oki 😔',
@@ -167,7 +174,7 @@ exports.MUTE_REPLIES = [
 /**
  * Array containing replies to the `!unmute` command.
  */
-exports.UNMUTE_REPLIES = [
+export const UNMUTE_REPLIES = [
     'Thanks sir',
     'Finally🐦',
     '🥳',
@@ -180,7 +187,7 @@ exports.UNMUTE_REPLIES = [
 /**
  * Array containing replies which requires the user to check his PMs.
  */
-exports.REACT_EMOJIS = [
+export const REACT_EMOJIS = [
     "✅",
     "🤖",
     "👀",
@@ -200,7 +207,7 @@ exports.REACT_EMOJIS = [
 /**
  * Array containing replies for users who try to perform administrative functions on the bot but are not bot admins.
  */
-exports.NOT_BOT_ADMIN_REPLIES = [
+export const NOT_BOT_ADMIN_REPLIES = [
     "No please 🐦, you are not a *bot admin* unfortunately.\n\nTry *!help* to see commands available to you.",
     "No can do 🐦, you don't have sufficient privileges.\n\nTry *!menu* to see commands available to you.",
     "You are not a *bot admin*\n\nTry *!help* or *!menu* to see commands that are available to you.",
@@ -213,7 +220,7 @@ exports.NOT_BOT_ADMIN_REPLIES = [
 /**
  * Array containing replies to admins attempting to promote the bot.
  */
-exports.PROMOTE_BOT_REPLIES = [
+export const PROMOTE_BOT_REPLIES = [
     "Thanks for the kind gesture, but I need no promotion🐦",
     "Sorry, the bot can't be promoted",
     "Sorry, I can't be promoted",
@@ -229,7 +236,7 @@ exports.PROMOTE_BOT_REPLIES = [
 /**
  * Array containing replies to admins attempting to demote the bot.
  */
-exports.DEMOTE_BOT_REPLIES = [
+export const DEMOTE_BOT_REPLIES = [
     "Imagine trying to demote me 🙄",
     "Wow okay lol",
     "Sorry, the bot can't be demoted",
@@ -249,7 +256,7 @@ exports.DEMOTE_BOT_REPLIES = [
 /**
  * Array containing replies to admins attempting to promote the bot owner(the Grandmaster).
  */
-exports.PROMOTE_GRANDMASTER_REPLIES = [
+export const PROMOTE_GRANDMASTER_REPLIES = [
     "Interesting lel🐦",
     "The Grandmaster needs no further promotion 👍🏽",
     "You are not worthy to promote the Grandmaster🐦",
@@ -264,7 +271,7 @@ exports.PROMOTE_GRANDMASTER_REPLIES = [
 /**
  * Array containing replies to admins attempting to demote the bot owner(the Grandmaster).
  */
-exports.DEMOTE_GRANDMASTER_REPLIES = [
+export const DEMOTE_GRANDMASTER_REPLIES = [
     "Interesting🐦",
     "❌",
     "🙄",
@@ -286,7 +293,7 @@ exports.DEMOTE_GRANDMASTER_REPLIES = [
 /**
  * Array containing replies to commands that require the bot to perform actions that may take long.
  */
-exports.WAIT_REPLIES = [
+export const WAIT_REPLIES = [
     "Gimme a sec🐦",
     "Just a second",
     "One sec🐦",
@@ -303,7 +310,7 @@ exports.WAIT_REPLIES = [
 /**
  * Array containing replies to `!slides` command.
  */
-exports.COURSE_MATERIALS_REPLIES = [
+export const COURSE_MATERIALS_REPLIES = [
     "Need some slides?",
     "Oh you need slides? 🐦",
     "Need any course materials?",
@@ -318,7 +325,7 @@ exports.COURSE_MATERIALS_REPLIES = [
  * based on weighted chances.
  * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.
  */
-exports.FOOTNOTES = new Map([
+export const FOOTNOTES = new Map([
     ["", 60], // send "nothing" more often, to avoid annoying users with multiple tips
 
     // Greetings/wishes
@@ -351,7 +358,7 @@ exports.FOOTNOTES = new Map([
 /**
  * Array containing links that should not be forwarded from other groups.
  */
-exports.LINKS_BLACKLIST = [
+export const LINKS_BLACKLIST = [
     'instagram',
     'facebook',
     'sefbenonline',
@@ -371,7 +378,7 @@ exports.LINKS_BLACKLIST = [
 /**
  * Array containing keywords in links that should not be forwarded from other groups.
  */
-exports.WORDS_IN_LINKS_BLACKLIST = [
+export const WORDS_IN_LINKS_BLACKLIST = [
     'music',
     'bet',
     'gift',
@@ -387,7 +394,7 @@ exports.WORDS_IN_LINKS_BLACKLIST = [
 /**
  * Array containing file extensions and their appropriate mime types.
  */
-exports.MIME_TYPES = [
+export const MIME_TYPES = [
     {
         fileExtension: 'doc',
         mime_type: 'application/msword'

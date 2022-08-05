@@ -19,5 +19,8 @@
   "engines": {
     "node": "14.x"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/qrcode-terminal": "^0.12.0"
+  }
 }

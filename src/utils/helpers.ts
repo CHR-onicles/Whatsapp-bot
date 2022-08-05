@@ -17,7 +17,10 @@ var VARIABLES_COUNTER = 0;
 
 const currentEnv = process.env.NODE_ENV;
 const PROD_PREFIX = '!';
-const currentPrefix = currentEnv === 'production' ? PROD_PREFIX : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
+let currentPrefix: string;
+if (process.env.DEV_PREFIX) {
+    currentPrefix = currentEnv === 'production' ? PROD_PREFIX : process.env.DEV_PREFIX; // hiding Development prefix so user's cant access the Development version of the bot as it's still being worked on
+}
 const BOT_PUSHNAME = 'Ethereal'; // The bot's whatsapp username
 const COOLDOWN_IN_SECS = 5;
 const SOFT_BAN_DURATION_IN_MINS = 15;
@@ -583,7 +586,7 @@ const checkForChance = (chance) => {
 
 
 
-module.exports = {
+export {
     currentEnv,
     currentPrefix,
     PROD_PREFIX,

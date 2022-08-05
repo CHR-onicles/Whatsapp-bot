@@ -52,7 +52,7 @@ initCollection();
  * @param {string} courseCode String representing the course code for a specific course
  * @returns 
  */
-exports.getResource = async (courseCode) => {
+export const getResource = async (courseCode: string) => {
     const res = await ResourceModel.find({ courseCode });
     // console.log('[RESOURCES MODEL]', res);
     return res;

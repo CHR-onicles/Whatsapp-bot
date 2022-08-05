@@ -53,14 +53,14 @@ const initCollection = async () => {
 initCollection();
 
 
-// EXPORTS ---------------------------------------------
+// export const ---------------------------------------------
 
 /**
  * Gets muted status of bot.
  * @async
  * @returns {Promise<boolean>} **True** if bot muted, **false** otherwise.
  */
-exports.getMutedStatus = async () => {
+export const getMutedStatus = async () => {
     const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isMuted: 1 });
     // console.log('[MISC MODEL]', status);
     return status.isMuted;
@@ -70,7 +70,7 @@ exports.getMutedStatus = async () => {
  * Mutes the bot.
  * @async
  */
-exports.muteBot = async () => {
+export const muteBot = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isMuted: true } });
         // console.log('[MISC MODEL]', res);
@@ -84,7 +84,7 @@ exports.muteBot = async () => {
  * Unmutes the bot.
  * @async
  */
-exports.unmuteBot = async () => {
+export const unmuteBot = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isMuted: false } });
         // console.log('[MISC MODEL]', res);
@@ -99,7 +99,7 @@ exports.unmuteBot = async () => {
  * @async
  * @returns {Promise<boolean>} **True** if notifications are on for a specific course, **false** otherwise.
  */
-exports.getNotificationStatus = async () => {
+export const getNotificationStatus = async () => {
     const status = await MiscellaneousModel.findOne(DEFAULT_ID, { classNotifications: 1 });
     // console.log('[MISC MODEL]', status);
     return status.classNotifications;
@@ -110,7 +110,7 @@ exports.getNotificationStatus = async () => {
  * @param {boolean} status Boolean representing enabled(True) or disabled(False).
  * @async
  */
-exports.enableOrDisableAllNotifications = async (status) => {
+export const enableOrDisableAllNotifications = async (status) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { classNotifications: { CSCD416: status, CSCD418: status, CSCD422: status, CSCD424: status, CSCD400: status, CSCD426: status, CSCD428: status, CSCD432: status, CSCD434: status } } });
         // console.log('[MISC MODEL]',res);
@@ -126,7 +126,7 @@ exports.enableOrDisableAllNotifications = async (status) => {
  * @param {boolean} status Boolean representing enabled(True) or disabled(False).
  * @async
  */
-exports.enableOrDisableNotificationForCourse = async (courseCode, status) => {
+export const enableOrDisableNotificationForCourse = async (courseCode, status) => {
     const classNotifsRes = await MiscellaneousModel.findOne(DEFAULT_ID, { classNotifications: 1 });
     let res = null;
     // Couldn't think of a better way of making it more dynamic
@@ -173,7 +173,7 @@ exports.enableOrDisableNotificationForCourse = async (courseCode, status) => {
  * @async
  * @returns {Promise<boolean>} **True** if forwarding important messages is on, **false** otherwise.
  */
-exports.getForwardingStatus = async () => {
+export const getForwardingStatus = async () => {
     const status = await MiscellaneousModel.findOne(DEFAULT_ID, { isForwardingOn: 1 });
     // console.log('[MISC MODEL]', status);
     return status.isForwardingOn;
@@ -183,7 +183,7 @@ exports.getForwardingStatus = async () => {
  * Turns on forwarding of important messages. (temporary)
  * @async
  */
-exports.enableForwarding = async () => {
+export const enableForwarding = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: true } });
         // console.log('[MISC MODEL]', res);
@@ -197,7 +197,7 @@ exports.enableForwarding = async () => {
  * Turns off forwarding of important messages. (temporary)
  * @async
  */
-exports.disableForwarding = async () => {
+export const disableForwarding = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { isForwardingOn: false } });
         // console.log('[MISC MODEL]', res)
@@ -212,7 +212,7 @@ exports.disableForwarding = async () => {
  * @async
  * @returns {Array<string>} An array with all links in the database.
  */
-exports.getAllLinks = async () => {
+export const getAllLinks = async () => {
     const links = await MiscellaneousModel.findOne(DEFAULT_ID, { allLinks: 1 });
     // console.log('[MISC MODEL]', links.allLinks);
     return links.allLinks;
@@ -223,7 +223,7 @@ exports.getAllLinks = async () => {
  * @param {string} newLink A string with a whatsapp message including the link.
  * @async
  */
-exports.addLink = async (newLink) => {
+export const addLink = async (newLink) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { allLinks: newLink } });
         // console.log('[MISC MODEL]', res);
@@ -237,7 +237,7 @@ exports.addLink = async (newLink) => {
  * Removes all the links saved in the database.
  * @async
  */
-exports.removeAllLinks = async () => {
+export const removeAllLinks = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { allLinks: [] } });
         // console.log('[MISC MODEL]', res);
@@ -251,7 +251,7 @@ exports.removeAllLinks = async () => {
  * @async
  * @returns {Array<string>} An array with all announcements in the database.
  */
-exports.getAllAnnouncements = async () => {
+export const getAllAnnouncements = async () => {
     const ann = await MiscellaneousModel.findOne(DEFAULT_ID, { allAnnouncements: 1 });
     // console.log('[MISC MODEL]', ann.allAnnouncements);
     return ann.allAnnouncements;
@@ -262,7 +262,7 @@ exports.getAllAnnouncements = async () => {
  * @param {string} newAnnouncement A string containing the new announcement.
  * @async
  */
-exports.addAnnouncement = async (newAnnouncement) => {
+export const addAnnouncement = async (newAnnouncement) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { allAnnouncements: newAnnouncement } });
         // console.log('[MISC MODEL]', res);
@@ -277,7 +277,7 @@ exports.addAnnouncement = async (newAnnouncement) => {
  * Removes all announcements in the database.
  * @async
  */
-exports.removeAllAnnouncements = async () => {
+export const removeAllAnnouncements = async () => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $set: { allAnnouncements: [] } });
         // console.log('[MISC MODEL]', res);
@@ -292,7 +292,7 @@ exports.removeAllAnnouncements = async () => {
  * @async
  * @returns {Array<string>} An array containing bot admins.
  */
-exports.getAllBotAdmins = async () => {
+export const getAllBotAdmins = async () => {
     const botAdmins = await MiscellaneousModel.distinct("botAdmins");
     // console.log('[MISC MODEL]', botAdmins);
     return botAdmins;
@@ -303,7 +303,7 @@ exports.getAllBotAdmins = async () => {
  * @param {string} newAdmin A string containing the user to be made a bot admin.
  * @async
  */
-exports.addBotAdmin = async (newAdmin) => {
+export const addBotAdmin = async (newAdmin) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { botAdmins: newAdmin } });
         // console.log('[MISC MODEL]', res);
@@ -317,7 +317,7 @@ exports.addBotAdmin = async (newAdmin) => {
  * @param {string} admin A string containing a whatsapp user's number.
  * @async
  */
-exports.removeBotAdmin = async (admin) => {
+export const removeBotAdmin = async (admin) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { botAdmins: admin } });
         // console.log('[MISC MODEL]', res);
@@ -331,7 +331,7 @@ exports.removeBotAdmin = async (admin) => {
  * @async
  * @returns Object with each property containing an array of users who offer a specific elective.
  */
-exports.getUsersToNotifyForClass = async () => {
+export const getUsersToNotifyForClass = async () => {
     const resUsers = await MiscellaneousModel.findOne(DEFAULT_ID, { electiveMultimedia: 1, electiveExpert: 1, electiveConcurrent: 1, electiveMobile: 1 });
     const { electiveMultimedia: multimedia, electiveExpert: expert, electiveConcurrent: concurrent, electiveMobile: mobile } = resUsers;
     return { multimedia, expert, concurrent, mobile };
@@ -343,7 +343,7 @@ exports.getUsersToNotifyForClass = async () => {
  * @param {string} rowId A string representing the **ID** for a specific whatsapp list.
  * @async
  */
-exports.addUserToBeNotified = async (newUser, rowId) => {
+export const addUserToBeNotified = async (newUser, rowId) => {
     try {
         let res = null;
         if (rowId === '1') {
@@ -369,7 +369,7 @@ exports.addUserToBeNotified = async (newUser, rowId) => {
  * @param {string} elective A string representing a single character used to identify an elective.
  * @async
  */
-exports.removeUserToBeNotified = async (user, elective) => {
+export const removeUserToBeNotified = async (user, elective) => {
     try {
         let res = null;
         if (elective === 'MA') {
@@ -393,7 +393,7 @@ exports.removeUserToBeNotified = async (user, elective) => {
  * @async
  * @returns Array of users/groups where announcements and links will be forwarded to.
  */
-exports.getForwardToUsers = async () => {
+export const getForwardToUsers = async () => {
     const users = await MiscellaneousModel.findOne(DEFAULT_ID, { forwardToUsers: 1 });
     // console.log('[MISC MODEL]', users.forwardToUsers);
     return users.forwardToUsers;
@@ -404,7 +404,7 @@ exports.getForwardToUsers = async () => {
  * @async
  * @returns Array of users who have been blacklisted.
  */
-exports.getBlacklistedUsers = async () => {
+export const getBlacklistedUsers = async () => {
     const users = await MiscellaneousModel.findOne(DEFAULT_ID, { blacklistedUsers: 1 });
     // console.log('[MISC MODEL]', users);
     return users.blacklistedUsers;
@@ -415,7 +415,7 @@ exports.getBlacklistedUsers = async () => {
  * @param {string} user String representing a whatsapp number.
  * @async
  */
-exports.addBlacklistedUser = async (user) => {
+export const addBlacklistedUser = async (user) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { blacklistedUsers: user } });
         // console.log('[MISC MODEL]', res);
@@ -429,7 +429,7 @@ exports.addBlacklistedUser = async (user) => {
  * @param {string} user String representing a whatsapp number.
  * @async
  */
-exports.removeBlacklistedUser = async (user) => {
+export const removeBlacklistedUser = async (user) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { blacklistedUsers: user } });
         // console.log('[MISC MODEL]', res);
@@ -443,7 +443,7 @@ exports.removeBlacklistedUser = async (user) => {
  * @async
  * @returns Array of official class groups.
  */
-exports.getAllClassGroups = async () => {
+export const getAllClassGroups = async () => {
     const groups = await MiscellaneousModel.findOne(DEFAULT_ID, { classGroups: 1 });
     // console.log('[MISC MODEL]', groups);
     return groups.classGroups;
@@ -454,7 +454,7 @@ exports.getAllClassGroups = async () => {
  * @async
  * @param {string} group String representing the group id user (`group.id.user`).
  */
-exports.addClassGroup = async (group) => {
+export const addClassGroup = async (group) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $push: { classGroups: group } });
         // console.log('[MISC MODEL]', res);
@@ -468,7 +468,7 @@ exports.addClassGroup = async (group) => {
  * @async
  * @param {string} group String representing the group id user (`group.id.user`).
  */
-exports.removeClassGroup = async (group) => {
+export const removeClassGroup = async (group) => {
     try {
         const res = await MiscellaneousModel.updateOne(DEFAULT_ID, { $pull: { classGroups: group } });
         // console.log('[MISC MODEL]', res);
