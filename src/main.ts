@@ -119,7 +119,8 @@ if (process.env.MONGO_URL) {
       try {
         args.RUN_FIRST_TIME = true;
         console.log("[CLIENT] Starting logs...");
-        client.commands.get("status").execute(client, null, args);
+        client.commands &&
+          client.commands.get("status")?.execute(client, null, args);
       } catch (error) {
         console.error("[CLIENT ERROR]", error);
       }
@@ -170,14 +171,14 @@ if (process.env.MONGO_URL) {
           .filter((file) => file.endsWith(".js"));
         for (let file of commands) {
           const command = require(`${rootDir}/${folder}/${file}`);
-          client.commands.set(command.name, command);
+          client.commands && client.commands.set(command.name, command);
           // console.log('[CLIENT] done')
         }
       });
 
       console.log(
         "[CLIENT] Number of commands read successfully:",
-        client.commands.size
+        client.commands?.size
       );
       isDoneReadingCommands = true;
     });
@@ -258,7 +259,8 @@ if (process.env.MONGO_URL) {
           if (!(firstWord.slice(1) === client.info.wid.user)) return; // Stop processing if the bot is not the one mentioned
           args.isMention = isMention;
           try {
-            client.commands.get("menu").execute(client, msg, args);
+            client.commands &&
+              client.commands.get("menu")?.execute(client, msg, args);
           } catch (error) {
             console.error("[CLIENT ERROR]", error);
           }
@@ -267,10 +269,11 @@ if (process.env.MONGO_URL) {
 
         // Execute command called
         const cmd =
-          client.commands.get(possibleCommand.slice(1)) ||
-          client.commands.get(
-            checkForAlias(client.commands, possibleCommand.slice(1))
-          );
+          (client.commands && client.commands.get(possibleCommand.slice(1))) ||
+          (client.commands &&
+            client.commands.get(
+              checkForAlias(client.commands, possibleCommand.slice(1))
+            ));
         console.log(
           "\n[CLIENT] Possible cmd:",
           possibleCommand,
