@@ -17,8 +17,8 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
   const contact = await msg.getContact();
   const chatFromContact = await contact.getChat();
   const curChat = await msg.getChat();
-  const { multimedia, expert, concurrent, mobile } =
-    await getUsersToNotifyForClass();
+  const response = await getUsersToNotifyForClass();
+
   let text = "";
 
   if (curChat.isGroup) {
@@ -37,18 +37,22 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
 
   // if user has already subscribed to be notified for class, get his elective and send the current day's
   // timetable based on the elective.
-  if (multimedia.includes(contact.id.user)) {
-    helperForClassesToday(text, "MA");
-    return;
-  } else if (expert.includes(contact.id.user)) {
-    helperForClassesToday(text, "E");
-    return;
-  } else if (concurrent.includes(contact.id.user)) {
-    helperForClassesToday(text, "C");
-    return;
-  } else if (mobile.includes(contact.id.user)) {
-    helperForClassesToday(text, "MC");
-    return;
+  if (response) {
+    const { multimedia, expert, concurrent, mobile } = response;
+
+    if (multimedia.includes(contact.id.user)) {
+      helperForClassesToday(text, "MA");
+      return;
+    } else if (expert.includes(contact.id.user)) {
+      helperForClassesToday(text, "E");
+      return;
+    } else if (concurrent.includes(contact.id.user)) {
+      helperForClassesToday(text, "C");
+      return;
+    } else if (mobile.includes(contact.id.user)) {
+      helperForClassesToday(text, "MC");
+      return;
+    }
   }
 
   const list = new List(

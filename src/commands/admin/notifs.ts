@@ -57,47 +57,54 @@ const execute = async (client: IClient, msg: Message) => {
     case "status":
     case "stats":
     case "-s":
+      // const response =
       const notifsStatus = await getNotificationStatus();
-      if (Object.values(notifsStatus).every((elem) => !elem)) {
-        await msg.reply("All notifications for today's classes are *OFF* ❌");
-      } else {
-        let reply = [];
-        const {
-          CSCD416,
-          CSCD418,
-          CSCD422,
-          CSCD424,
-          CSCD426,
-          CSCD428,
-          CSCD432,
-          CSCD434,
-        } = notifsStatus;
-        reply.push(
-          `[🔰] *CSCD416 notification status:* ${CSCD416 ? "✅" : "❌"}`
-        );
-        reply.push(
-          `[🔰] *CSCD418 notification status:* ${CSCD418 ? "✅" : "❌"}`
-        );
-        reply.push(
-          `[🔰] *CSCD422 notification status:* ${CSCD422 ? "✅" : "❌"}`
-        );
-        reply.push(
-          `[🔰] *CSCD424 notification status:* ${CSCD424 ? "✅" : "❌"}`
-        );
-        // reply.push(`[🔰] *CSCD400 notification status:* ${CSCD400 ? "✅" : "❌"}`);
-        reply.push(
-          `[🔰] *CSCD426 notification status:* ${CSCD426 ? "✅" : "❌"}`
-        );
-        reply.push(
-          `[🔰] *CSCD428 notification status:* ${CSCD428 ? "✅" : "❌"}`
-        );
-        reply.push(
-          `[🔰] *CSCD432 notification status:* ${CSCD432 ? "✅" : "❌"}`
-        );
-        reply.push(
-          `[🔰] *CSCD434 notification status:* ${CSCD434 ? "✅" : "❌"}`
-        );
-        await msg.reply(reply.join("\n"));
+      if (notifsStatus) {
+        if (
+          notifsStatus &&
+          Object.values(notifsStatus).every((elem) => !elem)
+        ) {
+          await msg.reply("All notifications for today's classes are *OFF* ❌");
+        } else {
+          let reply = [];
+          const {
+            CSCD416,
+            CSCD418,
+            CSCD422,
+            CSCD424,
+            CSCD426,
+            CSCD428,
+            CSCD432,
+            CSCD434,
+          } = notifsStatus;
+
+          reply.push(
+            `[🔰] *CSCD416 notification status:* ${CSCD416 ? "✅" : "❌"}`
+          );
+          reply.push(
+            `[🔰] *CSCD418 notification status:* ${CSCD418 ? "✅" : "❌"}`
+          );
+          reply.push(
+            `[🔰] *CSCD422 notification status:* ${CSCD422 ? "✅" : "❌"}`
+          );
+          reply.push(
+            `[🔰] *CSCD424 notification status:* ${CSCD424 ? "✅" : "❌"}`
+          );
+          // reply.push(`[🔰] *CSCD400 notification status:* ${CSCD400 ? "✅" : "❌"}`);
+          reply.push(
+            `[🔰] *CSCD426 notification status:* ${CSCD426 ? "✅" : "❌"}`
+          );
+          reply.push(
+            `[🔰] *CSCD428 notification status:* ${CSCD428 ? "✅" : "❌"}`
+          );
+          reply.push(
+            `[🔰] *CSCD432 notification status:* ${CSCD432 ? "✅" : "❌"}`
+          );
+          reply.push(
+            `[🔰] *CSCD434 notification status:* ${CSCD434 ? "✅" : "❌"}`
+          );
+          await msg.reply(reply.join("\n"));
+        }
       }
       break;
 

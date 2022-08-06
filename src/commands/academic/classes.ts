@@ -17,8 +17,8 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
   const contact = await msg.getContact();
   const chatFromContact = await contact.getChat();
   const curChat = await msg.getChat();
-  const { multimedia, expert, concurrent, mobile } =
-    await getUsersToNotifyForClass();
+  const response = await getUsersToNotifyForClass();
+
   let text = "";
 
   if (curChat.isGroup) {
@@ -36,18 +36,21 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
   };
 
   // if the user has already subscribed to be notified, find his elective and send the timetable based on that.
-  if (multimedia.includes(contact.id.user)) {
-    helperForAllClassesReply(text, "MA");
-    return;
-  } else if (expert.includes(contact.id.user)) {
-    helperForAllClassesReply(text, "E");
-    return;
-  } else if (concurrent.includes(contact.id.user)) {
-    helperForAllClassesReply(text, "C");
-    return;
-  } else if (mobile.includes(contact.id.user)) {
-    helperForAllClassesReply(text, "MC");
-    return;
+  if (response) {
+    const { multimedia, expert, concurrent, mobile } = response;
+    if (multimedia.includes(contact.id.user)) {
+      helperForAllClassesReply(text, "MA");
+      return;
+    } else if (expert.includes(contact.id.user)) {
+      helperForAllClassesReply(text, "E");
+      return;
+    } else if (concurrent.includes(contact.id.user)) {
+      helperForAllClassesReply(text, "C");
+      return;
+    } else if (mobile.includes(contact.id.user)) {
+      helperForAllClassesReply(text, "MC");
+      return;
+    }
   }
 
   const list = new List(

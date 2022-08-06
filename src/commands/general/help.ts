@@ -26,36 +26,36 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
 
   // If user just types help with no arguments, show all commands
   if (!msgArgs.length) {
-    client.commands.get("menu").execute(client, msg, args);
+    client.commands && client.commands.get("menu")?.execute(client, msg, args);
   }
 
   // If user types help with a command as an argument show info for that command
   if (msgArgs.length) {
     const commandName = msgArgs[0];
-    if (!client.commands.has(commandName)) {
+    if (client.commands && !client.commands.has(commandName)) {
       await chatFromContact.sendMessage("That command does not exist.");
       return;
     }
     let command = null;
     try {
-      command = client.commands.get(commandName);
+      command = client.commands && client.commands.get(commandName);
     } catch (error) {
       console.error(error);
     }
 
-    if (!isBotAdmin && command.category === "admin") {
+    if (!isBotAdmin && command?.category === "admin") {
       await chatFromContact.sendMessage(pickRandomReply(NOT_BOT_ADMIN_REPLIES));
       return;
     } else {
       await chatFromContact.sendMessage(
-        `*Command:* ${currentPrefix}${command.name}\n\n` +
+        `*Command:* ${currentPrefix}${command?.name}\n\n` +
           `*Aliases:* ${
-            command.alias.length
-              ? command.alias.map((alias: string) => alias).join(", ")
+            command?.alias.length
+              ? command?.alias.map((alias: string) => alias).join(", ")
               : "None"
           }\n\n` +
-          `*Description:* ${command.description}\n\n` +
-          `*Usage:*\n${command.help}`
+          `*Description:* ${command?.description}\n\n` +
+          `*Usage:*\n${command?.help}`
       );
     }
   }

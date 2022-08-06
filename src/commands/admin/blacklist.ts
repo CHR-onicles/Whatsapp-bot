@@ -21,15 +21,17 @@ const execute = async (client: IClient, msg: Message) => {
     return;
   }
 
-  if (!blacklistedUsers.length) {
+  if (blacklistedUsers && !blacklistedUsers.length) {
     await msg.reply("There are currently no blacklisted users");
     return;
   }
 
   const foundBlacklistedUsers = [];
-  for (const con of allContacts) {
-    for (const black of blacklistedUsers) {
-      if (con.number === black) foundBlacklistedUsers.push(con);
+  if (blacklistedUsers) {
+    for (const con of allContacts) {
+      for (const black of blacklistedUsers) {
+        if (con.number === black) foundBlacklistedUsers.push(con);
+      }
     }
   }
 
