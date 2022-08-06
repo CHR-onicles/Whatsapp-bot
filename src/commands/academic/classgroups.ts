@@ -1,4 +1,4 @@
-import { IClient } from "src/custom";
+import { IClient } from "../../interfaces";
 import { Chat, GroupChat, Message } from "whatsapp-web.js";
 import { getMutedStatus, getAllClassGroups } from "../../models/misc";
 import { REACT_EMOJIS } from "../../utils/data";

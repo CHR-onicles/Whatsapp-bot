@@ -1,7 +1,7 @@
 // --------------------------------------------------
 // helper.js contains helper functions to supplement bot logic
 // --------------------------------------------------
-import WAWebJS from "whatsapp-web.js";
+import { Chat, Contact, GroupParticipant, Message } from "whatsapp-web.js";
 import { MessageMedia } from "whatsapp-web.js";
 import {
   getUsersToNotifyForClass,
@@ -11,6 +11,8 @@ import {
 } from "../models/misc";
 import { MIME_TYPES, ALL_CLASSES } from "./data";
 import { getResource } from "../models/resources";
+import { IClient, ICourse } from "../interfaces";
+import { TCommands } from "../types";
 
 // GLOBAL VARIABLES ----------------------------------
 /**
@@ -41,11 +43,11 @@ const pickRandomReply = (replies: string[]) => {
 
 /**
  * Extract time for a course from the `ALL_CLASSES` array.
- * @param {string} course_name A string containing name, time and venue of class.
- * @returns {string} A string containing the time for a course in the format HH:MM.
+ * @param courseName A string containing name, time and venue of class.
+ * @returns A string containing the time for a course in the format HH:MM.
  */
-const extractTime = (course_name) => {
-  const timePortion = course_name.split("|")[1].trim();
+const extractTime = (courseName: string) => {
+  const timePortion = courseName.split("|")[1].trim();
   const rawTime = timePortion.slice(1);
   let newRawTime = null;
 
@@ -58,23 +60,23 @@ const extractTime = (course_name) => {
 
 /**
  * Extracts the command (which is usually the first word) from the message `body`.
- * @param {WAWebJS.Message} msg Message object from whatsapp.
- * @returns {string} The first word in the message `body`.
+ * @param msg Message object from whatsapp.
+ * @returns The first word in the message `body`.
  */
-const extractCommand = (msg) => {
-  const split = msg?.body.toLowerCase().split(/(\s+|\n+)/);
+const extractCommand = (msg: Message) => {
+  const split = msg.body.toLowerCase().split(/(\s+|\n+)/);
   const firstWord = split.shift();
   // console.log('[HELPERS - EC]', firstWord)
-  if (firstWord.startsWith(currentPrefix)) return firstWord;
+  if (firstWord?.startsWith(currentPrefix)) return firstWord;
   return "";
 };
 
 /**
  * Extracts the arguments/flags to supplement a command.
- * @param {WAWebJS.Message} msg Message object from whatsapp .
- * @returns {Array<string>} Empty array if no arguments are attached to command or an array of arguments.
+ * @param msg Message object from whatsapp .
+ * @returns Empty array if no arguments are attached to command or an array of arguments.
  */
-const extractCommandArgs = (msg) => {
+const extractCommandArgs = (msg: Message) => {
   // If there's a newline ignore everything after the new line
   const args = msg.body.toLowerCase().split(/\n+/)[0]; // enforce arguments being separated from commands strictly by space(s)
 
@@ -90,10 +92,10 @@ const extractCommandArgs = (msg) => {
 
 /**
  * Converts milliseconds to days, hours, minutes and seconds.
- * @param {number} duration A duration in milliseconds.
+ * @param duration A duration in milliseconds.
  * @returns Object containing days, hours, minutes and seconds
  */
-const msToDHMS = (duration) => {
+const msToDHMS = (duration: number) => {
   if (duration < 0) {
     throw new Error("[HELPERS - MTDHMS] The duration cannot be negative!");
   }
@@ -113,10 +115,13 @@ const msToDHMS = (duration) => {
 
 /**
  * Calculates the time left in milliseconds for a reminder in 2 hours, 1 hour, and 30 minutes respectively.
- * @param {{name: string, duration: number}} course Object containing course name and duration.
+ * @param course Object containing course name and duration.
  * @returns Object containing milliseconds left for a reminder in 2 hours, 1 hour, and 30 minutes respectively.
  */
-const notificationTimeLeftCalc = (course) => {
+const notificationTimeLeftCalc = (course: {
+  name: string;
+  duration: number;
+}) => {
   // Constants for notification intervals
   const twoHrsInMs = 120 * 60 * 1000;
   const oneHrInMs = 60 * 60 * 1000;
@@ -142,7 +147,7 @@ const notificationTimeLeftCalc = (course) => {
     classTimeMins,
     0
   );
-  const timeLeftInMs = newClassTime - curTime;
+  const timeLeftInMs = newClassTime.getTime() - curTime.getTime();
 
   if (twoHrsInMs > timeLeftInMs) {
     console.log(
@@ -177,149 +182,159 @@ const notificationTimeLeftCalc = (course) => {
 
 /**
  * Starts the notification intervals calculation.
- * @param {WAWebJS.Client} client Client object from wweb.js library.
+ * @param client Client object from wweb.js library.
  */
-const startNotificationCalculation = async (client) => {
+const startNotificationCalculation = async (client: IClient) => {
   const todayDay = new Date().toString().split(" ")[0];
-  const { multimedia, expert, concurrent, mobile } =
-    await getUsersToNotifyForClass();
+  const usersToNotify = await getUsersToNotifyForClass();
+  if (usersToNotify) {
+    const { multimedia, expert, concurrent, mobile } = usersToNotify;
 
-  const totalUsers = [...multimedia, ...expert, ...concurrent, ...mobile];
-  const chats = await client.getChats();
-  const notifsStatus = await getNotificationStatus();
-  const {
-    CSCD416,
-    CSCD418,
-    CSCD422,
-    CSCD424,
-    CSCD426,
-    CSCD428,
-    CSCD432,
-    CSCD434,
-  } = notifsStatus;
+    const totalUsers = [...multimedia, ...expert, ...concurrent, ...mobile];
+    const chats = await client.getChats();
+    const notifsStatus = await getNotificationStatus();
+    if (notifsStatus) {
+      const {
+        CSCD416,
+        CSCD418,
+        CSCD422,
+        CSCD424,
+        CSCD426,
+        CSCD428,
+        CSCD432,
+        CSCD434,
+      } = notifsStatus;
 
-  if (Object.values(notifsStatus).every((elem) => !elem)) {
-    console.log(
-      "[HELPERS - SNC] Exiting because all notifications have been turned OFF"
-    );
-    return;
-  }
-
-  if (!totalUsers.length) {
-    console.log("[HELPERS - SNC] Exiting because there are no users to notify");
-    return;
-  }
-
-  if (todayDay === "Sat" || todayDay === "Sun") {
-    console.log(
-      "[HELPERS - SNC] No courses to be notified for during the weekend!"
-    );
-    return;
-  }
-
-  const { courses } = ALL_CLASSES.find((classObj) => {
-    if (classObj.day.slice(0, 3) === todayDay) {
-      return classObj;
-    }
-  });
-  // console.log('[HELPERS - SNC]', courses);
-
-  for (const course of courses) {
-    if (
-      (course.code === "CSCD416" && !CSCD416) ||
-      (course.code === "CSCD418" && !CSCD418) ||
-      (course.code === "CSCD422" && !CSCD422) ||
-      (course.code === "CSCD424" && !CSCD424) ||
-      // (course.code === 'CSCD400' && !CSCD400) ||
-      (course.code === "CSCD426" && !CSCD426) ||
-      (course.code === "CSCD428" && !CSCD428) ||
-      (course.code === "CSCD432" && !CSCD432) ||
-      (course.code === "CSCD434" && !CSCD434)
-    ) {
-      continue;
-    }
-
-    const classTime = extractTime(course.name);
-    const classTimeHrs = +classTime.split(":")[0];
-    const classTimeMins = +classTime
-      .split(":")[1]
-      .slice(0, classTime.split(":")[1].length - 2);
-    const { timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins } =
-      notificationTimeLeftCalc(course);
-
-    const curTime = new Date();
-    const newClassTime = new Date(
-      curTime.getFullYear(),
-      curTime.getMonth(),
-      curTime.getDate(),
-      classTimeHrs,
-      classTimeMins,
-      0
-    );
-    const timeLeftInMs = newClassTime - curTime;
-    if (timeLeftInMs < 0) continue; // if the time for a course is past, skip to next course
-
-    // Helper function to reduce repetition;
-    const helperForTimeoutIntervalGeneration = (electiveArray) => {
-      if (electiveArray.length) {
-        electiveArray.forEach((student) => {
-          generateTimeoutIntervals(
-            student,
-            course,
-            chats,
-            timeoutTwoHrs,
-            timeoutOneHr,
-            timeoutThirtyMins
-          );
-          // console.log('[HELPERS - SNC] Student:', student, ' course:', course);
-        });
-        console.log("\n");
-      }
-    };
-
-    if (course.name.includes("Mult")) {
-      helperForTimeoutIntervalGeneration(multimedia);
-    } else if (course.name.includes("Expert")) {
-      helperForTimeoutIntervalGeneration(expert);
-    } else if (course.name.includes("Conc")) {
-      helperForTimeoutIntervalGeneration(concurrent);
-    } else if (course.name.includes("Mob")) {
-      helperForTimeoutIntervalGeneration(mobile);
-    } else {
-      totalUsers.forEach((student) => {
-        generateTimeoutIntervals(
-          student,
-          course,
-          chats,
-          timeoutTwoHrs,
-          timeoutOneHr,
-          timeoutThirtyMins
+      if (Object.values(notifsStatus).every((elem) => !elem)) {
+        console.log(
+          "[HELPERS - SNC] Exiting because all notifications have been turned OFF"
         );
-        // console.log('[HELPERS - SNC] Student:', student, ' course:', course);
+        return;
+      }
+
+      if (!totalUsers.length) {
+        console.log(
+          "[HELPERS - SNC] Exiting because there are no users to notify"
+        );
+        return;
+      }
+
+      if (todayDay === "Sat" || todayDay === "Sun") {
+        console.log(
+          "[HELPERS - SNC] No courses to be notified for during the weekend!"
+        );
+        return;
+      }
+
+      const found = ALL_CLASSES.find((classObj) => {
+        if (classObj.day.slice(0, 3) === todayDay) {
+          return classObj;
+        }
       });
-      console.log("\n");
+      // console.log('[HELPERS - SNC]', courses);
+      if (found) {
+        const { courses } = found;
+        for (const course of courses) {
+          if (
+            (course.code === "CSCD416" && !CSCD416) ||
+            (course.code === "CSCD418" && !CSCD418) ||
+            (course.code === "CSCD422" && !CSCD422) ||
+            (course.code === "CSCD424" && !CSCD424) ||
+            // (course.code === 'CSCD400' && !CSCD400) ||
+            (course.code === "CSCD426" && !CSCD426) ||
+            (course.code === "CSCD428" && !CSCD428) ||
+            (course.code === "CSCD432" && !CSCD432) ||
+            (course.code === "CSCD434" && !CSCD434)
+          ) {
+            continue;
+          }
+
+          const classTime = extractTime(course.name);
+          const classTimeHrs = +classTime.split(":")[0];
+          const classTimeMins = +classTime
+            .split(":")[1]
+            .slice(0, classTime.split(":")[1].length - 2);
+          const { timeoutTwoHrs, timeoutOneHr, timeoutThirtyMins } =
+            notificationTimeLeftCalc(course);
+
+          const curTime = new Date();
+          const newClassTime = new Date(
+            curTime.getFullYear(),
+            curTime.getMonth(),
+            curTime.getDate(),
+            classTimeHrs,
+            classTimeMins,
+            0
+          );
+          const timeLeftInMs = newClassTime.getTime() - curTime.getTime();
+          if (timeLeftInMs < 0) continue; // if the time for a course is past, skip to next course
+
+          // Helper function to reduce repetition;
+          const helperForTimeoutIntervalGeneration = (
+            electiveArray: string[]
+          ) => {
+            if (electiveArray.length) {
+              electiveArray.forEach((student) => {
+                generateTimeoutIntervals(
+                  student,
+                  course,
+                  chats,
+                  timeoutTwoHrs,
+                  timeoutOneHr,
+                  timeoutThirtyMins
+                );
+                // console.log('[HELPERS - SNC] Student:', student, ' course:', course);
+              });
+              console.log("\n");
+            }
+          };
+
+          if (course.name.includes("Mult")) {
+            helperForTimeoutIntervalGeneration(multimedia);
+          } else if (course.name.includes("Expert")) {
+            helperForTimeoutIntervalGeneration(expert);
+          } else if (course.name.includes("Conc")) {
+            helperForTimeoutIntervalGeneration(concurrent);
+          } else if (course.name.includes("Mob")) {
+            helperForTimeoutIntervalGeneration(mobile);
+          } else {
+            totalUsers.forEach((student) => {
+              generateTimeoutIntervals(
+                student,
+                course,
+                chats,
+                timeoutTwoHrs,
+                timeoutOneHr,
+                timeoutThirtyMins
+              );
+              // console.log('[HELPERS - SNC] Student:', student, ' course:', course);
+            });
+            console.log("\n");
+          }
+        }
+      }
     }
   }
 };
 
 /**
  * Generates the dynamic timeouts after which the notification callbacks will send a message to all subscribed users.
- * @param {string} user A string that represents a user, usually by a phone number.
- * @param {{name: string, duration: number}} course Object containing course `name` and `duration`.
- * @param {WAWebJS.Chat} chats All chats the bot is participating in.
- * @param {number} timeoutTwoHrs Value in milliseconds left to send the 2 hour notification.
- * @param {number} timeoutOneHr Value in milliseconds left to send the 1 hour notification.
- * @param {number} timeoutThirtyMins Value in milliseconds left to send the 30 minutes notification.
+ * @param user A string that represents a user, usually by a phone number.
+ * @param course Object containing course `name` and `duration`.
+ * @param chats All chats the bot is participating in.
+ * @param timeoutTwoHrs Value in milliseconds left to send the 2 hour notification.
+ * @param timeoutOneHr Value in milliseconds left to send the 1 hour notification.
+ * @param timeoutThirtyMins Value in milliseconds left to send the 30 minutes notification.
  */
 const generateTimeoutIntervals = (
-  user,
-  course,
-  chats,
-  timeoutTwoHrs,
-  timeoutOneHr,
-  timeoutThirtyMins
+  user: string,
+  course: { name: string; code: string; duration: number },
+  chats: Chat[],
+  timeoutTwoHrs: number,
+  timeoutOneHr: number,
+  timeoutThirtyMins: number
 ) => {
-  const chat_from_user = chats.find((chat) => chat.id.user === user); // used in the eval statement
+  const chat_from_user = chats.find((chat: Chat) => chat.id.user === user); // used in the eval statement
 
   // Create dynamic variables to assign the timeouts to. The dynamic variables are needed in order to clear the timeouts
   // in case the user opts out or there's a recalculation of notification intervals.
@@ -378,12 +393,23 @@ const stopAllOngoingNotifications = () => {
 
 /**
  * Generates reply to `!classes` command based on elective being offered.
- * @param {Array<{day: string, courses: Array<{name: string, duration: number}>}>} allClasses An array containing the full timetable for Level 400 Computer Science students.
- * @param {string} elective Character identifying the elective being offered.
- * @param {string} text Reply that would be sent by the bot.
+ * @param allClasses An array containing the full timetable for Level 400 Computer Science students.
+ * @param elective Character identifying the elective being offered.
+ * @param text Reply that would be sent by the bot.
  * @returns Modified `text` as bot's response.
  */
-const allClassesReply = (allClasses, elective, text) => {
+const allClassesReply = (
+  allClasses: {
+    day: string;
+    courses: {
+      name: string;
+      code: string;
+      duration: number;
+    }[];
+  }[],
+  elective: string,
+  text: string
+) => {
   let filtered_courses = null;
   if (elective === "MA") {
     text +=
@@ -467,12 +493,12 @@ const allClassesReply = (allClasses, elective, text) => {
 
 /**
  * Gets classes for the current day.
- * @param {string} text Reply that would be sent by the bot.
- * @param {string} elective Character identifying the elective being offered.
+ * @param text Reply that would be sent by the bot.
+ * @param elective Character identifying the elective being offered.
  * @async
  * @returns Modified `text` as bot's response.
  */
-const todayClassReply = async (text, elective) => {
+const todayClassReply = async (text: string, elective: string) => {
   const todayDay = new Date().toString().split(" ")[0]; // to get day of today
 
   if (todayDay === "Sat" || todayDay === "Sun") {
@@ -481,113 +507,117 @@ const todayClassReply = async (text, elective) => {
     return text;
   }
 
-  let { courses } = ALL_CLASSES.find((classObj) => {
+  const found = ALL_CLASSES.find((classObj) => {
     if (classObj.day.slice(0, 3) === todayDay) {
       return classObj;
     }
   });
 
-  const curTime = new Date();
-  const doneArray = [];
-  const inSessionArray = [];
-  const upcomingArray = [];
+  if (found) {
+    let { courses } = found;
 
-  if (elective === "MA") {
-    text +=
-      "Today's classes for students offering *Multimedia Applications*: ☀\n\n";
-    courses = courses.filter(
-      (c) =>
-        !c.name.includes("Expert") &&
-        !c.name.includes("Conc") &&
-        !c.name.includes("Mob")
-    );
-  } else if (elective === "E") {
-    text += "Today's classes for students offering *Expert Systems*: ☀\n\n";
-    courses = courses.filter(
-      (c) =>
-        !c.name.includes("Mult") &&
-        !c.name.includes("Conc") &&
-        !c.name.includes("Mob")
-    );
-  } else if (elective === "C") {
-    text +=
-      "Today's classes for students offering *Concurrent & Distributed Systems*: ☀\n\n";
-    courses = courses.filter(
-      (c) =>
-        !c.name.includes("Mult") &&
-        !c.name.includes("Expert") &&
-        !c.name.includes("Mob")
-    );
-  } else if (elective === "MC") {
-    text += "Today's classes for students offering *Mobile Computing*: ☀\n\n";
-    courses = courses.filter(
-      (c) =>
-        !c.name.includes("Mult") &&
-        !c.name.includes("Expert") &&
-        !c.name.includes("Conc")
-    );
-  }
+    const curTime = new Date();
+    const doneArray: ICourse[] = [] as ICourse[];
+    const inSessionArray: ICourse[] = [] as ICourse[];
+    const upcomingArray: ICourse[] = [] as ICourse[];
 
-  courses.forEach((course) => {
-    const classTime = extractTime(course.name);
-    const classTimeHrs = +classTime.split(":")[0];
-    const classTimeMins = +classTime
-      .split(":")[1]
-      .slice(0, classTime.split(":")[1].length - 2);
-
-    if (
-      curTime.getHours() < classTimeHrs ||
-      (curTime.getHours() === classTimeHrs &&
-        curTime.getMinutes() < classTimeMins)
-    ) {
-      upcomingArray.push(course);
-    } else if (
-      curTime.getHours() === classTimeHrs ||
-      curTime.getHours() < classTimeHrs + course.duration ||
-      (curTime.getHours() <= classTimeHrs + course.duration &&
-        curTime.getMinutes() < classTimeMins)
-    ) {
-      inSessionArray.push(course);
-    } else if (
-      curTime.getHours() > classTimeHrs + course.duration ||
-      (curTime.getHours() >= classTimeHrs + course.duration &&
-        curTime.getMinutes() > classTimeMins)
-    ) {
-      doneArray.push(course);
+    if (elective === "MA") {
+      text +=
+        "Today's classes for students offering *Multimedia Applications*: ☀\n\n";
+      courses = courses.filter(
+        (c) =>
+          !c.name.includes("Expert") &&
+          !c.name.includes("Conc") &&
+          !c.name.includes("Mob")
+      );
+    } else if (elective === "E") {
+      text += "Today's classes for students offering *Expert Systems*: ☀\n\n";
+      courses = courses.filter(
+        (c) =>
+          !c.name.includes("Mult") &&
+          !c.name.includes("Conc") &&
+          !c.name.includes("Mob")
+      );
+    } else if (elective === "C") {
+      text +=
+        "Today's classes for students offering *Concurrent & Distributed Systems*: ☀\n\n";
+      courses = courses.filter(
+        (c) =>
+          !c.name.includes("Mult") &&
+          !c.name.includes("Expert") &&
+          !c.name.includes("Mob")
+      );
+    } else if (elective === "MC") {
+      text += "Today's classes for students offering *Mobile Computing*: ☀\n\n";
+      courses = courses.filter(
+        (c) =>
+          !c.name.includes("Mult") &&
+          !c.name.includes("Expert") &&
+          !c.name.includes("Conc")
+      );
     }
-  });
 
-  text +=
-    "✅ *Done*:\n" +
-    (function () {
-      return !doneArray.length
-        ? "🚫 None\n"
-        : doneArray.map(({ name }) => `~${name}~\n`).join("");
-    })() +
-    "\n" +
-    "⏳ *In session*:\n" +
-    (function () {
-      return !inSessionArray.length
-        ? "🚫 None\n"
-        : inSessionArray.map(({ name }) => `${name}\n`).join("");
-    })() +
-    "\n" +
-    "💡 *Upcoming*:\n" +
-    (function () {
-      return !upcomingArray.length
-        ? "🚫 None\n"
-        : upcomingArray.map(({ name }) => `${name}\n`).join("");
-    })();
-  return text;
+    courses.forEach((course) => {
+      const classTime = extractTime(course.name);
+      const classTimeHrs = +classTime.split(":")[0];
+      const classTimeMins = +classTime
+        .split(":")[1]
+        .slice(0, classTime.split(":")[1].length - 2);
+
+      if (
+        curTime.getHours() < classTimeHrs ||
+        (curTime.getHours() === classTimeHrs &&
+          curTime.getMinutes() < classTimeMins)
+      ) {
+        upcomingArray.push(course);
+      } else if (
+        curTime.getHours() === classTimeHrs ||
+        curTime.getHours() < classTimeHrs + course.duration ||
+        (curTime.getHours() <= classTimeHrs + course.duration &&
+          curTime.getMinutes() < classTimeMins)
+      ) {
+        inSessionArray.push(course);
+      } else if (
+        curTime.getHours() > classTimeHrs + course.duration ||
+        (curTime.getHours() >= classTimeHrs + course.duration &&
+          curTime.getMinutes() > classTimeMins)
+      ) {
+        doneArray.push(course);
+      }
+    });
+
+    text +=
+      "✅ *Done*:\n" +
+      (function () {
+        return !doneArray.length
+          ? "🚫 None\n"
+          : doneArray.map(({ name }) => `~${name}~\n`).join("");
+      })() +
+      "\n" +
+      "⏳ *In session*:\n" +
+      (function () {
+        return !inSessionArray.length
+          ? "🚫 None\n"
+          : inSessionArray.map(({ name }) => `${name}\n`).join("");
+      })() +
+      "\n" +
+      "💡 *Upcoming*:\n" +
+      (function () {
+        return !upcomingArray.length
+          ? "🚫 None\n"
+          : upcomingArray.map(({ name }) => `${name}\n`).join("");
+      })();
+    return text;
+  }
 };
 
 /**
  * Helper function to retrieve slides from DB to send to user.
- * @param {WAWebJS.Message} msg Message object from whatsapp.
- * @param {string} courseCode String representing course code.
+ * @param msg Message object from whatsapp.
+ * @param courseCode String representing course code.
  * @async
  */
-const sendSlides = async (msg, courseCode) => {
+const sendSlides = async (msg: Message, courseCode: string) => {
   let isDone = false;
   console.log("[HELPERS - SS] Getting slides...");
   const materials = await getResource(courseCode);
@@ -597,34 +627,38 @@ const sendSlides = async (msg, courseCode) => {
     const curMaterial = material;
     const file_extension =
       curMaterial.title.split(".")[curMaterial.title.split(".").length - 1]; // always extract the last "." and what comes after
-    const { mime_type } = MIME_TYPES.find(
+    const foundMimeType = MIME_TYPES.find(
       (obj) => obj.fileExtension === file_extension
     );
-    const slide = new MessageMedia(
-      mime_type,
-      curMaterial.binData,
-      curMaterial.title
-    );
-    await msg.reply(slide);
-    console.log("[HELPERS - SS] Sent a slide");
-    if (material === materials[materials.length - 1]) isDone = true;
+
+    if (foundMimeType) {
+      const { mime_type } = foundMimeType;
+      const slide = new MessageMedia(
+        mime_type,
+        curMaterial.binData,
+        curMaterial.title
+      );
+      await msg.reply(slide);
+      console.log("[HELPERS - SS] Sent a slide");
+      if (material === materials[materials.length - 1]) isDone = true;
+    }
+    // if (isDone) await msg.reply(`Done 👍🏽 from ${currentEnv}`);
+    if (isDone) await msg.reply(`Done 👍🏽`);
+    console.log(" [HELPERS - SS]Done sending slides");
   }
-  // if (isDone) await msg.reply(`Done 👍🏽 from ${currentEnv}`);
-  if (isDone) await msg.reply(`Done 👍🏽`);
-  console.log(" [HELPERS - SS]Done sending slides");
 };
 
 /**
  * Checks whether a user is a bot admin. User passed can be a whatsapp contact or a whatsapp number as a String.
- * @param {WAWebJS.Contact} contact Object that represents a contact on whatsapp.
+ * @param contact Object that represents a contact on whatsapp.
  * @async
  * @returns **True** if contact is a bot admin, **False** otherwise.
  */
-const isUserBotAdmin = async (contact) => {
+const isUserBotAdmin = async (contact: Contact | string | GroupParticipant) => {
   const admins = new Set(await getAllBotAdmins());
 
   // Probably a bad practice but mehh
-  // If a whatsapp number as a string is passed, do this...
+  // If a whatsapp number is passed as a string, do this...
   if (typeof contact !== "object") {
     return admins.has(contact);
   }
@@ -633,10 +667,10 @@ const isUserBotAdmin = async (contact) => {
 
 /**
  * Gets a random item from a map using weighted probability.
- * @param {Map<string, number>} map Map containing a message and its weight.
+ * @param map Map containing a message and its weight.
  * @returns Random item from a map.
  */
-const pickRandomWeightedMessage = (map) => {
+const pickRandomWeightedMessage = (map: Map<string, number>) => {
   const items = [...map.keys()];
   const weights = [...map.values()];
 
@@ -655,14 +689,15 @@ const pickRandomWeightedMessage = (map) => {
 
 /**
  * Checks whether all elements in an array are the same.
- * @param {Array} arr Array containing some elements
+ * @param arr Array containing some elements
  * @returns True if all elements are equal, false otherwise
  */
-const areAllItemsEqual = (arr) => arr.every((item) => item === arr[0]);
+// I think this definitely has to be an "any" type
+const areAllItemsEqual = (arr: any[]) => arr.every((item) => item === arr[0]);
 
 /**
  * Sleeps the bot for some time.
- * @param {number} milliseconds Represents the amount of time to sleep in milliseconds
+ * @param milliseconds Represents the amount of time to sleep in milliseconds
  */
 const sleep = async (milliseconds = 500) => {
   await new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -670,11 +705,11 @@ const sleep = async (milliseconds = 500) => {
 
 /**
  * Checks and returns commands for aliases used.
- * @param {Map<String, Object>} map Map containing commands and their relevant information.
- * @param {string} keyword String representing the keyword to search for.
- * @returns {string} String representing key from map.
+ * @param map Map containing commands and their relevant information.
+ * @param keyword String representing the keyword to search for.
+ * @returns String representing key from map.
  */
-const checkForAlias = (map, keyword) => {
+const checkForAlias = (map: TCommands, keyword: string) => {
   for (const entry of map) {
     const aliases = entry[1].alias;
     // console.log('[HELPERS - CFA]', aliases);
@@ -688,70 +723,84 @@ const checkForAlias = (map, keyword) => {
 
 /**
  * Adds a cooldown to each user after using a command.
- * @param {WAWebJS.Client} client Client instance from WWebjs library.
- * @param {string} user String representing a user.
+ * @param client Client instance from WWebjs library.
+ * @param user String representing a user.
  */
-const addToUsedCommandRecently = (client, user) => {
-  client.usedCommandRecently.add(user);
+const addToUsedCommandRecently = (client: IClient, user: string) => {
+  client.usedCommandRecently && client.usedCommandRecently.add(user);
   setTimeout(() => {
-    client.usedCommandRecently.delete(user);
+    client.usedCommandRecently && client.usedCommandRecently.delete(user);
   }, COOLDOWN_IN_SECS * 1000);
 };
 
 /**
  * Gets amount of time left in seconds for setTimeout instance to execute.
- * @param {Object} timeout Object representing a setTimeout instance.
- * @returns {number} Number indicating the amount of time left in seconds for the setTimeout instance to execute.
+ * @param timeout NodeJS timeout instance.
+ * @returns Number indicating the amount of time left in seconds for the setTimeout instance to execute.
  */
-const getTimeLeftForSetTimeout = (timeout) => {
+const getTimeLeftForSetTimeout = (timeout: NodeJS.Timeout) => {
   return Math.ceil(
+    //@ts-ignore - Properties actually do exist but TS says it doesn't
     (timeout._idleStart + timeout._idleTimeout) / 1000 - process.uptime()
   );
 };
 
 /**
  * Checks messages for spam and executes appropriate action.
- * @param {WAWebJS.Client} client Client instance from WWebjs lirbary.
- * @param {WAWebJS.Contact} contact Object representing a whatsapp contact.
- * @param {WAWebJS.Chat} chatFromContact Object representing a whatsapp chat.
- * @param {WAWebJS.Message} msg Object representing a whatsapp message.
+ * @param client Client instance from WWebjs library.
+ * @param contact Object representing a whatsapp contact.
+ * @param chatFromContact Object representing a whatsapp chat.
+ * @param msg Object representing a whatsapp message.
  * @async
- * @returns {boolean} Returns **True** if spam intent is detected, **False** otherwise.
+ * @returns Returns **True** if spam intent is detected, **False** otherwise.
  */
-const checkForSpam = async (client, contact, chatFromContact, msg) => {
+const checkForSpam = async (
+  client: IClient,
+  contact: Contact,
+  chatFromContact: Chat,
+  msg: Message
+) => {
   if ((await getMutedStatus()) === true) return; // Don't check for spam and potentially send a message if bot is muted
   if (contact.id.user === process.env.GRANDMASTER) return; // Don't check for spam for owner of the bot hehe 😈
-  let currentUserObj = client.potentialSoftBanUsers.get(contact.id.user);
+  let currentUserObj = client.potentialSoftBanUsers?.get(contact.id.user);
 
   // This block takes care of what happens during cooldown
-  if (client.usedCommandRecently.has(contact.id.user)) {
+  if (
+    client.usedCommandRecently &&
+    client.usedCommandRecently.has(contact.id.user)
+  ) {
     if (!currentUserObj.hasSentWarningMessage) {
       await msg.reply(
         `Please wait for *${COOLDOWN_IN_SECS}secs* before sending another command.\n\nAll commands issued within the *${COOLDOWN_IN_SECS}secs* period will be ignored 👍🏽`
       ); //todo: Add more replies for this later
-      client.potentialSoftBanUsers.set(contact.id.user, {
-        ...currentUserObj,
-        hasSentWarningMessage: true,
-      });
-      currentUserObj = client.potentialSoftBanUsers.get(contact.id.user); // to get the most recent version of the object after update
+      client.potentialSoftBanUsers &&
+        client.potentialSoftBanUsers.set(contact.id.user, {
+          ...currentUserObj,
+          hasSentWarningMessage: true,
+        });
+      currentUserObj =
+        client.potentialSoftBanUsers &&
+        client.potentialSoftBanUsers.get(contact.id.user); // to get the most recent version of the object after update
     }
 
     if (currentUserObj.numOfCommandsUsed > 2) {
       // user can now be considered to be spamming
-      client.potentialSoftBanUsers.set(contact.id.user, {
-        ...currentUserObj,
-        isQualifiedForSoftBan: true,
-        timeout: setTimeout(async () => {
-          client.potentialSoftBanUsers.delete(contact.id.user);
-          console.log(
-            `[HELPERS - CFS] User ${contact.id.user}'s soft ban has been lifted`
-          );
-          await contact.unblock();
-          chatFromContact.sendMessage(
-            "🔊 Your temporary ban has been lifted.\n\nYou can now use bot commands."
-          );
-        }, SOFT_BAN_DURATION_IN_MINS * 60 * 1000),
-      });
+      client.potentialSoftBanUsers &&
+        client.potentialSoftBanUsers.set(contact.id.user, {
+          ...currentUserObj,
+          isQualifiedForSoftBan: true,
+          timeout: setTimeout(async () => {
+            client.potentialSoftBanUsers &&
+              client.potentialSoftBanUsers.delete(contact.id.user);
+            console.log(
+              `[HELPERS - CFS] User ${contact.id.user}'s soft ban has been lifted`
+            );
+            await contact.unblock();
+            chatFromContact.sendMessage(
+              "🔊 Your temporary ban has been lifted.\n\nYou can now use bot commands."
+            );
+          }, SOFT_BAN_DURATION_IN_MINS * 60 * 1000),
+        });
       console.log(
         `[HELPERS - CFS] User ${contact.id.user} is now qualified to be soft banned`
       );
@@ -766,15 +815,17 @@ const checkForSpam = async (client, contact, chatFromContact, msg) => {
       // await addSoftBannedUser(contact.id.user, curTimePlus10Mins);
       return true;
     }
-    client.potentialSoftBanUsers.set(contact.id.user, {
-      ...currentUserObj,
-      numOfCommandsUsed: currentUserObj.numOfCommandsUsed + 1,
-    });
+    client.potentialSoftBanUsers &&
+      client.potentialSoftBanUsers.set(contact.id.user, {
+        ...currentUserObj,
+        numOfCommandsUsed: currentUserObj.numOfCommandsUsed + 1,
+      });
     return true;
   }
 
   // Check if user issues a command while being soft banned
   if (
+    client.potentialSoftBanUsers &&
     client.potentialSoftBanUsers.has(contact.id.user) &&
     currentUserObj.isQualifiedForSoftBan
   ) {
@@ -796,10 +847,10 @@ const checkForSpam = async (client, contact, chatFromContact, msg) => {
 
 /**
  * Get random chance of occurrence.
- * @param {number} chance Number representing chance for something to occur. Valid range is from 1 to 9. 1 means 10% chance of occurring, 2 means 20% and so on.
- * @returns {Boolean} True or False
+ * @param chance Number representing chance for something to occur. Valid range is from 1 to 9. 1 means 10% chance of occurring, 2 means 20% and so on.
+ * @returns True or False
  */
-const checkForChance = (chance) => {
+const checkForChance = (chance: number) => {
   if (chance < 1) throw new Error("[HELPERS] Chance cannot be less than 1");
   if (chance > 9) throw new Error("[HELPERS] Chance cannot be more than 9");
   return Math.ceil(Math.random() * 10) < chance;

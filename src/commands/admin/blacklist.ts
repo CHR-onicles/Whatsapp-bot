@@ -1,4 +1,4 @@
-import { IClient } from "src/custom";
+import { IClient } from "../../interfaces";
 import { Message } from "whatsapp-web.js";
 import { getMutedStatus, getBlacklistedUsers } from "../../models/misc";
 import { NOT_BOT_ADMIN_REPLIES } from "../../utils/data";

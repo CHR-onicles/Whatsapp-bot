@@ -1,4 +1,4 @@
-import { IArgs, IClient } from "src/custom";
+import { IArgs, IClient } from "../../interfaces";
 import { List, Message } from "whatsapp-web.js";
 import { getMutedStatus } from "../../models/misc";
 import {

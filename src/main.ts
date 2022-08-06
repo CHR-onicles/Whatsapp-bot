@@ -8,9 +8,10 @@ import qrcode from "qrcode-terminal";
 import { MongoStore } from "wwebjs-mongo";
 import mongoose from "mongoose";
 import axios from "axios";
-import { config } from "dotenv";
 import path from "path";
 import fs from "fs";
+import { config } from "dotenv";
+config();
 
 require("./utils/db");
 import {
@@ -38,13 +39,12 @@ import {
   getForwardingStatus,
   enableOrDisableAllNotifications,
 } from "./models/misc";
-import { IClient, IArgs } from "./custom";
+import { IClient, IArgs } from "./interfaces";
 
 // --------------------------------------------------
 // Global variables
 // --------------------------------------------------
 const app = express();
-config();
 const port = process.env.PORT || 3000;
 let BOT_START_TIME: Date;
 const args = {} as IArgs;
@@ -52,6 +52,12 @@ let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed: string;
 console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
+// console.log(process[Symbol.for('ts-node.register.instance') as unknown as keyof typeof process]?.toLocaleString().length)
+// const sourceFilesExtension = process[
+//   Symbol.for("ts-node.register.instance") as unknown as keyof typeof process
+// ]?.toLocaleString().length
+//   ? ".ts"
+//   : ".js";
 
 // --------------------------------------------------
 // Configurations
@@ -88,7 +94,7 @@ if (process.env.MONGO_URL) {
       console.log("[CLIENT] Remote auth session saved");
     });
 
-    client.on("qr", (qr) => {
+    client.on("qr", (qr: string) => {
       qrcode.generate(qr, { small: true });
     });
 
@@ -158,7 +164,7 @@ if (process.env.MONGO_URL) {
     // Using the client object since it's available to *almost* all parts of the codebase
     // especially the command files...trying to avoid using a global variable. 👍🏽
     client.commands = new Map();
-    client.usedCommandRecently = new Set();
+    client.usedCommandRecently = new Set() as Set<string>;
     client.potentialSoftBanUsers = new Map();
 
     // Read commands into memory
@@ -168,7 +174,7 @@ if (process.env.MONGO_URL) {
       folders.forEach((folder) => {
         const commands = fs
           .readdirSync(`${rootDir}/${folder}`)
-          .filter((file) => file.endsWith(".js"));
+          .filter((file) => file.endsWith(".ts"));
         for (let file of commands) {
           const command = require(`${rootDir}/${folder}/${file}`);
           client.commands && client.commands.set(command.name, command);
@@ -185,7 +191,7 @@ if (process.env.MONGO_URL) {
 
     //* Handle all message events
     // todo: Transfer to separate file later
-    client.on("message", async (msg) => {
+    client.on("message", async (msg: Message) => {
       await sleep(500); // Might help with performance slightly maybe?
       if (!isDoneReadingCommands) {
         console.error("[CLIENT ERROR] Not done reading commands");
@@ -206,34 +212,45 @@ if (process.env.MONGO_URL) {
           const selectedRowId = msg.selectedRowId.split("-")[0];
           switch (selectedRowId) {
             case "slides":
-              client.commands.get("slides").execute(client, msg, args);
+              client.commands &&
+                client.commands.get("slides")?.execute(client, msg, args);
               break;
             case "class":
-              client.commands.get("class").execute(client, msg, args);
+              client.commands &&
+                client.commands.get("class")?.execute(client, msg, args);
               break;
             case "classes":
-              client.commands.get("classes").execute(client, msg, args);
+              client.commands &&
+                client.commands.get("classes")?.execute(client, msg, args);
               break;
             case "notify":
-              client.commands.get("notify").execute(client, msg, args);
+              client.commands &&
+                client.commands.get("notify")?.execute(client, msg, args);
               break;
             default:
               const command = extractCommand(msg);
-              const isValidCommand = command.startsWith(currentPrefix);
+              const isValidCommand = command?.startsWith(currentPrefix);
               if (!isValidCommand) break;
               args.isListResponse = false;
-              client.commands.get(command.slice(1)).execute(client, msg, args);
+              if (command) {
+                client.commands &&
+                  client.commands
+                    .get(command.slice(1))
+                    ?.execute(client, msg, args);
+              }
               break;
           }
         }
 
         addToUsedCommandRecently(client, contact.id.user);
-        client.potentialSoftBanUsers.set(contact.id.user, {
-          isQualifiedForSoftBan: false,
-          numOfCommandsUsed: 0,
-          hasSentWarningMessage: false,
-          timeout: null,
-        });
+        if (client.potentialSoftBanUsers) {
+          client.potentialSoftBanUsers.set(contact.id.user, {
+            isQualifiedForSoftBan: false,
+            numOfCommandsUsed: 0,
+            hasSentWarningMessage: false,
+            timeout: null,
+          });
+        }
         return;
       }
 
@@ -242,14 +259,14 @@ if (process.env.MONGO_URL) {
         // Message type is no longer "text" as stated in the library's docs
         args.isListResponse = false;
         const possibleCommand = extractCommand(msg);
-        const isValidCommand = possibleCommand.startsWith(currentPrefix);
+        const isValidCommand = possibleCommand?.startsWith(currentPrefix);
         isMention = msg.body.startsWith("@");
         if (!isValidCommand && !isMention) return; // stop processing if message doesn't start with a valid command syntax or a mention
         if (
           (await checkForSpam(client, contact, chatFromContact, msg)) === true
         )
           return;
-        lastPrefixUsed = possibleCommand[0];
+        if (possibleCommand) lastPrefixUsed = possibleCommand[0];
         args.lastPrefixUsed = lastPrefixUsed;
 
         // Check if mention is for bot
@@ -268,42 +285,48 @@ if (process.env.MONGO_URL) {
         }
 
         // Execute command called
-        const cmd =
-          (client.commands && client.commands.get(possibleCommand.slice(1))) ||
-          (client.commands &&
-            client.commands.get(
-              checkForAlias(client.commands, possibleCommand.slice(1))
-            ));
-        console.log(
-          "\n[CLIENT] Possible cmd:",
-          possibleCommand,
-          "\nCmd:",
-          cmd,
-          "\nArgs:",
-          args
-        );
-        if (!cmd) {
-          //! Do not always respond to commands as this can be an exploit to spam and crash the bot
-          if (checkForChance(1)) {
-            // 10% chance of sending this message to users who type wrong commands
-            await msg.reply(
-              "Do you need help with commands?\n\nType *!help* or *!menu* to get started 👍🏻"
-            );
+        if (possibleCommand) {
+          const cmd =
+            (client.commands &&
+              client.commands.get(possibleCommand.slice(1))) ||
+            (client.commands &&
+              client.commands.get(
+                //@ts-ignore
+                checkForAlias(client.commands, possibleCommand.slice(1))
+              ));
+          console.log(
+            "\n[CLIENT] Possible cmd:",
+            possibleCommand,
+            "\nCmd:",
+            cmd,
+            "\nArgs:",
+            args
+          );
+          if (!cmd) {
+            //! Do not always respond to commands as this can be an exploit to spam and crash the bot
+            if (checkForChance(1)) {
+              // 10% chance of sending this message to users who type wrong commands
+              await msg.reply(
+                "Do you need help with commands?\n\nType *!help* or *!menu* to get started 👍🏻"
+              );
+            }
+            return;
           }
-          return;
-        }
 
-        try {
-          cmd.execute(client, msg, args);
-          addToUsedCommandRecently(client, contact.id.user);
-          client.potentialSoftBanUsers.set(contact.id.user, {
-            isQualifiedForSoftBan: false,
-            numOfCommandsUsed: 0,
-            hasSentWarningMessage: false,
-            timeout: null,
-          });
-        } catch (error) {
-          console.error("[CLIENT ERROR]", error);
+          try {
+            cmd.execute(client, msg, args);
+            addToUsedCommandRecently(client, contact.id.user);
+            if (client.potentialSoftBanUsers) {
+              client.potentialSoftBanUsers.set(contact.id.user, {
+                isQualifiedForSoftBan: false,
+                numOfCommandsUsed: 0,
+                hasSentWarningMessage: false,
+                timeout: null,
+              });
+            }
+          } catch (error) {
+            console.error("[CLIENT ERROR]", error);
+          }
         }
       }
     });
@@ -320,14 +343,16 @@ if (process.env.MONGO_URL) {
       const helperForInit = async (msg: Message) => {
         const chats = await client.getChats();
         const forwardToUsers = await getForwardToUsers();
-        const targetChats = [];
+        if (forwardToUsers) {
+          const targetChats = [];
 
-        for (const chat of chats) {
-          for (const ftu of forwardToUsers) {
-            if (chat.id.user === ftu) targetChats.push(chat);
+          for (const chat of chats) {
+            for (const ftu of forwardToUsers) {
+              if (chat.id.user === ftu) targetChats.push(chat);
+            }
           }
+          return { forwardToUsers, targetChats };
         }
-        return { forwardToUsers, targetChats };
       };
 
       //* For Announcements
@@ -343,100 +368,115 @@ if (process.env.MONGO_URL) {
           if (areAllItemsEqual([...msg.body])) return;
         }
 
-        const { forwardToUsers, targetChats } = await helperForInit(msg);
-        let quotedMsg: Message;
+        const response = await helperForInit(msg);
+        if (response) {
+          const { forwardToUsers, targetChats } = response;
 
-        // Don't forward announcements from chats which receive forwarded announcements
-        for (const user of forwardToUsers) {
-          if (currentChat.id.user === user) {
-            console.log(
-              "[CLIENT] Announcement from forwardedUsers, so do nothing"
+          // Don't forward announcements from chats which receive forwarded announcements
+          for (const user of forwardToUsers) {
+            if (currentChat.id.user === user) {
+              console.log(
+                "[CLIENT] Announcement from forwardedUsers, so do nothing"
+              );
+              return;
+            }
+          }
+          let quotedMsg: Message;
+
+          const currentForwardedAnnouncements = await getAllAnnouncements();
+          // console.log('[CLIENT] Recognized an announcement');
+
+          if (
+            currentForwardedAnnouncements &&
+            !currentForwardedAnnouncements.includes(msg.body)
+          ) {
+            await addAnnouncement(msg.body);
+            if (msg.hasQuotedMsg) {
+              quotedMsg = await msg.getQuotedMessage();
+              targetChats.forEach(
+                async (chat) => await quotedMsg.forward(chat)
+              );
+            }
+            targetChats.forEach(async (chat) => await msg.forward(chat));
+            targetChats.forEach(
+              async (chat) =>
+                await chat.sendMessage(
+                  `Forwarded announcement from *${currentChat.name}*`
+                )
             );
-            return;
+          } else {
+            console.log("[CLIENT] Repeated announcement");
           }
-        }
-        const currentForwardedAnnouncements = await getAllAnnouncements();
-        // console.log('[CLIENT] Recognized an announcement');
-
-        if (!currentForwardedAnnouncements.includes(msg.body)) {
-          await addAnnouncement(msg.body);
-          if (msg.hasQuotedMsg) {
-            quotedMsg = await msg.getQuotedMessage();
-            targetChats.forEach(async (chat) => await quotedMsg.forward(chat));
-          }
-          targetChats.forEach(async (chat) => await msg.forward(chat));
-          targetChats.forEach(
-            async (chat) =>
-              await chat.sendMessage(
-                `Forwarded announcement from *${currentChat.name}*`
-              )
-          );
-        } else {
-          console.log("[CLIENT] Repeated announcement");
         }
       }
 
       //* For links
       else if (msg.links.length) {
-        const { forwardToUsers, targetChats } = await helperForInit(msg);
+        const response = await helperForInit(msg);
+        if (response) {
+          const { forwardToUsers, targetChats } = response;
 
-        // Don't forward links from chats which receive forwarded links
-        for (const user of forwardToUsers) {
-          if (currentChat.id.user === user) {
-            console.log("[CLIENT] Link from forwardedUsers, so do nothing");
-            return;
-          }
-        }
-
-        const links = msg.links;
-        // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol",  "hey.me"
-        // and insecure links from leaking through
-        for (const singleLink of links) {
-          if (!singleLink.link.includes("https")) return;
-        }
-        // console.log('[CLIENT]', links);
-        let currentForwardedLinks = await getAllLinks();
-        currentForwardedLinks = currentForwardedLinks.map((link: string) =>
-          link.toLowerCase()
-        );
-        // console.log('[CLIENT]', currentForwardedLinks)
-        const blacklistedStuff = LINKS_BLACKLIST.concat(
-          WORDS_IN_LINKS_BLACKLIST
-        );
-
-        // Checking if whatsapp has flagged the link as suspicious
-        for (const singleLink of links) {
-          if (singleLink.isSuspicious) {
-            console.error(
-              "[CLIENT ERROR] Whatsapp flags this link as suspicious:",
-              singleLink.link
-            );
-            return;
-          }
-        }
-
-        // Using this style of for-loop for performance and in order to "return" and break from this event
-        for (const singleLink of links) {
-          for (const item of blacklistedStuff) {
-            if (singleLink.link.includes(item)) {
-              console.log("[CLIENT] Link contains a blacklisted item:", item);
+          // Don't forward links from chats which receive forwarded links
+          for (const user of forwardToUsers) {
+            if (currentChat.id.user === user) {
+              console.log("[CLIENT] Link from forwardedUsers, so do nothing");
               return;
             }
           }
-        }
 
-        // console.log('[CLIENT] recognized a link');
-        if (!currentForwardedLinks.includes(msg.body.toLowerCase())) {
-          await addLink(msg.body);
-          targetChats.forEach(async (chat) => await msg.forward(chat));
-          targetChats.forEach(
-            async (chat) =>
-              await chat.sendMessage(
-                `Forwarded link from *${currentChat.name}*`
-              )
+          const links = msg.links;
+          // Don't forward a link if it doesn't have https...to avoid letting stuff like "awww...lol",  "hey.me"
+          // and insecure links from leaking through
+          for (const singleLink of links) {
+            if (!singleLink.link.includes("https")) return;
+          }
+          // console.log('[CLIENT]', links);
+          let currentForwardedLinks = await getAllLinks();
+          currentForwardedLinks =
+            currentForwardedLinks &&
+            currentForwardedLinks.map((link: string) => link.toLowerCase());
+          // console.log('[CLIENT]', currentForwardedLinks)
+          const blacklistedStuff = LINKS_BLACKLIST.concat(
+            WORDS_IN_LINKS_BLACKLIST
           );
-        } else {
-          console.log("[CLIENT] Repeated link");
+
+          // Checking if whatsapp has flagged the link as suspicious
+          for (const singleLink of links) {
+            if (singleLink.isSuspicious) {
+              console.error(
+                "[CLIENT ERROR] Whatsapp flags this link as suspicious:",
+                singleLink.link
+              );
+              return;
+            }
+          }
+
+          // Using this style of for-loop for performance and in order to "return" and break from this event
+          for (const singleLink of links) {
+            for (const item of blacklistedStuff) {
+              if (singleLink.link.includes(item)) {
+                console.log("[CLIENT] Link contains a blacklisted item:", item);
+                return;
+              }
+            }
+          }
+
+          // console.log('[CLIENT] recognized a link');
+          if (
+            currentForwardedLinks &&
+            !currentForwardedLinks.includes(msg.body.toLowerCase())
+          ) {
+            await addLink(msg.body);
+            targetChats.forEach(async (chat) => await msg.forward(chat));
+            targetChats.forEach(
+              async (chat) =>
+                await chat.sendMessage(
+                  `Forwarded link from *${currentChat.name}*`
+                )
+            );
+          } else {
+            console.log("[CLIENT] Repeated link");
+          }
         }
       }
     });

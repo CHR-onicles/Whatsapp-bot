@@ -15,8 +15,9 @@
     "module": "CommonJS",
     "esModuleInterop": true,
     "downlevelIteration": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "skipDefaultLibCheck": true,
   },
-  "exclude": ["./dist", "./node_modules"],
+  "exclude": ["./dist", "./node_modules", "src/test.ts"],
   "include": ["./src"]
 }
