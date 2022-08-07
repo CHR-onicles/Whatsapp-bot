@@ -11,7 +11,7 @@ import {
 } from "../models/misc";
 import { MIME_TYPES, ALL_CLASSES } from "./data";
 import { getResource } from "../models/resources";
-import { IClient, ICourse } from "../interfaces";
+import { IClient, ICourse } from "../types";
 import { TCommands } from "../types";
 
 // GLOBAL VARIABLES ----------------------------------

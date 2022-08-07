@@ -1,5 +1,5 @@
-import { IArgs, IClient } from "../interfaces";
-import { Message } from "whatsapp-web.js";
+import { Set } from "typescript";
+import { Client, Message } from "whatsapp-web.js";
 
 export type TCommands = Map<
   string,
@@ -16,3 +16,24 @@ export type TCommands = Map<
     ) => Promise<void>;
   }
 >;
+
+export interface IClient extends Client {
+  // check for better way of typing these
+  commands?: TCommands;
+  usedCommandRecently?: Set<string>;
+  potentialSoftBanUsers?: Map<any, any>; //todo: Define this type properly later
+}
+
+export interface IArgs {
+  BOT_START_TIME?: Date;
+  RUN_FIRST_TIME?: boolean;
+  isListResponse?: boolean;
+  isMention?: boolean;
+  lastPrefixUsed?: string;
+}
+
+export interface ICourse {
+  name?: string;
+  code?: string;
+  duration?: number;
+}

@@ -1,4 +1,4 @@
-import { IClient } from "../../interfaces";
+import { IClient } from "../../types";
 import { GroupChat, Message } from "whatsapp-web.js";
 import { getMutedStatus } from "../../models/misc";
 import { currentPrefix } from "../../utils/helpers";

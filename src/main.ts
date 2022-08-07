@@ -39,7 +39,7 @@ import {
   getForwardingStatus,
   enableOrDisableAllNotifications,
 } from "./models/misc";
-import { IClient, IArgs } from "./interfaces";
+import { IClient, IArgs } from "./types";
 
 // --------------------------------------------------
 // Global variables

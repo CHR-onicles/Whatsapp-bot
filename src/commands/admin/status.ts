@@ -14,7 +14,7 @@ import {
 } from "../../utils/helpers";
 import { totalmem } from "os";
 import { NOT_BOT_ADMIN_REPLIES } from "../../utils/data";
-import { IArgs, IClient } from "../../interfaces";
+import { IArgs, IClient } from "../../types";
 import { Message, MessageContent } from "whatsapp-web.js";
 
 const execute = async (client: IClient, msg: Message, args: IArgs) => {
