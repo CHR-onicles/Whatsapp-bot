@@ -133,3 +133,4 @@ test.js
 logs*.*
 course_resources/
 RemoteAuth.zip
+dist/

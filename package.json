@@ -16,7 +16,9 @@
   },
   "scripts": {
     "start": "node dist/src/main.js",
-    "dev": "ts-node src/main.ts"
+    "dev": "ts-node src/main.ts",
+    "tsc": "tsc",
+    "postinstall": "npm run tsc"
   },
   "engines": {
     "node": "14.x"
