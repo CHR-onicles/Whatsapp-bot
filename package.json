@@ -16,7 +16,9 @@
   },
   "scripts": {
     "start": "node dist/src/main.js",
-  "dev": "nodemon src/main.ts"
+  "dev": "nodemon src/main.ts",
+  "tsc": "tsc --skipLibCheck",
+  "postinstall": "npm run tsc"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
