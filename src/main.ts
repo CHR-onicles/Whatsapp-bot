@@ -174,7 +174,7 @@ if (process.env.MONGO_URL) {
       folders.forEach((folder) => {
         const commands = fs
           .readdirSync(`${rootDir}/${folder}`)
-          .filter((file) => file.endsWith(".ts"));
+          .filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
         for (let file of commands) {
           const command = require(`${rootDir}/${folder}/${file}`);
           client.commands && client.commands.set(command.name, command);
