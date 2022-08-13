@@ -62,54 +62,54 @@ exports.ALL_CLASSES = [
  * Array containing current L400 1st Semester Computer Science exams timetable.
  */
 exports.EXAM_TIMETABLE = [
-    // {
-    //     date: "Saturday, May 14 2022",
-    //     _date: new Date(2022, 04, 14, 13, 20), // to avoid extra processing logic :)
-    //     time: "1:20pm",
-    //     courseCode: "CSCD 421",
-    //     courseTitle: "Accounting",
-    //     examMode: "Onsite/Online"
-    // },
-    // {
-    //     date: "Monday, May 16 2022",
-    //     _date: new Date(2022, 04, 16, 7, 30),
-    //     time: "7:30am",
-    //     courseCode: "CSCD 419",
-    //     courseTitle: "Formal Methods",
-    //     examMode: "Onsite/Physical"
-    // },
-    // {
-    //     date: "Wednesday, May 18 2022",
-    //     _date: new Date(2022, 04, 18, 7, 30),
-    //     time: "7:30am",
-    //     courseCode: "CSCD 417",
-    //     courseTitle: "Theory & Survey",
-    //     examMode: "Onsite/Physical"
-    // },
-    // {
-    //     date: "Friday, May 20 2022",
-    //     _date: new Date(2022, 04, 20, 11, 30),
-    //     time: "11:30am",
-    //     courseCode: "CSCD 427",
-    //     courseTitle: "Networking",
-    //     examMode: "Onsite/Physical"
-    // },
-    // {
-    //     date: "Saturday, May 21 2022",
-    //     _date: new Date(2022, 04, 21, 7, 30),
-    //     time: "7:30am",
-    //     courseCode: "CSCD 415",
-    //     courseTitle: "Compilers",
-    //     examMode: "Onsite/Physical"
-    // },
-    // {
-    //     date: "Monday, May 23 2022",
-    //     _date: new Date(2022, 04, 23, 15, 30),
-    //     time: "3:30pm",
-    //     courseCode: "CSCD 423",
-    //     courseTitle: "Software Modelling",
-    //     examMode: "Onsite/Physical"
-    // },
+    {
+        date: "Tuesday, Sep 13 2022",
+        _date: new Date(2022, 8, 13, 15, 30), // to avoid extra processing logic :)
+        time: "3:30pm",
+        courseCode: "CSCD 422",
+        courseTitle: "HCI",
+        examMode: "Onsite/Physical",
+    },
+    {
+        date: "Thursday, Sep 15 2022",
+        _date: new Date(2022, 8, 15, 15, 30),
+        time: "3:30pm",
+        courseCode: "CSCD 428",
+        courseTitle: "Expert Systems",
+        examMode: "Onsite/Physical",
+    },
+    {
+        date: "Tuesday, Sep 20 2022",
+        _date: new Date(2022, 8, 20, 7, 30),
+        time: "7:30am",
+        courseCode: "CSCD 416",
+        courseTitle: "System Programming",
+        examMode: "Onsite/Physical",
+    },
+    {
+        date: "Wednesday, Sep 21 2022",
+        _date: new Date(2022, 8, 21, 11, 30),
+        time: "11:30am",
+        courseCode: "CSCD 418",
+        courseTitle: "Computer Security",
+        examMode: "Onsite/Physical",
+    },
+    {
+        date: "Thursday, Sep 22 2022",
+        _date: new Date(2022, 8, 22, 15, 30),
+        time: "3:30pm",
+        courseCode: "CSCD 424",
+        courseTitle: "Management Principles",
+        examMode: "Onsite/Physical",
+    },
+    {
+        date: "Saturday, Sep 24 2022",
+        _date: new Date(2022, 8, 24, 7, 30),
+        time: "7:30am",
+        courseCode: "CSCD 434",
+        courseTitle: "Mobile Computing",
+        examMode: "Onsite/Physical",
+    },
 ]
 
 /**

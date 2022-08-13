@@ -10,11 +10,12 @@ const execute = async (client, msg) => {
     const chatFromContact = await contact.getChat();
     let text = "*L400 CS EXAMS TIMETABLE* 📄\n\n";
 
-    if (curChat.isGroup) await msg.react(pickRandomReply(REACT_EMOJIS));
     if (!EXAM_TIMETABLE.length) {
         await msg.reply("There is NO exam timetable currently 🐦");
         return;
     }
+    
+    if (curChat.isGroup) await msg.react(pickRandomReply(REACT_EMOJIS));
 
     EXAM_TIMETABLE.forEach(({ _date, date, time, courseCode, courseTitle, examMode }, index) => {
         const isPast = new Date() - _date > 0 ? true : false; // Check if the exam has already been written
