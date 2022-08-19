@@ -16,7 +16,7 @@
     "esModuleInterop": true,
     "downlevelIteration": true,
     "noEmitOnError": true,
-    "skipDefaultLibCheck": true,
+    "skipDefaultLibCheck": true
   },
   "exclude": ["./dist", "./node_modules"],
   "include": ["./src"]

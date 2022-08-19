@@ -3,7 +3,7 @@
 // bot to function correctly
 // --------------------------------------------------
 
-import { IClass, IExamTimetable } from "src/types";
+import { IClass, IExamTimetable } from "../types";
 
 /**
  * Source code for the bot, hosted on Github.
