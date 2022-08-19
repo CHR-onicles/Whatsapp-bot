@@ -136,22 +136,26 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
 
   const logger = async () => {
     const chats = await client.getChats();
-    const BOT_LOG_GROUP = process.env.BOT_LOG_GROUP;
+    const BOT_LOG_GROUP = process.env.BOT_LOG_GROUP as string;
     const botLogGroup = chats.find((chat) => chat.id.user === BOT_LOG_GROUP);
     if (botLogGroup) {
-      await botLogGroup.sendMessage(await generateReplies() as MessageContent); // send status once before the 1hour interval starts
+      await botLogGroup.sendMessage(
+        (await generateReplies()) as MessageContent
+      ); // send status once before the 1hour interval starts
       setInterval(async () => {
-        await botLogGroup.sendMessage(await generateReplies() as MessageContent);
+        await botLogGroup.sendMessage(
+          (await generateReplies()) as MessageContent
+        );
       }, 3600_000);
     }
-
-    if (RUN_FIRST_TIME && currentEnv === "production") {
-      logger();
-      args.RUN_FIRST_TIME = false;
-    } else {
-      await msg.reply(await generateReplies() as MessageContent);
-    }
   };
+
+  if (RUN_FIRST_TIME) {
+    logger();
+    args.RUN_FIRST_TIME = false;
+  } else {
+    await msg.reply((await generateReplies()) as MessageContent);
+  }
 };
 
 module.exports = {
