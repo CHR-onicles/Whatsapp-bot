@@ -58,7 +58,7 @@ const execute = async (client: IClient, msg: Message) => {
 module.exports = {
   name: "everyone",
   description: "Ping everyone 🔊",
-  alias: ["all", "every", "e"],
+  alias: ["all", "every", "e", "everybody"],
   category: "admin", // admin | everyone
   help: `To use this command, type:\n*${currentPrefix}everyone*`,
   execute,

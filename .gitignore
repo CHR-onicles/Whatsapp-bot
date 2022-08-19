@@ -129,7 +129,7 @@ out
 .wwebjs_auth/
 
 # Personal stuff
-test.js
+test.*
 logs*.*
 course_resources/
 RemoteAuth.zip

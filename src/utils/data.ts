@@ -376,7 +376,7 @@ export const COURSE_MATERIALS_REPLIES = [
  * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.
  */
 export const FOOTNOTES = new Map([
-  ["", 60], // send "nothing" more often, to avoid annoying users with multiple tips
+  ["", 62], // send "nothing" more often, to avoid annoying users with multiple tips
 
   // Greetings/wishes
   ["Hope you are having a great day 🥳", 1],
