@@ -37,3 +37,21 @@ export interface ICourse {
   code?: string;
   duration?: number;
 }
+
+export interface IClass {
+  day: string;
+  courses:
+    {
+      name: string;
+      code: string;
+      duration: number;
+    }[];
+}
+export interface IExamTimetable {
+  date?: string;
+  _date?: Date;
+  time?: string;
+  courseCode?: string;
+  courseTitle?: string;
+  examMode?: string;
+}
