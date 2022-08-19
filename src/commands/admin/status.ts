@@ -137,7 +137,7 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
   const logger = async () => {
     const chats = await client.getChats();
     const BOT_LOG_GROUP = process.env.BOT_LOG_GROUP as string;
-    console.log("from status command:", BOT_LOG_GROUP)
+    console.log("[STATUS CMD] Bot logging group ID:", BOT_LOG_GROUP) // For some reason, when this is added the function works as intended on Heroku
     const botLogGroup = chats.find((chat) => chat.id.user === BOT_LOG_GROUP);
     if (botLogGroup) {
       await botLogGroup.sendMessage(
