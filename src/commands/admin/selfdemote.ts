@@ -27,7 +27,7 @@ const execute = async (client: IClient, msg: Message) => {
 module.exports = {
   name: "selfdemote",
   description: "Demote yourself(Grandmaster only) to be a regular user 👮🏽‍♂️❌",
-  alias: ["sdem"],
+  alias: ["sdem", "selfd"],
   category: "admin", // admin | everyone
   help: `To use this command, type:\n*${currentPrefix}selfdemote*`,
   execute,

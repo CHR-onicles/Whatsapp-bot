@@ -26,7 +26,7 @@ const execute = async (client: IClient, msg: Message) => {
 module.exports = {
   name: "selfpromote",
   description: "Promote yourself(Grandmaster only) to be a bot admin 👮🏽‍♂️♻",
-  alias: ["sprom"],
+  alias: ["sprom", "selfp"],
   category: "admin", // admin | everyone
   help: `To use this command, type:\n*${currentPrefix}selfpromote*`,
   execute,
