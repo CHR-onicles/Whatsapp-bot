@@ -393,48 +393,49 @@ export const FOOTNOTES = new Map([
   //   } 🥳`,
   //   2,
   // ],
-  ["Don't forget to DO MORE 👍🏽", 0.5],
-  ["Keep on keeping on👍🏽", 0.5],
+  ["Don't forget to DO MORE 👍🏽", 1],
+  ["Keep on keeping on👍🏽", 1],
   ["Glad I could be of help 😁", 2],
   ["I hope this was helpful🙂", 2],
   ["Happy to help ☺", 2],
+  ["Enjoy 🐦", 1],
 
   // Hints
-  ["Have you tried !𝒉𝒆𝒍𝒑 ? Try it out!", 4],
-  ["Checked out !𝕞𝕖𝕟𝕦 ?", 4],
-  ["💡 Use *!menu* to see all the commands available to you", 4],
+  ["Have you tried !𝒉𝒆𝒍𝒑 ? Try it out!", 5],
+  ["Checked out !𝕞𝕖𝕟𝕦 yet?", 5],
+  ["💡 Use *!menu* to see all the commands available to you", 5],
   [
-    "💡 Did you know you could ping me in a group to see all the commands? 😮",
-    3,
+    "💡 Did you know you could ping me in a group to see all my commands? 😮",
+    4,
   ],
   [
     "💡 Use *!notify enable* to subscribe to class notifications.\n\nThe bot will remember your elective whenever you request for a timetable 💪🏽",
     4,
   ],
-  [
-    "💡 You don't need to type full commands, you can use shorter aliases now!\n\nType *!help <command>* to see if a command has aliases.\n\nEg: *!help class*",
-    1,
-  ],
-  [
-    "🆕 Checkout *!help <command>* to see more information about any command.\n\nEg: *!help botadmins*",
-    1,
-  ],
-  [
-    "🆕 Did you know that almost all commands have aliases?\n\nType *!help <command>* to see aliases and how to use the command.\n\nEg: *!help classes*",
-    1,
-  ],
-  [
-    "🆕 Don't know how to use a specific command?\n\nType *!help <command>* to see how to use it.\n\nEg: *!help slides*",
-    1,
-  ],
+  // [
+  //   "💡 You don't need to type full commands, you can use shorter aliases now!\n\nType *!help <command>* to see if a command has aliases.\n\nEg: *!help class*",
+  //   1,
+  // ],
+  // [
+  //   "🆕 Checkout *!help <command>* to see more information about any command.\n\nEg: *!help botadmins*",
+  //   1,
+  // ],
+  // [
+  //   "🆕 Did you know that almost all commands have aliases?\n\nType *!help <command>* to see aliases and how to use the command.\n\nEg: *!help classes*",
+  //   1,
+  // ],
+  // [
+  //   "🆕 Don't know how to use a specific command?\n\nType *!help <command>* to see how to use it.\n\nEg: *!help slides*",
+  //   1,
+  // ],
   [
     "🆕 There are now *cooldowns* after using any command to avoid overloading the bot.\n\nThis simply means after using any command, you'll have to wait for a few seconds before using another command.",
-    2,
-  ],
-  [
-    "🆕 Command arguments like *enable* and *disable* can be replaced with *-e* and *-d* respectively.\n\nEg: *!notify -e* or *!notify -d*",
     1,
   ],
+  // [
+  //   "🆕 Command arguments like *enable* and *disable* can be replaced with *-e* and *-d* respectively.\n\nEg: *!notify -e* or *!notify -d*",
+  //   1,
+  // ],
   // ["Run *!updates* to see the bot's latest updates", 0],
 ]);
 
