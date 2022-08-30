@@ -51,6 +51,7 @@ const args = {} as IArgs;
 let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed: string;
+const USE_REMOTE_AUTH = true;
 console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
 // console.log(process[Symbol.for('ts-node.register.instance') as unknown as keyof typeof process]?.toLocaleString().length)
 // const sourceFilesExtension = process[
@@ -65,7 +66,7 @@ console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
 if (process.env.MONGO_URL) {
   mongoose.connect(process.env.MONGO_URL).then(() => {
     let client: IClient;
-    if (currentEnv === "development") {
+    if (currentEnv === "development" && !USE_REMOTE_AUTH) {
       client = new Client({
         puppeteer: {
           headless: true,
