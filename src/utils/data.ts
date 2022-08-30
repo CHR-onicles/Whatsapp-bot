@@ -120,8 +120,16 @@ export const ALL_CLASSES: IClass[] = [
  */
 export const EXAM_TIMETABLE: IExamTimetable[] = [
   {
+    date: "Monday, Sep 12 2022",
+    _date: new Date(2022, 8, 12, 7, 30), // to avoid extra processing logic :)
+    time: "7:30am",
+    courseCode: "CSCD 432",
+    courseTitle: "Conc & Dist Systems",
+    examMode: "Onsite/Physical",
+  },
+  {
     date: "Tuesday, Sep 13 2022",
-    _date: new Date(2022, 8, 13, 15, 30), // to avoid extra processing logic :)
+    _date: new Date(2022, 8, 13, 15, 30),
     time: "3:30pm",
     courseCode: "CSCD 422",
     courseTitle: "HCI",
@@ -133,6 +141,14 @@ export const EXAM_TIMETABLE: IExamTimetable[] = [
     time: "3:30pm",
     courseCode: "CSCD 428",
     courseTitle: "Expert Systems",
+    examMode: "Onsite/Physical",
+  },
+  {
+    date: "Thursday, Sep 18 2022",
+    _date: new Date(2022, 8, 18, 7, 30),
+    time: "7:30am",
+    courseCode: "CSCD 426",
+    courseTitle: "Multimedia Applications",
     examMode: "Onsite/Physical",
   },
   {
