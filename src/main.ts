@@ -51,7 +51,7 @@ const args = {} as IArgs;
 let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed: string;
-const USE_REMOTE_AUTH = true;
+const USE_REMOTE_AUTH = false;
 console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
 // console.log(process[Symbol.for('ts-node.register.instance') as unknown as keyof typeof process]?.toLocaleString().length)
 // const sourceFilesExtension = process[
@@ -67,6 +67,7 @@ if (process.env.MONGO_URL) {
   mongoose.connect(process.env.MONGO_URL).then(() => {
     let client: IClient;
     if (currentEnv === "development" && !USE_REMOTE_AUTH) {
+      console.log("[CLIENT] Using Local Auth strategy...");
       client = new Client({
         puppeteer: {
           headless: true,
@@ -119,6 +120,8 @@ if (process.env.MONGO_URL) {
         "[CLIENT] Client is ready!",
         currentEnv === "development" ? "\n" : ""
       );
+      // console.log("Whatsapp web version:", await client.getWWebVersion());
+
       BOT_START_TIME = new Date();
       args.BOT_START_TIME = BOT_START_TIME;
 
