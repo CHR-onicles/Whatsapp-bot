@@ -392,7 +392,7 @@ export const COURSE_MATERIALS_REPLIES = [
  * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.
  */
 export const FOOTNOTES = new Map([
-  ["", 63], // send "nothing" more often, to avoid annoying users with multiple tips
+  ["", 68], // send "nothing" more often, to avoid annoying users with multiple tips
 
   // Greetings/wishes
   ["Hope you are having a great day 🥳", 1],
@@ -417,17 +417,17 @@ export const FOOTNOTES = new Map([
   ["Enjoy 🐦", 1],
 
   // Hints
-  ["Have you tried !𝒉𝒆𝒍𝒑 ? Try it out!", 5],
-  ["Checked out !𝕞𝕖𝕟𝕦 yet?", 5],
-  ["💡 Use *!menu* to see all the commands available to you", 5],
+  ["Have you tried !𝒉𝒆𝒍𝒑 ? Try it out!", 2],
+  ["Checked out !𝕞𝕖𝕟𝕦 yet?", 2],
+  ["💡 Use *!menu* to see all the commands available to you", 2],
   [
     "💡 Did you know you could ping me in a group to see all my commands? 😮",
-    4,
+    2,
   ],
-  [
-    "💡 Use *!notify enable* to subscribe to class notifications.\n\nThe bot will remember your elective whenever you request for a timetable 💪🏽",
-    4,
-  ],
+  // [
+  //   "💡 Use *!notify enable* to subscribe to class notifications.\n\nThe bot will remember your elective whenever you request for a timetable 💪🏽",
+  //   4,
+  // ],
   // [
   //   "💡 You don't need to type full commands, you can use shorter aliases now!\n\nType *!help <command>* to see if a command has aliases.\n\nEg: *!help class*",
   //   1,
@@ -453,6 +453,13 @@ export const FOOTNOTES = new Map([
   //   1,
   // ],
   // ["Run *!updates* to see the bot's latest updates", 0],
+
+  // Farewell messages
+  ["Congrats on finishing school 🎉", 2],
+  ["It was an honor serving you 🐦", 2],
+  ["Best of luck in your future endeavours 👍🏻", 2],
+  ["Farewell soldier 👋🏻", 2],
+  ["I enjoyed serving you, thank you.", 2],
 ]);
 
 /**
