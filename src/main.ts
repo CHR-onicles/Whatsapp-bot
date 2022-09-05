@@ -219,6 +219,10 @@ if (process.env.MONGO_URL) {
               client.commands &&
                 client.commands.get("slides")?.execute(client, msg, args);
               break;
+            case "pasco":
+              client.commands &&
+                client.commands.get("pasco")?.execute(client, msg, args);
+              break;
             case "class":
               client.commands &&
                 client.commands.get("class")?.execute(client, msg, args);
