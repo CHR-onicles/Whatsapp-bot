@@ -41,14 +41,14 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
           //   title: "System Programming",
           //   description: "CSCD 416",
           // },
-          // {
-          //   id:
-          //     lastPrefixUsed === process.env.DEV_PREFIX
-          //       ? "pasco-418_dev"
-          //       : "pasco-418_prod",
-          //   title: "Computer Systems Security",
-          //   description: "CSCD 418",
-          // },
+          {
+            id:
+              lastPrefixUsed === process.env.DEV_PREFIX
+                ? "pasco-418_dev"
+                : "pasco-418_prod",
+            title: "Computer Systems Security",
+            description: "CSCD 418",
+          },
           {
             id:
               lastPrefixUsed === process.env.DEV_PREFIX
@@ -57,22 +57,14 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
             title: "Human Computer Interaction",
             description: "CSCD 422",
           },
-          // {
-          //   id:
-          //     lastPrefixUsed === process.env.DEV_PREFIX
-          //       ? "pasco-424_dev"
-          //       : "pasco-424_prod",
-          //   title: "Management Principles",
-          //   description: "CSCD 424",
-          // },
-          // {
-          //   id:
-          //     lastPrefixUsed === process.env.DEV_PREFIX
-          //       ? "pasco-400_dev"
-          //       : "pasco-400_prod",
-          //   title: "Project",
-          //   description: "CSCD 400",
-          // },
+          {
+            id:
+              lastPrefixUsed === process.env.DEV_PREFIX
+                ? "pasco-424_dev"
+                : "pasco-424_prod",
+            title: "Management Principles",
+            description: "CSCD 424",
+          },
           // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'pasco-426_dev' : 'pasco-426_prod', title: 'Multimedia Applications', description: 'CSCD 426' },
           // {
           //   id:
@@ -149,18 +141,6 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
           if (currentEnv !== "production") break;
           await msg.reply(pickRandomReply(WAIT_REPLIES));
           sendPastQuestions(msg, "CSCD 424");
-          break;
-
-        case "400_dev":
-          if (currentEnv !== "development") break;
-          await msg.reply(pickRandomReply(WAIT_REPLIES));
-          sendPastQuestions(msg, "CSCD 400");
-          break;
-
-        case "400_prod":
-          if (currentEnv !== "production") break;
-          await msg.reply(pickRandomReply(WAIT_REPLIES));
-          sendPastQuestions(msg, "CSCD 400");
           break;
 
         case "426_dev":
