@@ -387,6 +387,19 @@ export const COURSE_MATERIALS_REPLIES = [
 ];
 
 /**
+ * Array containing replies to `!slides` command.
+ */
+export const PAST_QUESTIONS_REPLIES = [
+  "Need some past questions?",
+  "Oh you need pasco? 🐦",
+  "Need any past questions?",
+  "What past questions can I help you with?",
+  "Looking for pasco?",
+  "Your search for pasco ends here 🐦",
+  "Your wish is my command 🐦",
+];
+
+/**
  * Map containing some extra info about the bot/random messages to be sent to users
  * based on weighted chances.
  * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.

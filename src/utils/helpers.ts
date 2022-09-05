@@ -13,6 +13,7 @@ import { MIME_TYPES, ALL_CLASSES } from "./data";
 import { getResource } from "../models/resources";
 import { IClient, ICourse } from "../types";
 import { TCommands } from "../types";
+import { getPastQuestions } from "../models/pastQuestions";
 
 // GLOBAL VARIABLES ----------------------------------
 /**
@@ -648,6 +649,43 @@ const sendSlides = async (msg: Message, courseCode: string) => {
 };
 
 /**
+ * Helper function to retrieve past questions from DB to send to user.
+ * @param msg Message object from whatsapp.
+ * @param courseCode String representing course code.
+ * @async
+ */
+const sendPastQuestions = async (msg: Message, courseCode: string) => {
+  let isDone = false;
+  console.log("[HELPERS - SS] Getting past questions...");
+  const materials = await getPastQuestions(courseCode);
+  if (materials.length) console.log(" [HELPERS - SS]Got past questions");
+  else console.error(" [HELPERS - SS ERROR] No past questions received from DB");
+  for (const material of materials) {
+    const curMaterial = material;
+    const file_extension =
+      curMaterial.title.split(".")[curMaterial.title.split(".").length - 1]; // always extract the last "." and what comes after
+    const foundMimeType = MIME_TYPES.find(
+      (obj) => obj.fileExtension === file_extension
+    );
+
+    if (foundMimeType) {
+      const { mime_type } = foundMimeType;
+      const slide = new MessageMedia(
+        mime_type,
+        curMaterial.binData,
+        curMaterial.title
+      );
+      await msg.reply(slide);
+      console.log("[HELPERS - SS] Sent a past question");
+      if (material === materials[materials.length - 1]) isDone = true;
+    }
+    // if (isDone) await msg.reply(`Done 👍🏽 from ${currentEnv}`);
+    if (isDone) await msg.reply(`Done 👍🏽`);
+    console.log(" [HELPERS - SS]Done sending past questions");
+  }
+};
+
+/**
  * Checks whether a user is a bot admin. User passed can be a whatsapp contact or a whatsapp number as a String.
  * @param contact Object that represents a contact on whatsapp.
  * @async
@@ -881,4 +919,5 @@ export {
   getTimeLeftForSetTimeout,
   checkForSpam,
   checkForChance,
+  sendPastQuestions,
 };
