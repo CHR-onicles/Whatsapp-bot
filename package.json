@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node dist/src/main.js",
-    "dev": "nodemon src/main.ts",
+    "dev": "tsc && node dist/src/main.js",
     "tsc": "tsc --skipLibCheck",
     "postinstall": "npm run tsc",
     "test": "ts-node src/test.ts"

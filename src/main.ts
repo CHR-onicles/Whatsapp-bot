@@ -51,7 +51,7 @@ const args = {} as IArgs;
 let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed: string;
-const USE_REMOTE_AUTH = false;
+const USE_REMOTE_AUTH = true;
 console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
 // console.log(process[Symbol.for('ts-node.register.instance') as unknown as keyof typeof process]?.toLocaleString().length)
 // const sourceFilesExtension = process[
@@ -67,7 +67,6 @@ if (process.env.MONGO_URL) {
   mongoose.connect(process.env.MONGO_URL).then(() => {
     let client: IClient;
     if (currentEnv === "development" && !USE_REMOTE_AUTH) {
-      console.log("[CLIENT] Using Local Auth strategy...");
       client = new Client({
         puppeteer: {
           headless: true,
@@ -75,6 +74,7 @@ if (process.env.MONGO_URL) {
         },
         authStrategy: new LocalAuth(),
       });
+      console.log("[CLIENT] Using Local Auth strategy...");
     } else {
       const store = new MongoStore({ mongoose: mongoose });
       client = new Client({
@@ -87,6 +87,7 @@ if (process.env.MONGO_URL) {
           backupSyncIntervalMs: 300000,
         }),
       });
+      console.log("[CLIENT] Using Remote Auth strategy...");
     }
 
     client.setMaxListeners(0); // for an infinite number of event listeners
