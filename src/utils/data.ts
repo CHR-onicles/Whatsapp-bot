@@ -136,7 +136,7 @@ export const EXAM_TIMETABLE: IExamTimetable[] = [
     examMode: "Onsite/Physical",
   },
   {
-    date: "Thursday, Sep 18 2022",
+    date: "Sunday, Sep 18 2022",
     _date: new Date(2022, 8, 18, 7, 30),
     time: "7:30am",
     courseCode: "CSCD 426",
