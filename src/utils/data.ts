@@ -128,14 +128,6 @@ export const EXAM_TIMETABLE: IExamTimetable[] = [
     examMode: "Onsite/Physical",
   },
   {
-    date: "Sunday, Sep 18 2022",
-    _date: new Date(2022, 8, 18, 15, 30),
-    time: "3:30pm",
-    courseCode: "CSCD 422",
-    courseTitle: "HCI",
-    examMode: "Onsite/Physical",
-  },
-  {
     date: "Thursday, Sep 15 2022",
     _date: new Date(2022, 8, 15, 15, 30),
     time: "3:30pm",
@@ -149,6 +141,14 @@ export const EXAM_TIMETABLE: IExamTimetable[] = [
     time: "7:30am",
     courseCode: "CSCD 426",
     courseTitle: "Multimedia Applications",
+    examMode: "Onsite/Physical",
+  },
+  {
+    date: "Sunday, Sep 18 2022",
+    _date: new Date(2022, 8, 18, 15, 30),
+    time: "3:30pm",
+    courseCode: "CSCD 422",
+    courseTitle: "HCI",
     examMode: "Onsite/Physical",
   },
   {
