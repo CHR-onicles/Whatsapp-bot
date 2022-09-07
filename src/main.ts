@@ -51,7 +51,7 @@ const args = {} as IArgs;
 let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed: string;
-const USE_REMOTE_AUTH = true;
+const USE_REMOTE_AUTH = false;
 console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
 // console.log(process[Symbol.for('ts-node.register.instance') as unknown as keyof typeof process]?.toLocaleString().length)
 // const sourceFilesExtension = process[
