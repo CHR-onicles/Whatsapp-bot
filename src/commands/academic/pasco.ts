@@ -33,14 +33,14 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
       {
         title: "",
         rows: [
-          // {
-          //   id:
-          //     lastPrefixUsed === process.env.DEV_PREFIX
-          //       ? "pasco-416_dev"
-          //       : "pasco-416_prod",
-          //   title: "System Programming",
-          //   description: "CSCD 416",
-          // },
+          {
+            id:
+              lastPrefixUsed === process.env.DEV_PREFIX
+                ? "pasco-416_dev"
+                : "pasco-416_prod",
+            title: "System Programming",
+            description: "CSCD 416",
+          },
           {
             id:
               lastPrefixUsed === process.env.DEV_PREFIX
