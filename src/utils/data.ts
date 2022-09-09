@@ -260,6 +260,10 @@ export const REACT_EMOJIS = [
   "👋🏻",
   "🤝🏻",
   "🙏🏻",
+  "🤪",
+  "🧐",
+  "🤓",
+  "🦾",
 ];
 
 /**
@@ -397,7 +401,7 @@ export const PAST_QUESTIONS_REPLIES = [
  * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.
  */
 export const FOOTNOTES = new Map([
-  ["", 68], // send "nothing" more often, to avoid annoying users with multiple tips
+  ["", 72], // send "nothing" more often, to avoid annoying users with multiple tips
 
   // Greetings/wishes
   ["Hope you are having a great day 🥳", 1],
@@ -463,8 +467,6 @@ export const FOOTNOTES = new Map([
   ["Congrats on finishing school 🎉", 2],
   ["It was an honor serving you 🐦", 2],
   ["Best of luck in your future endeavours 👍🏻", 2],
-  ["Farewell soldier 👋🏻", 2],
-  ["I enjoyed serving you, thank you.", 2],
 ]);
 
 /**
