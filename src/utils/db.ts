@@ -11,7 +11,7 @@ const { connect } = require("mongoose");
 const connectToDB = async () => {
   try {
     const env = process.env.NODE_ENV as string;
-    let envLog = "[DB] In";
+    let envLog = "[DB] In ";
 
     // Explicitly checking for both environments just in case the env becomes undefined or anything apart from "development" and "production"
     if (env === "production") envLog += "PRODUCTION";

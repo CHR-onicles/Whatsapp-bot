@@ -45,13 +45,13 @@ import { IClient, IArgs } from "./types";
 // Global variables
 // --------------------------------------------------
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3030;
 let BOT_START_TIME: Date;
 const args = {} as IArgs;
 let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed: string;
-const USE_REMOTE_AUTH = false;
+const USE_REMOTE_AUTH = true;
 console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
 // console.log(process[Symbol.for('ts-node.register.instance') as unknown as keyof typeof process]?.toLocaleString().length)
 // const sourceFilesExtension = process[

@@ -92,7 +92,7 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
     if (msg.selectedRowId) {
       const selectedRowId = msg.selectedRowId.split("-")[1];
 
-      console.log(`[SLIDES CMD] Slides from ${currentEnv} env`);
+      console.log(`[PASCO CMD] Past Questions from ${currentEnv} env`);
 
       switch (selectedRowId) {
         case "416_dev":
