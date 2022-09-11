@@ -89,7 +89,6 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
@@ -130,7 +129,9 @@ dist
 .wwebjs_auth/
 
 # Personal stuff
-test.js
+test.*
 logs*.*
 course_resources/
 RemoteAuth.zip
+dist/
+past_questions/

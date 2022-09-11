@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "allowJs": true,
+    "rootDir": ".",
+    "outDir": "./dist",
+    "declaration": false,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "strict": true,
+    "alwaysStrict": true,
+    "importsNotUsedAsValues": "preserve",
+    "checkJs": true,
+    "types": ["node"],
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "downlevelIteration": true,
+    "noEmitOnError": true,
+    "skipDefaultLibCheck": true
+  },
+  "exclude": ["./dist", "./node_modules"],
+  "include": ["./src"]
+}
