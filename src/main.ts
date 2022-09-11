@@ -3,9 +3,9 @@
 
 // --------------------------------------------------
 import express, { Request, Response } from "express";
-import { Client, RemoteAuth, LocalAuth, Message } from "whatsapp-web.js";
+import { Client, LocalAuth, Message } from "whatsapp-web.js";
 import qrcode from "qrcode-terminal";
-import { MongoStore } from "wwebjs-mongo";
+// import { MongoStore } from "wwebjs-mongo";
 import mongoose from "mongoose";
 import axios from "axios";
 import path from "path";
@@ -51,7 +51,7 @@ const args = {} as IArgs;
 let isDoneReadingCommands = false;
 let isMention = false;
 let lastPrefixUsed: string;
-const USE_REMOTE_AUTH = true;
+// const USE_REMOTE_AUTH = true;
 console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
 // console.log(process[Symbol.for('ts-node.register.instance') as unknown as keyof typeof process]?.toLocaleString().length)
 // const sourceFilesExtension = process[
@@ -66,36 +66,36 @@ console.log(`[PREFIX] Current prefix: \"${currentPrefix}\"`);
 if (process.env.MONGO_URL) {
   mongoose.connect(process.env.MONGO_URL).then(() => {
     let client: IClient;
-    if (currentEnv === "development" && !USE_REMOTE_AUTH) {
-      client = new Client({
-        puppeteer: {
-          headless: true,
-          args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        },
-        authStrategy: new LocalAuth(),
-      });
-      console.log("[CLIENT] Using Local Auth strategy...");
-    } else {
-      const store = new MongoStore({ mongoose: mongoose });
-      client = new Client({
-        puppeteer: {
-          headless: true,
-          args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        },
-        authStrategy: new RemoteAuth({
-          store: store,
-          backupSyncIntervalMs: 300000,
-        }),
-      });
-      console.log("[CLIENT] Using Remote Auth strategy...");
-    }
+    // if (currentEnv === "development" && !USE_REMOTE_AUTH) {
+    client = new Client({
+      puppeteer: {
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      },
+      authStrategy: new LocalAuth(),
+    });
+    console.log("[CLIENT] Using Local Auth strategy...");
+    // } else {
+    //   const store = new MongoStore({ mongoose: mongoose });
+    //   client = new Client({
+    //     puppeteer: {
+    //       headless: true,
+    //       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    //     },
+    //     authStrategy: new RemoteAuth({
+    //       store: store,
+    //       backupSyncIntervalMs: 300000,
+    //     }),
+    //   });
+    //   console.log("[CLIENT] Using Remote Auth strategy...");
+    // }
 
     client.setMaxListeners(0); // for an infinite number of event listeners
     client.initialize();
 
-    client.on("remote_session_saved", () => {
-      console.log("[CLIENT] Remote auth session saved");
-    });
+    // client.on("remote_session_saved", () => {
+    //   console.log("[CLIENT] Remote auth session saved");
+    // });
 
     client.on("qr", (qr: string) => {
       qrcode.generate(qr, { small: true });
