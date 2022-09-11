@@ -1492,7 +1492,7 @@ ws@8.5.0:
 
 wwebjs-mongo@^1.1.0:
   version "1.1.0"
-  resolved "https://registry.npmjs.org/wwebjs-mongo/-/wwebjs-mongo-1.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/wwebjs-mongo/-/wwebjs-mongo-1.1.0.tgz#a18f2e2772e793b34751b8e00ac76f76c5478de5"
   integrity sha512-uXbhkHkwo5WDwhhn72LOIKskaUNB72+G5knRLnfd0quGGFuvTKTPjzawF2nW8ai8D3M3WomdFlXApcAUK1499g==
 
 yauzl@^2.10.0:
