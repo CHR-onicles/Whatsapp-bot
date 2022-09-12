@@ -643,8 +643,10 @@ const sendSlides = async (msg: Message, courseCode: string) => {
       if (material === materials[materials.length - 1]) isDone = true;
     }
     // if (isDone) await msg.reply(`Done 👍🏽 from ${currentEnv}`);
-    if (isDone) await msg.reply(`Done 👍🏽`);
-    console.log(" [HELPERS - SS]Done sending slides");
+    if (isDone) {
+      await msg.reply(`Done 👍🏽`);
+      console.log(" [HELPERS - SS]Done sending slides");
+    }
   }
 };
 
@@ -659,7 +661,8 @@ const sendPastQuestions = async (msg: Message, courseCode: string) => {
   console.log("[HELPERS - SS] Getting past questions...");
   const materials = await getPastQuestions(courseCode);
   if (materials.length) console.log(" [HELPERS - SS]Got past questions");
-  else console.error(" [HELPERS - SS ERROR] No past questions received from DB");
+  else
+    console.error(" [HELPERS - SS ERROR] No past questions received from DB");
   for (const material of materials) {
     const curMaterial = material;
     const file_extension =
@@ -680,8 +683,10 @@ const sendPastQuestions = async (msg: Message, courseCode: string) => {
       if (material === materials[materials.length - 1]) isDone = true;
     }
     // if (isDone) await msg.reply(`Done 👍🏽 from ${currentEnv}`);
-    if (isDone) await msg.reply(`Done 👍🏽`);
-    console.log(" [HELPERS - SS]Done sending past questions");
+    if (isDone) {
+      await msg.reply(`Done 👍🏽`);
+      console.log(" [HELPERS - SS]Done sending past questions");
+    }
   }
 };
 
