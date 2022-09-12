@@ -66,15 +66,14 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
             description: "CSCD 424",
           },
           // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'pasco-426_dev' : 'pasco-426_prod', title: 'Multimedia Applications', description: 'CSCD 426' },
-          // {
-          //   id:
-          //     lastPrefixUsed === process.env.DEV_PREFIX
-          //       ? "pasco-428_dev"
-          //       : "pasco-428_prod",
-          //   title: "Expert Systems",
-          //   description: "CSCD 428",
-          // },
-          // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'pasco-432_dev' : 'pasco-432_prod', title: 'Concurrent & Distributed Systems', description: 'CSCD 432' },
+          {
+            id:
+              lastPrefixUsed === process.env.DEV_PREFIX
+                ? "pasco-428_dev"
+                : "pasco-428_prod",
+            title: "Expert Systems",
+            description: "CSCD 428",
+          },
           // { id: lastPrefixUsed === process.env.DEV_PREFIX ? 'pasco-434_dev' : 'pasco-434_prod', title: 'Mobile Computing', description: 'CSCD 434' },
         ],
       },
@@ -165,18 +164,6 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
           if (currentEnv !== "production") break;
           await msg.reply(pickRandomReply(WAIT_REPLIES));
           sendPastQuestions(msg, "CSCD 428");
-          break;
-
-        case "432_dev":
-          if (currentEnv !== "development") break;
-          await msg.reply(pickRandomReply(WAIT_REPLIES));
-          sendPastQuestions(msg, "CSCD 432");
-          break;
-
-        case "432_prod":
-          if (currentEnv !== "production") break;
-          await msg.reply(pickRandomReply(WAIT_REPLIES));
-          sendPastQuestions(msg, "CSCD 432");
           break;
 
         case "434_dev":
