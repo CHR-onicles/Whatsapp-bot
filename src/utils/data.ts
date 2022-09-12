@@ -401,7 +401,7 @@ export const PAST_QUESTIONS_REPLIES = [
  * The **numbers** represent the probability of sending that particular message. The sum of all the numbers is strictly 100.
  */
 export const FOOTNOTES = new Map([
-  ["", 72], // send "nothing" more often, to avoid annoying users with multiple tips
+  ["", 83], // send "nothing" more often, to avoid annoying users with multiple tips
 
   // Greetings/wishes
   ["Hope you are having a great day 🥳", 1],
@@ -420,18 +420,18 @@ export const FOOTNOTES = new Map([
   // ],
   ["Don't forget to DO MORE 👍🏽", 1],
   ["Keep on keeping on👍🏽", 1],
-  ["Glad I could be of help 😁", 2],
-  ["I hope this was helpful🙂", 2],
-  ["Happy to help ☺", 2],
+  ["Glad I could be of help 😁", 1],
+  ["I hope this was helpful🙂", 1],
+  ["Happy to help ☺", 1],
   ["Enjoy 🐦", 1],
 
   // Hints
-  ["Have you tried !𝒉𝒆𝒍𝒑 ? Try it out!", 2],
-  ["Checked out !𝕞𝕖𝕟𝕦 yet?", 2],
-  ["💡 Use *!menu* to see all the commands available to you", 2],
+  ["Have you tried !help? Try it out!", 1],
+  ["Checked out !menu yet?", 1],
+  ["💡 Use *!menu* to see all the commands available to you", 1],
   [
     "💡 Did you know you could ping me in a group to see all my commands? 😮",
-    2,
+    1,
   ],
   // [
   //   "💡 Use *!notify enable* to subscribe to class notifications.\n\nThe bot will remember your elective whenever you request for a timetable 💪🏽",
@@ -453,10 +453,10 @@ export const FOOTNOTES = new Map([
   //   "🆕 Don't know how to use a specific command?\n\nType *!help <command>* to see how to use it.\n\nEg: *!help slides*",
   //   1,
   // ],
-  [
-    "🆕 There are now *cooldowns* after using any command to avoid overloading the bot.\n\nThis simply means after using any command, you'll have to wait for a few seconds before using another command.",
-    1,
-  ],
+  // [
+  //   "🆕 There are now *cooldowns* after using any command to avoid overloading the bot.\n\nThis simply means after using any command, you'll have to wait for a few seconds before using another command.",
+  //   1,
+  // ],
   // [
   //   "🆕 Command arguments like *enable* and *disable* can be replaced with *-e* and *-d* respectively.\n\nEg: *!notify -e* or *!notify -d*",
   //   1,
@@ -464,9 +464,9 @@ export const FOOTNOTES = new Map([
   // ["Run *!updates* to see the bot's latest updates", 0],
 
   // Farewell messages
-  ["Congrats on finishing school 🎉", 2],
-  ["It was an honor serving you 🐦", 2],
-  ["Best of luck in your future endeavours 👍🏻", 2],
+  ["Congrats on finishing school 🎉", 1],
+  ["It was an honor serving you 🐦", 1],
+  ["Best of luck in your future endeavours 👍🏻", 1],
 ]);
 
 /**
