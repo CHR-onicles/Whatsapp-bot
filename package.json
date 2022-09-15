@@ -8,7 +8,7 @@
     "axios": "^0.27.2",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
-    "mongoose": "^6.6.0",
+    "mongoose": "^6.6.1",
     "qrcode-terminal": "^0.12.0",
     "typescript": "^4.8.3",
     "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#045e7bd41407227f975cac766424bd3c99d8a899",
