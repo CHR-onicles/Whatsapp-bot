@@ -10,7 +10,7 @@
     "express": "^4.18.1",
     "mongoose": "^6.6.2",
     "qrcode-terminal": "^0.12.0",
-    "typescript": "^4.8.3",
+    "typescript": "^4.8.4",
     "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#045e7bd41407227f975cac766424bd3c99d8a899",
     "wwebjs-mongo": "^1.1.0"
   },
