@@ -61,16 +61,15 @@ Ladies and gentlemen, I present to you.... <span style="font-size: 18px">"Ethere
 <br>
 
 ## 🎥 Demo
+<div align="center">
+      <a href="https://youtu.be/jAqBMS0Hpng">
+     <img 
+      src="./assets/Ethereal-thumbnail.jpg" 
+      alt="Whatsapp bot demo" 
+      style="width:80%;">
+      </a>
+    </div>
 
-https://user-images.githubusercontent.com/44934037/164345371-b4ed39ed-a7cb-4486-87ee-d6a5c5fdd7bc.mp4
-
-Forgive the quality 🙏🏽, Github requires videos to be <10mb which is a pain for a long one like this.
-
-Made up for the low quality with good background music though! 🤍
-
-Oh and I couldn't add all the functionalities of the bot in the demo as it was getting way too long 😪
-
-(A new demo will be uploaded soon to show even more features of the bot 🤞🏽)
 
 <br>
 
