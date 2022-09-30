@@ -189,7 +189,7 @@ const execute = async (client: IClient, msg: Message, args: IArgs) => {
 
 module.exports = {
   name: "pasco",
-  description: "Get course materials for all courses 📚",
+  description: "Get past questions for all courses 📚",
   alias: ["pascos", "pq", "passco"],
   category: "everyone", // admin | everyone
   help: `To use this command, type:\n*${currentPrefix}pasco*, then choose a course from the list provided`,
