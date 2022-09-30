@@ -2,7 +2,7 @@
 
 <br>
 
-This is a whatsapp bot created initially for EPiC Devs ([wait who?](#who-are-epic-devs)) but now widely used by '22 final year Computer Science students to make academic life a tiny bit easier. It uses a [Whatsapp web library](https://github.com/pedroslopez/whatsapp-web.js) and acts just like a regular user. It was built on a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. The bot uses a MongoDB cloud database to supplement its functionalities.
+This is a whatsapp bot created initially for EPiC Devs ([wait who?](#who-are-epic-devs)) but now widely used by 100+  '22 final year Computer Science students to make academic life a tiny bit easier. It uses a [Whatsapp web library](https://github.com/pedroslopez/whatsapp-web.js) and acts just like a regular user. It was built on a node server and is currently deployed to Heroku in order to make it available 24/7...or so I thought. The bot uses a MongoDB cloud database to supplement its functionalities.
 
 <br>
 
